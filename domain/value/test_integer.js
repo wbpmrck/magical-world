@@ -94,9 +94,10 @@ describe("integer class", function () {
     it("should can catch change event", function (done) {
         let int1 = new IntegerValue(10); //init a val,raw = 10
     
-        int1.on("change",function (raw,modify,val) {
+        int1.on("change",function (raw,modify,total,val) {
             expect(raw).to.eql(10);
             expect(modify).to.eql(-1);
+            expect(total).to.eql(9);
             expect(val).to.eql(int1);
             done();
         });

@@ -1,6 +1,11 @@
 /**
  * Created by kaicui on 17/8/5.
  * 表示最基础的数值类型(整数）
+ *
+ * value的修改操作一般分2种：
+ *
+ * update:[修改]-直接修改raw值,一般使用与hp,mp等这些状态变化的地方
+ * modify:[修正]-通过附加modifier,改变外部读取value的时候拿到的数据，raw并没改变。一般使用于：attack,defense等这种属性类场景
  */
 
 const oop = require("local-libs").oop;
@@ -33,7 +38,7 @@ var IntegerValue = oop.defineClass({
          * 触发change事件到外部，参数:raw,modify,this
          */
         notifyChage:function () {
-            this.emit("change",this.raw,this.modify,this);
+            this.emit("change",this.raw,this.modify,this.total(),this);
         },
         /**
          * 重设raw值
