@@ -8,7 +8,7 @@ const Attribute = require("./attribute");
 
 
 
-describe("Attribute class", function () {
+describe("Attribute", function () {
     beforeEach(function () {
         //run before each test
     });

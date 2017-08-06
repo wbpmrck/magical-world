@@ -8,7 +8,7 @@ const IntegerValue = require("./integer");
 
 
 
-describe("integer class", function () {
+describe("Integer Value", function () {
     beforeEach(function () {
         //run before each test
     });
