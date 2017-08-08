@@ -1,9 +1,10 @@
 # Route Map
 - V1.0
-    - simple battle
+    - simple turn-based battle
     - skill system
     - idle PVE system
     - item/equip system
+    - level system
 - V2.0
     - rebirth system
     - task system

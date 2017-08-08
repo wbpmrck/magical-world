@@ -6,20 +6,44 @@
  *
  * update:[修改]-直接修改raw值,一般使用与hp,mp等这些状态变化的地方
  * modify:[修正]-通过附加modifier,改变外部读取value的时候拿到的数据，raw并没改变。一般使用于：attack,defense等这种属性类场景
+ *
+ * -----------2017年08月08日----------
+ * 新增 option:min,max（可选参数）
+ *      -   控制raw的取值范围
+ *      -   只对raw有效，对modify无效（数据的修正可以超出raw的限制，或者说和raw无关）
  */
 
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 
 var IntegerValue = oop.defineClass({
-    constructor:function(rawValue){
+    constructor:function(rawValue,{min,max}={}){
         
         
         var self = this;
         event.mixin(self);
+    
+        self.options={min,max}; //可选项：最小值，最大值，用于控制raw的范围,可以不传
         
-        self.raw = parseInt(rawValue);
+        rawValue = parseInt(rawValue);
+        
+        let checkResult = self.checkRawIllegal(rawValue);
+        if(checkResult==-1){
+            rawValue = min;
+            // throw new Error(`value:[${rawValue}] create error,must between [${min}] and [${max}]!`)
+        }else if(checkResult==1){
+            rawValue = max;
+            // throw new Error(`value:[${rawValue}] create error,must between [${min}] and [${max}]!`)
+        }
+        self.raw = rawValue;
+        
         self.modify = 0;
+        
+        if(min !== undefined && max!== undefined){
+            if(min>max){
+                throw new Error(`value:[${rawValue}] create error,min must smaller than max!`)
+            }
+        }
     
         //多个对该值的修正项。每一项都一定含一个ref字段，addVal和addPercent一般来说只存在一个
         self.modifier =[/*{ref:<object>,addVal:-20},{ref:<object>,addPercent:0.05}*/];
@@ -27,6 +51,36 @@ var IntegerValue = oop.defineClass({
         
     },
     prototype:{
+        /**
+         * 改变value的取值范围（会对当前raw值进行修正）
+         * @param min
+         * @param max
+         */
+        changeRawRange:function ({min,max}={}) {
+            this.options={min,max};
+            
+            let checkResult = this.checkRawIllegal(this.raw);
+            if(checkResult==-1){
+                this.setRaw(min);
+            }else if(checkResult==1){
+                this.setRaw(max);
+            }
+        },
+        checkRawIllegal:function (raw) {
+            if(this.options){
+                if(this.options.min!==undefined){
+                    if(raw<parseInt(this.options.min) ){
+                        return -1; //表示达到下限
+                    }
+                }
+                if(this.options.max!==undefined){
+                    if(raw>parseInt(this.options.max) ){
+                        return 1; //表示达到上限
+                    }
+                }
+            }
+            return 0;
+        },
         /**
          * 计算value的本身值+修正值的和
          * @returns {Number}
@@ -46,6 +100,20 @@ var IntegerValue = oop.defineClass({
          */
         setRaw:function (raw) {
             raw = parseInt(raw);
+    
+            let checkResult = this.checkRawIllegal(raw);
+            if(checkResult==-1){
+                raw = this.options.min;
+                // throw new Error(`value:[${rawValue}] create error,must between [${min}] and [${max}]!`)
+            }else if(checkResult==1){
+                raw = this.options.max;
+                // throw new Error(`value:[${rawValue}] create error,must between [${min}] and [${max}]!`)
+            }
+            
+            // if(!this.checkRawLegal(raw)){
+            //     throw new Error(`setRaw ${raw} error,must between [${this.options.min}] and [${this.options.max}]!`);
+            // }
+            
             let old = this.raw;
             if(old != raw){
                 this.raw = raw;
