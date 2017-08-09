@@ -41,6 +41,9 @@ describe("Attribute", function () {
         var modifier2={addPercent:-0.1};
         str.modifyAddPercent(modifier2,modifier2.addPercent);
         expect(str.getVal()).to.eql(14);
+        
+        str.removeModifier(modifier2);
+        expect(str.getVal()).to.eql(15);
 
     });
     it("should can listen change,whenever on update or modify", function () {
@@ -68,6 +71,16 @@ describe("Attribute", function () {
         var modifier={addPercent:-0.2};
         str.modifyAddPercent(modifier,modifier.addPercent);
         expect(str.getVal()).to.eql(12);
+    
+    
+        str.once("valueChange",(total,raw,modify,val)=>{
+            expect(total).to.eql(15);
+            expect(raw).to.eql(15);
+            expect(str.getVal()).to.eql(15);
+        });
+    
+        str.removeModifier(modifier);
+        expect(str.getVal()).to.eql(15);
         
     });
     

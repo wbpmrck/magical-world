@@ -7,6 +7,15 @@
  * update:[修改]-直接修改raw值,一般使用与hp,mp等这些状态变化的地方
  * modify:[修正]-通过附加modifier,改变外部读取value的时候拿到的数据，raw并没改变。一般使用于：attack,defense等这种属性类场景
  *
+ * -----------2017年08月09日----------
+ * 新增 特性：
+ * addModifier 的输入，可以不再是简单值，而是可以是另外一个Integer
+ * 这样的话，如果modify本身是一个可变的值，那么这个变化会一直传递下去
+ *
+ * 本版本，addModifier 会兼容老的写法（纯值）和新的写法（Integer）
+ * 注意：
+ *  1、当传入的是Integer对象的时候，对于：addPercent:会当做千分位的分子处理，比如 100代表 100/1000=1/10
+ *
  * -----------2017年08月08日----------
  * 新增 option:min,max（可选参数）
  *      -   控制raw的取值范围
@@ -48,6 +57,9 @@ var IntegerValue = oop.defineClass({
         //多个对该值的修正项。每一项都一定含一个ref字段，addVal和addPercent一般来说只存在一个
         self.modifier =[/*{ref:<object>,addVal:-20},{ref:<object>,addPercent:0.05}*/];
         
+        self._fn={
+            "refreshModify":self.refreshModify.bind(self)
+        }
         
     },
     prototype:{
@@ -131,10 +143,22 @@ var IntegerValue = oop.defineClass({
             self.modifier.forEach((modifyObject)=>{
                 // console.log("modifyObject="+JSON.stringify(modifyObject));
                if(modifyObject.addVal!==undefined){
-                   self.modify += parseInt(modifyObject.addVal);
+                   
+                   //如果是Integer
+                   if(modifyObject.addVal instanceof IntegerValue){
+                       self.modify += modifyObject.addVal.total();
+                   }else{
+                       self.modify += parseInt(modifyObject.addVal);
+                   }
                }
                 if(modifyObject.addPercent!==undefined){
-                    self.modify += parseInt(self.raw * modifyObject.addPercent);
+    
+                    //如果是Integer
+                    if(modifyObject.addPercent instanceof IntegerValue){
+                        self.modify += parseInt(self.raw * (modifyObject.addPercent.total()/1000));
+                    }else{
+                        self.modify += parseInt(self.raw * modifyObject.addPercent);
+                    }
                 }
             });
             
@@ -148,10 +172,19 @@ var IntegerValue = oop.defineClass({
          * @param addPercent:修正的百分比（基于raw)
          */
         addModifier : function(ref,{addVal,addPercent}){
+            var self = this;
             //必须传入ref,addVal和addPercent至少传入1个
             if(ref!==undefined && (addVal!==undefined || addPercent!==undefined)){
                 this.modifier.push({ref,addVal,addPercent});
                 this.refreshModify();
+                
+                //判断类型,如果修正值本身，又是一个Integer(可变化),那么需要订阅其变化:
+                if(addVal instanceof IntegerValue){
+                    addVal.on("change",self._fn.refreshModify);
+                }
+                if(addPercent instanceof IntegerValue){
+                    addPercent.on("change",self._fn.refreshModify);
+                }
             }
         },
         /**

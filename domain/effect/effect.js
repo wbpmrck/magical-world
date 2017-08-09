@@ -25,13 +25,25 @@ var Effect = oop.defineClass({
         }
         
         self.level = level;
+        self.level.on("change",function (raw,modify,total,val) {
+            self.onLevelChange(total);
+        });
         
         self.params = params; //由外部上下文来注入，效果的具体参数。这个参数由具体的效果自己来定义
 
         self.source = self.target = undefined; //效果的作用源、作用对象
+        
+        
     },
     prototype:{
     
+        /**
+         * 当等级变化的时候会触发，子类应该重写这个方法
+         * @param nowLevel
+         */
+        onLevelChange:function (nowLevel) {
+            
+        },
         onInstall:function (source,target) {
             this.source = source;
             this.target = target;
@@ -39,7 +51,7 @@ var Effect = oop.defineClass({
             this.emit(events.INSTALLED,this); //发射事件，通知外部
             return this;
         },
-        onUnstall:function () {
+        onUninstall:function () {
             this.source = this.target = undefined;
             
             this.emit(events.UNINSTALLED,this); //发射事件，通知外部

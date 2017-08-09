@@ -30,6 +30,11 @@ var Attribute = oop.defineClass({
         getVal:function () {
           return this.val.total();
         },
+    
+        removeModifier:function (modifierRef) {
+            this.val.removeModifier(modifierRef);
+            return this;
+        },
         /**
          * 修正value
          * @param modifierRef
@@ -40,6 +45,7 @@ var Attribute = oop.defineClass({
             this.val.addModifier(modifierRef,{addVal});
             return this;
         },
+        
         /**
          * 修正value
          * @param addPercent

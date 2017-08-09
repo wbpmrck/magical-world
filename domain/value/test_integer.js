@@ -33,6 +33,34 @@ describe("Integer Value", function () {
         expect(int1.raw).to.eql(10);//raw not changed
         expect(int1.modify).to.eql(2);
         expect(int1.total()).to.eql(12);
+    
+    
+        let modifier3 = {addVal: new IntegerValue(10)}; //增加10，这次增加值本身也是一个可变的integer
+        
+        int1.addModifier(modifier3,modifier3);
+    
+        expect(int1.raw).to.eql(10);//raw not changed
+        expect(int1.modify).to.eql(12);
+        expect(int1.total()).to.eql(22);
+    
+        
+        modifier3.addVal.addModifier({},{addVal:1});//修正值本身又被修正了
+    
+        expect(int1.raw).to.eql(10);//raw not changed
+        expect(int1.modify).to.eql(13);
+        expect(int1.total()).to.eql(23);
+    
+        let modifier4 = {addPercent:new IntegerValue(100)}; //增加 千分之100 = 十分之1
+        int1.addModifier(modifier4,modifier4);
+        expect(int1.raw).to.eql(10);//raw not changed
+        expect(int1.modify).to.eql(14);
+        expect(int1.total()).to.eql(24);
+    
+        modifier4.addPercent.addModifier({},{addVal:100});//修正值本身又被修正了,变成2/10
+    
+        expect(int1.raw).to.eql(10);//raw not changed
+        expect(int1.modify).to.eql(15);
+        expect(int1.total()).to.eql(25);
     });
     
     it("should can remove modifier", function () {

@@ -65,7 +65,7 @@ describe("Effect ", function () {
             expect(ef.target).to.eql(undefined);
             done();
         });
-        effect1.onUnstall();
+        effect1.onUninstall();
         
     });
     
