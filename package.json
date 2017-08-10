@@ -1,8 +1,10 @@
 {
   "name": "magical-world",
   "version": "0.0.1",
-
   "devDependencies": {
     "chai": "^3.5.0"
+  },
+  "dependencies": {
+    "string.prototype.padend": "^3.0.0"
   }
 }

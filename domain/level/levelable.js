@@ -16,6 +16,7 @@ oop.defineClass({
     constructor:function({
         levelCur, //number,或者Integer 对象，表示当前等级
         levelMax, //number,或者Integer 对象，表示最高等级
+        exp, // number,表示当前获得的经验值
         
     }){
         var self = this;
