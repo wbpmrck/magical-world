@@ -1,4 +1,14 @@
-# 开发计划
+# Aug 2017
+- 2017/08/30:
+    - finish the data structure sync framework
+    - build the server skeleton
+    - build the client skeleton
+
+- 2017/08/15:
+    - finish the domain logic
+    - add test cases to the domain logic
+
+### details
 
 - 2017年08月10日：
 
