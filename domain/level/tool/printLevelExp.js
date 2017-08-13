@@ -54,11 +54,11 @@ if(dataTable){
         expStepOutput.push('\r\n')
     }
     
-    console.log("经验值表:\r\n")
+    console.log("经验值表（可以用于每升1级额外需要的经验）:\r\n")
     console.log(expOutput.join(''));
     console.log("\r\n")
     
-    console.log("经验值差额表:\r\n")
+    console.log("经验值差额表(相邻2个级别，升级需要经验差额):\r\n")
     console.log(expStepOutput.join(''));
     console.log("EOF\r\n")
 }else{
