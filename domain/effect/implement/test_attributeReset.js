@@ -4,14 +4,14 @@
 
 
 const expect = require('chai').expect;
-const attributeModify = require("./attributeModify");
+const attributeReset = require("./attributeReset");
 const integer = require("../../value/integer");
 
 const Attribute = require("../../attribute/attribute");
 
 
 
-describe("attributeModify :", function () {
+describe("attributeReset :", function () {
     beforeEach(function () {
         //run before each test
     });
@@ -21,9 +21,9 @@ describe("attributeModify :", function () {
 
     it("should increase work", function () {
         //定义了一个修改属性的效果：初始20，等级因子是10，当前等级是1，增长曲线是线性
-        let effect = new attributeModify({
-            name:"attributeModify",
-            desc:"修正属性",
+        let effect = new attributeReset({
+            name:"attributeReset",
+            desc:"修改属性",
             level:new integer(1),
             params:{
                 attrName:"str",
@@ -50,26 +50,23 @@ describe("attributeModify :", function () {
         //此时str = 10+ (20 + 1*10) = 40
         expect(target.attr.str.getVal()).to.eql(40);
         
-        //然后给effect进行升级
+        //然后给effect进行升级(对于reset效果，不是附着在对象上面，所以应该不变)
         let levelModifier ={addVal:new integer(1)};
         effect.level.addModifier(levelModifier,levelModifier); //升了1级
+        
         //此时str = 10+ (20 + 2*10) = 40
-        expect(target.attr.str.getVal()).to.eql(50);
-        
-        //然后给effect进行再次升级
-        levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
-        //此时str = 10+ (20 + 3*10) = 60
-        expect(target.attr.str.getVal()).to.eql(60);
-        
+        expect(target.attr.str.getVal()).to.eql(40);
+    
+    
         //然后移除效果
         effect.onUninstall();
-        expect(target.attr.str.getVal()).to.eql(10);
+        expect(target.attr.str.getVal()).to.eql(40);
     });
     
     it("should decrease work", function () {
         //定义了一个修改属性的效果：初始20，等级因子是10，当前等级是1，增长曲线是线性
-        let effect = new attributeModify({
-            name:"attributeModify",
+        let effect = new attributeReset({
+            name:"attributeReset",
             desc:"修正属性",
             level:new integer(1),
             params:{
@@ -97,20 +94,16 @@ describe("attributeModify :", function () {
         //此时str = 100- (20 + 1*10) = 70
         expect(target.attr.str.getVal()).to.eql(70);
         
-        //然后给effect进行升级
+        //然后给effect进行升级(对于reset效果，不是附着在对象上面，所以应该不变)
         let levelModifier ={addVal:new integer(1)};
         effect.level.addModifier(levelModifier,levelModifier); //升了1级
-        //此时str = 100- (20 + 2*10) = 60
-        expect(target.attr.str.getVal()).to.eql(60);
-        
-        //然后给effect进行再次升级
-        levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
-        //此时str = 100- (20 + 3*10) = 50
-        expect(target.attr.str.getVal()).to.eql(50);
+        //此时str = 100- (20 + 1*10) = 70
+        expect(target.attr.str.getVal()).to.eql(70);
+    
     
         //然后移除效果
         effect.onUninstall();
-        expect(target.attr.str.getVal()).to.eql(100);
+        expect(target.attr.str.getVal()).to.eql(70);
     });
     
 });

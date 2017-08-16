@@ -1,23 +1,24 @@
 /**
  * Created by kaicui on 17/8/6.
  * effect的实现之一:
- * 名称：属性修改效果(按绝对值)
- * 作用：修改某些属性，增加modify(不按照百分比)
+ * 名称：属性值修改效果(按绝对值)
+ * 作用：直接修改某属性值（uninstall 的时候不恢复）
  * 约束：target必须具有:getAttr(String attrName)方法，返回一个Attribute对象
- * 使用场景：被动技能：增加力量30点
+ *使用场景：
+ *  1、主动技能：对目标造成30点神圣伤害 （相当于 reset 属性值为 当前-30）
  */
 
 
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
-const Effect = require("../effect");
 const increaseMath = require("../../math/increase");
+const Effect = require("../effect");
 const Integer = require("../../value/integer");
 
-var AttributeModify = oop.defineClass({
+var AttributeReset = oop.defineClass({
     super:Effect,
     /**
-     * 属性修正效果
+     * 直接伤害
      * @param name
      * @param desc
      * @param level
@@ -87,7 +88,7 @@ var AttributeModify = oop.defineClass({
                     if(fn){
                         let addVal = self.calculateAddVal();
                         self.addVal.setRaw(addVal); //修正值，每次通过setRaw更新
-                        attr.modifyAdd(self,self.addVal);
+                        attr.updateAdd(self.addVal.total());
                     }
                 }
             }
@@ -96,13 +97,7 @@ var AttributeModify = oop.defineClass({
         },
         onUninstall:function () {
             var self = this;
-            //解除对属性的修改 if(self.params.attrName){
-            let {attrName} = self.params;
-    
-            if(self.target.getAttr && typeof self.target.getAttr ==='function'){
-                let attr = self.target.getAttr(attrName);
-                attr.removeModifier(self);
-            }
+           
             //调用基类方法
             oop.getSupper(self).onUninstall.call(self);
             
@@ -111,4 +106,4 @@ var AttributeModify = oop.defineClass({
     }
 });
 
-module.exports = AttributeModify;
+module.exports = AttributeReset;

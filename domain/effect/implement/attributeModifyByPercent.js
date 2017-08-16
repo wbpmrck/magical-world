@@ -4,7 +4,7 @@
  * 名称：属性修改效果(按百分比)
  * 作用：修改某些属性，增加modify(按照百分比)
  * 约束：target必须具有:getAttr(String attrName)方法，返回一个Attribute对象
- *
+ *使用场景：被动技能：增加力量30%
  */
 
 

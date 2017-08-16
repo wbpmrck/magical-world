@@ -6,6 +6,7 @@
 const expect = require('chai').expect;
 const Levelable = require("./levelable");
 const oop = require("local-libs").oop;
+const Integer = require("../value/integer");
 
  describe("levelable", function () {
      beforeEach(function () {
@@ -130,5 +131,25 @@ const oop = require("local-libs").oop;
          expect(upped).to.eql(4);
          expect(levelable1.exp).to.eql(80);
          expect(levelable1.levelCur.raw).to.eql(5);
+     });
+     
+     it("should can level up even if the levelCur is modified to equal levelMax", function () {
+         let levelable1 = new Levelable({
+             levelCur:new Integer(0), //number,或者Integer 对象，表示当前等级
+             levelMax:new Integer(5), //number,或者Integer 对象，表示最高等级
+             exp:0, // number,表示当前获得的经验值
+             expTableName:"small_02"
+         });
+    
+         expect(levelable1.canLevelUp()).to.eql(false);
+         
+         //modify currentLevel
+    
+         levelable1.acquireExp(29); //need 1 to arrive level1
+         expect(levelable1.exp).to.eql(29);
+         expect(levelable1.canLevelUp()).to.eql(false);
+         levelable1.acquireExp(1); // arrive level1
+         expect(levelable1.exp).to.eql(30);
+         expect(levelable1.canLevelUp()).to.eql(true);
      });
  });
