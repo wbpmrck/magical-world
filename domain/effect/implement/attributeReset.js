@@ -12,7 +12,7 @@
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const increaseMath = require("../../math/increase");
-const Effect = require("../effect");
+const {Effect,EffectEvents} = require("../effect");
 const Integer = require("../../value/integer");
 
 var AttributeReset = oop.defineClass({
@@ -89,6 +89,8 @@ var AttributeReset = oop.defineClass({
                         let addVal = self.calculateAddVal();
                         self.addVal.setRaw(addVal); //修正值，每次通过setRaw更新
                         attr.updateAdd(self.addVal.total());
+    
+                        self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
                     }
                 }
             }
@@ -100,7 +102,8 @@ var AttributeReset = oop.defineClass({
            
             //调用基类方法
             oop.getSupper(self).onUninstall.call(self);
-            
+    
+            self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
             return this;
         }
     }

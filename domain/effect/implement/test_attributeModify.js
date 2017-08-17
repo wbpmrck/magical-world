@@ -8,7 +8,7 @@ const attributeModify = require("./attributeModify");
 const integer = require("../../value/integer");
 
 const Attribute = require("../../attribute/attribute");
-
+const {EffectEvents} = require("../effect")
 
 
 describe("attributeModify :", function () {
@@ -45,6 +45,13 @@ describe("attributeModify :", function () {
             }
         };
         let source = {};//假的作用源
+    
+        effect.once(EffectEvents.INSTALLED,(ef)=>{
+            expect(ef).to.eql(effect);
+            expect(ef.source).to.eql(source);
+            expect(ef.target).to.eql(target);
+        });
+            
         effect.onInstall(source,target);
         
         //此时str = 10+ (20 + 1*10) = 40
@@ -60,7 +67,14 @@ describe("attributeModify :", function () {
         levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
         //此时str = 10+ (20 + 3*10) = 60
         expect(target.attr.str.getVal()).to.eql(60);
-        
+    
+    
+        effect.once(EffectEvents.UNINSTALLED,(ef)=>{
+            expect(ef).to.eql(effect);
+            expect(ef.source).to.eql(undefined);
+            expect(ef.target).to.eql(undefined);
+        });
+    
         //然后移除效果
         effect.onUninstall();
         expect(target.attr.str.getVal()).to.eql(10);

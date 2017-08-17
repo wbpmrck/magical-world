@@ -10,7 +10,7 @@
 
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
-const Effect = require("../effect");
+const {Effect,EffectEvents} = require("../effect");
 const increaseMath = require("../../math/increase");
 const Integer = require("../../value/integer");
 
@@ -88,6 +88,8 @@ var AttributeModifyByPercent = oop.defineClass({
                         let addPercent = self.calculateAddVal();
                         self.addPercent.setRaw(addPercent); //修正值，每次通过setRaw更新
                         attr.modifyAddPercent(self,self.addPercent);
+    
+                        self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
                     }
                 }
             }
@@ -105,7 +107,8 @@ var AttributeModifyByPercent = oop.defineClass({
             }
             //调用基类方法
             oop.getSupper(self).onUninstall.call(self);
-            
+    
+            self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
             return this;
         }
     }

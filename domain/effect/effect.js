@@ -8,7 +8,10 @@
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const IntegerValue = require("../value/integer");
-const {events} = require("./consts");
+const EffectEvents =  {
+    INSTALLED:1,
+    UNINSTALLED:2,
+};
 
 var Effect = oop.defineClass({
     
@@ -44,17 +47,27 @@ var Effect = oop.defineClass({
         onLevelChange:function (nowLevel) {
             
         },
+        /**
+         * 效果被放到目标对象
+         * @param source：效果来源
+         * @param target：放置对象
+         * @returns {Effect}
+         */
         onInstall:function (source,target) {
             this.source = source;
             this.target = target;
             
-            this.emit(events.INSTALLED,this); //发射事件，通知外部
+            // this.emit(EffectEvents.INSTALLED,this); //发射事件，通知外部
             return this;
         },
+        /**
+         * 效果从对象上移除了
+         * @returns {Effect}
+         */
         onUninstall:function () {
             this.source = this.target = undefined;
             
-            this.emit(events.UNINSTALLED,this); //发射事件，通知外部
+            // this.emit(EffectEvents.UNINSTALLED,this); //发射事件，通知外部
             return this;
         },
         toString:function(){
@@ -63,4 +76,4 @@ var Effect = oop.defineClass({
     }
 });
 
-module.exports = Effect;
+module.exports = {Effect,EffectEvents};
