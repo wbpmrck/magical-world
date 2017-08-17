@@ -76,4 +76,14 @@ var Effect = oop.defineClass({
     }
 });
 
-module.exports = {Effect,EffectEvents};
+let getEffect=function (effectName,effectDesc,level, params) {
+    let cons = require(`./implement/${effectName}`);
+    let ef = new cons({
+        name:effectName,
+        desc:effectDesc,
+        level:level,
+        params:params
+    });
+    return ef;
+}
+module.exports = {Effect,EffectEvents,getEffect};

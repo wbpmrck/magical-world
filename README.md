@@ -12,7 +12,12 @@ this a game totally written in javascript.
     - the domain classes and logics.
     - the domain is independent from the client/server
 
+# About the design
 
+- [lifeCycle design](./doc/lifeCycle.md)
+- [serialization rules](./doc/serialization.md)
+- [skill system](./doc/skill.md)
+- [playing method record](./doc/game.md)
 
 
 # About the Route Map
