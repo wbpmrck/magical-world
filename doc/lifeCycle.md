@@ -20,7 +20,7 @@ AFTER_CHAR_NORMAL_ATK |角色进行普攻后|N*M|{attacker:<行动的char对象>
 AFTER_CHAR_BE_NORMAL_ATK_MISS |角色受到普攻成功躲避后|N*M|{attacker:<进攻的char对象>,target:<被选定的攻击对象>}|如果普通攻击落空，会触发此事件
 AFTER_CHAR_NORMAL_ATK_MISS |角色进行普攻Miss后|N*M|{attacker:<进攻的char对象>,target:<被选定的攻击对象>}|如果普通攻击落空，会触发此事件
 AFTER_CHAR_ACTION |角色行动后|N|{actor:<行动的char对象>,continueTimes:<整数>如果大于0,则还可以再行动>}|continueTimes在行动完成之后会自动-1，如果被修改为>0的值,则actor可以再次进入行动周期（还在当前回合内），`可用于实现类似2次行动的特效`
-TURN_NED |回合结束|N|
+TURN_END |回合结束|N|
 BATTLE_END |战斗结束|1|
 BEFORE_WORLD_CLOSE  |世界关闭之前|1|
 

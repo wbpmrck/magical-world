@@ -3,9 +3,13 @@
  *
  * 技能：
  *
- * 1、技能包含多个技能项目，技能定义了所属人，等级、当前熟练度（经验）等信息
+ * 1、技能包含多个技能项目，技能定义了所属人，等级、当前熟练度（经验）等信息。
+ *      技能还有一个关键属性type,表示主动还是被动。如果是被动技能，则人物创建完成之后就触发release.主动技能的release由战斗系统来决定（根据能量情况）
  * 2、技能项目是一个有一定概率、在某些时刻、对某些对象，释放某些效果(effect)的集合
  *
+ *
+ *  PS:
+ *  1、技能的触发时机，是通过监听"世界上下文"事件来决定的
  */
 
 
@@ -77,11 +81,11 @@ var SkillItem = oop.defineClass({
         install:function (context) {
             var self = this;
             
-            let _install = function () {
+            let _install = function (lifeCycleParams) {
                 //todo:先看概率
                 //寻找对象
                 let targetChooser = self.targetChooser;
-                let targets = targetChooser.chooseTarget(self.parent.holder,context,self.targetChooserParams);
+                let targets = targetChooser.chooseTarget(self.parent.holder,context,lifeCycleParams,self.targetChooserParams);
                 if(targets && targets.length >0){
                     //然后进行效果安装
                     //首先获取技能项里都有哪些效果元数据
@@ -100,12 +104,12 @@ var SkillItem = oop.defineClass({
             //根据自身的生效周期（如果为空，则立刻生效),来进行处理
             if(self.installCycle){
                 let source = self.parent.holder;
-                source.on(self.installCycle,()=>{
-                    _install();
+                context.on(self.installCycle,(lifeCycleParams)=>{
+                    _install(lifeCycleParams);
                 });
             }else{
                 //如果不需在特定周期触发，那直接触发
-                _install();
+                _install({});
             }
             
         }

@@ -19,10 +19,11 @@ let ChooserBase = oop.defineClass({
          * 选择目标对象
          * @param source：一个选择的发起者，可能是世界，也可能是某个角色
          * @param context：上下文，用于协助选择对象
-         * @param params：对象选择器需要的参数
+         * @param lifeCycleParams：上下文参数，用于协助选择对象【重要】
+         * @param params：对象选择器需要的参数(比如选择几个？选择前排？)
          * @return :返回应该是一个数组，数组元素是很多的角色对象
          */
-        chooseTarget:function (source,context,params) {
+        chooseTarget:function (source,context,lifeCycleParams,params) {
             throw new Error("not implement")
         }    
     }

@@ -78,6 +78,12 @@ var EffectCarrier = oop.defineClass({
             
             //触发事件：效果添加完成
             this.emit(EffectCarrierLifeEvent.AFTER_INSTALL_EFFECT,context,source,effect);
+    
+    
+            //如果该效果没有持续回合数字段，则直接调用uninstall立刻移除
+            if(effect.params.continueTurn===undefined){
+                this.uninstallEffect(effect);
+            }
             return true;
         }
     }

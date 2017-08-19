@@ -2,7 +2,7 @@
  * Created by kaicui on 17/8/5.
  */
 
-
+const event = require("local-libs").event;
 const oop = require("local-libs").oop;
 const expect = require('chai').expect;
 const {EffectCarrier,EffectCarrierLifeEvent} = require("./effectCarrier");
@@ -46,7 +46,10 @@ describe("EffectCarrier ", function () {
         let _source ={};
         w1.attr.addAttr(new Attribute("str","力量",10));
         expect(w1.getAttr("str").getVal()).to.eql(10);
-        
+    
+    
+        let worldContext ={};//模拟世界上下文
+        event.mixin(worldContext);
     
         //定义了一个修改属性的效果：初始20，等级因子是10，当前等级是1，增长曲线是线性
         let _effect = new AttributeModify({
@@ -55,11 +58,13 @@ describe("EffectCarrier ", function () {
             level:new Integer(1),
             params:{
                 attrName:"str",
+                continueTurn:1,
                 mode:"inc",
                 basePoint:20,
                 levelFactor:10,
                 increase:"linear"
-            }
+            },
+            worldContext
         });
         
         //these are events emit by effectCarrier
