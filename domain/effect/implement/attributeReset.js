@@ -24,7 +24,7 @@ var AttributeReset = oop.defineClass({
      * @param level
      * @param params：{attrName:属性名,mode:"inc"or"dec"表示增加还是减少,basePoint:基础修正点数(整数),levelFactor:用于和等级相乘的因子,increase:增长函数名，参见math/increase.js}
      */
-    constructor:function({name,desc,level,params}){
+    constructor:function({level,params}){
         var self = this;
         
         self.addVal=new Integer(0); //暂存当前效果已经产生的属性修正，默认0
@@ -32,6 +32,17 @@ var AttributeReset = oop.defineClass({
     },
     prototype:{
     
+        toString:function () {
+            var self = this;
+            let {attrName,mode,basePoint,levelFactor,increase} = self.params;
+            if(self.target){
+                let attr = self.target.getAttr(attrName);
+                return `${attr.desc}${mode=="inc"?"增加":"减少"}${Math.abs(self.addVal.total())}`;
+            }else{
+                return `${attrName}${mode=="inc"?"增加":"减少"}${Math.abs(self.addVal.total())}`;
+            }
+            
+        },
         /**
          * 根据当前状态，计算应该修正的属性值
          * @returns {*}

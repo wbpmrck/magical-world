@@ -49,10 +49,13 @@ describe("attributeReset :", function () {
         
         //此时str = 10+ (20 + 1*10) = 40
         expect(target.attr.str.getVal()).to.eql(40);
+        expect(effect.toString()).to.eql("力量增加30");
         
         //然后给effect进行升级(对于reset效果，不是附着在对象上面，所以应该不变)
         let levelModifier ={addVal:new integer(1)};
         effect.level.addModifier(levelModifier,levelModifier); //升了1级
+    
+        expect(effect.toString()).to.eql("力量增加40");
         
         //此时str = 10+ (20 + 2*10) = 40
         expect(target.attr.str.getVal()).to.eql(40);
@@ -61,6 +64,8 @@ describe("attributeReset :", function () {
         //然后移除效果
         effect.onUninstall();
         expect(target.attr.str.getVal()).to.eql(40);
+    
+        expect(effect.toString()).to.eql("str增加40");
     });
     
     it("should decrease work", function () {

@@ -22,8 +22,8 @@ describe("attributeModify :", function () {
     it("should increase work", function () {
         //定义了一个修改属性的效果：初始20，等级因子是10，当前等级是1，增长曲线是线性
         let effect = new attributeModify({
-            name:"attributeModify",
-            desc:"修正属性",
+            // name:"attributeModify",
+            // desc:"修正属性",
             level:new integer(1),
             params:{
                 attrName:"str",
@@ -53,6 +53,9 @@ describe("attributeModify :", function () {
         });
             
         effect.onInstall(source,target);
+    
+    
+        expect(effect.toString()).to.eql("力量增加30");
         
         //此时str = 10+ (20 + 1*10) = 40
         expect(target.attr.str.getVal()).to.eql(40);
@@ -62,11 +65,13 @@ describe("attributeModify :", function () {
         effect.level.addModifier(levelModifier,levelModifier); //升了1级
         //此时str = 10+ (20 + 2*10) = 40
         expect(target.attr.str.getVal()).to.eql(50);
+        expect(effect.toString()).to.eql("力量增加40");
         
         //然后给effect进行再次升级
         levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
         //此时str = 10+ (20 + 3*10) = 60
         expect(target.attr.str.getVal()).to.eql(60);
+        expect(effect.toString()).to.eql("力量增加50");
     
     
         effect.once(EffectEvents.UNINSTALLED,(ef)=>{
@@ -83,8 +88,8 @@ describe("attributeModify :", function () {
     it("should decrease work", function () {
         //定义了一个修改属性的效果：初始20，等级因子是10，当前等级是1，增长曲线是线性
         let effect = new attributeModify({
-            name:"attributeModify",
-            desc:"修正属性",
+            // name:"attributeModify",
+            // desc:"修正属性",
             level:new integer(1),
             params:{
                 attrName:"str",
@@ -110,18 +115,20 @@ describe("attributeModify :", function () {
         
         //此时str = 100- (20 + 1*10) = 70
         expect(target.attr.str.getVal()).to.eql(70);
+        expect(effect.toString()).to.eql("力量减少30");
         
         //然后给effect进行升级
         let levelModifier ={addVal:new integer(1)};
         effect.level.addModifier(levelModifier,levelModifier); //升了1级
         //此时str = 100- (20 + 2*10) = 60
         expect(target.attr.str.getVal()).to.eql(60);
+        expect(effect.toString()).to.eql("力量减少40");
         
         //然后给effect进行再次升级
         levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
         //此时str = 100- (20 + 3*10) = 50
         expect(target.attr.str.getVal()).to.eql(50);
-    
+        expect(effect.toString()).to.eql("力量减少50");
         //然后移除效果
         effect.onUninstall();
         expect(target.attr.str.getVal()).to.eql(100);

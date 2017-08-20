@@ -22,12 +22,18 @@ const {WordLifeCycle,CharLifeCycle} = require("../mechanism/lifeCycle");
 
 var Effect = oop.defineClass({
     
-    constructor:function({name,desc,level,params,worldContext}){
+    /**
+     *
+     * @param level
+     * @param params
+     * @param worldContext
+     */
+    constructor:function({level,params,worldContext}){
         var self = this;
         event.mixin(self);
         
-        self.name = name;
-        self.desc = desc;
+        // self.name = name;
+        // self.desc = desc;
     
         //这里的level应该是一个 integerValue,方便以后对effect等级进行修正.
         if(! (level instanceof IntegerValue) ){
@@ -90,16 +96,17 @@ var Effect = oop.defineClass({
             return this;
         },
         toString:function(){
-            return `level[${this.level.total()}][${this.name}][${this.desc}]`;
+            // return `level[${this.level.total()}][${this.name}][${this.desc}]`;
+            return "unknown effect"
         }
     }
 });
 
-let getEffect=function (effectName,effectDesc,level, params) {
+let getEffect=function (effectName,level, params) {
     let cons = require(`./implement/${effectName}`);
     let ef = new cons({
-        name:effectName,
-        desc:effectDesc,
+        // name:effectName,
+        // desc:effectDesc,
         level:level,
         params:params
     });

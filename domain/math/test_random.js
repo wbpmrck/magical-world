@@ -29,8 +29,8 @@ describe("random.isSingleHappen", function () {
             }
         }
         //error must small than 400
-        expect(happend).to.gt(49600);
-        expect(happend).to.lt(50400);
+        expect(happend).to.gt(49300);
+        expect(happend).to.lt(50600);
     
         //for 800, about 4/5 will happen
         happend = 0;
@@ -100,26 +100,26 @@ describe("random.getRandNum", function () {
     });
 
     it("can work", function () {
-        let result = new Array(100);
+        let result = new Array(10);
         
         for(var i=0,j=result.length;i<j;i++){
             result[i] = 0;
         }
     
         for(var i=0,j=100*10000;i<j;i++){
-            let num = getRandNum(0,99);
+            let num = getRandNum(0,9);
             result[num]++
         }
     
         for(var i=0,j=result.length;i<j;i++){
-            try{
+            // try{
     
-                expect(result[i]).to.gt(9000);
-                expect(result[i]).to.lt(10900);
-            }
-            catch (e){
-                console.log(result);
-            }
+                expect(result[i]).to.gt(94000);
+                expect(result[i]).to.lt(105000);
+            // }
+            // catch (e){
+                // console.log(result);
+            // }
         }
     
     });

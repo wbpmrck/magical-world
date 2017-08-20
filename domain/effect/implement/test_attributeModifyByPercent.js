@@ -49,17 +49,20 @@ describe("attributeModifyByPercent :", function () {
         
         //此时str = 100+ 100*(0.01 + 1*0.01) = 102
         expect(target.attr.str.getVal()).to.eql(102);
+        expect(effect.toString()).to.eql("力量增加2%");
         
         //然后给effect进行升级
         let levelModifier ={addVal:new integer(1)};
         effect.level.addModifier(levelModifier,levelModifier); //升了1级
         //此时str = 100+ 100*(0.01 + 2*0.01) = 103
         expect(target.attr.str.getVal()).to.eql(103);
+        expect(effect.toString()).to.eql("力量增加3%");
         
         //然后给effect进行再次升级
         levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
         //此时str = 100+ 100*(0.01 + 3*0.01) = 104
         expect(target.attr.str.getVal()).to.eql(104);
+        expect(effect.toString()).to.eql("力量增加4%");
     });
     
     it("should decrease work", function () {
@@ -92,17 +95,20 @@ describe("attributeModifyByPercent :", function () {
     
         //此时str = 100- 100*(0.01 + 1*0.01) = 98
         expect(target.attr.str.getVal()).to.eql(98);
+        expect(effect.toString()).to.eql("力量减少2%");
     
         //然后给effect进行升级
         let levelModifier ={addVal:new integer(1)};
         effect.level.addModifier(levelModifier,levelModifier); //升了1级
         //此时str = 100- 100*(0.01 + 2*0.01) = 97
         expect(target.attr.str.getVal()).to.eql(97);
+        expect(effect.toString()).to.eql("力量减少3%");
     
         //然后给effect进行再次升级
         levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
         //此时str = 100- 100*(0.01 + 3*0.01) = 96
         expect(target.attr.str.getVal()).to.eql(96);
+        expect(effect.toString()).to.eql("力量减少4%");
     });
     
 });

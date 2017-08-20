@@ -23,6 +23,8 @@
             - 在角色行动结束之后，效果会减少持续回合数，如果为0，则自动触发uninstall
 
     - (ing)开发Skill包
-        - Skill 继承自 levelable,表示是一个可以升级的东西
-        - Skill 包含Skill Item,Skill Item 包含若干个effect
+        - (DONE)Skill 继承自 levelable,表示是一个可以升级的东西
+        - (DONE)Skill 包含Skill Item,Skill Item 包含若干个effect
+        - (ing)skillItem.toString实现
+        - (DONE)effect.toString实现
     - (DONE)实现概率模块
