@@ -27,7 +27,9 @@ var AttributeModifyByPercent = oop.defineClass({
         var self = this;
         
         self.addPercent=new Integer(0); //暂存当前效果已经产生的属性修正，默认0
-        
+    
+        let addPercent = self.calculateAddVal();
+        self.addPercent.setRaw(addPercent); //修正值，每次通过setRaw更新
     },
     prototype:{
     
@@ -85,7 +87,6 @@ var AttributeModifyByPercent = oop.defineClass({
     
             //调用基类方法
             oop.getSupper(self).onInstall.call(self,source,target);
-            
             //实现自己的逻辑：给目标角色增加属性
             // self.params={attrName:属性名,mode:"inc"or"dec"表示增加还是减少,basePercent:基础修正点数(整数),levelFactor:用于和等级相乘的因子,increase:增长函数名，参见math/increase.js}
     
@@ -98,8 +99,6 @@ var AttributeModifyByPercent = oop.defineClass({
                     let attr = self.target.getAttr(attrName);
                     let fn = increaseMath[increase];
                     if(fn){
-                        let addPercent = self.calculateAddVal();
-                        self.addPercent.setRaw(addPercent); //修正值，每次通过setRaw更新
                         attr.modifyAddPercent(self,self.addPercent);
     
                         self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部

@@ -69,9 +69,13 @@ describe("passivity skill", function () {
             basePercent:100, //基础增加 10 / 1000 = 1/100
             levelFactor:10,
             increase:"linear"
+        },(effect)=>{
+            return `敏捷增加${Math.abs(effect.addPercent.total())/10}%`;
         });
     
-        expect(skill1.toString()).to.eql("力量增加30");
+        let desc = skill1.toString();
+        expect(desc[0][0]).to.eql("str增加11%"); //默认effect.toString的结果
+        expect(desc[0][1]).to.eql("敏捷增加11%"); //通过上面自定义模板输出的描述
         
     });
 });

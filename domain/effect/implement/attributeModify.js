@@ -27,6 +27,9 @@ var AttributeModify = oop.defineClass({
         var self = this;
         
         self.addVal=new Integer(0); //暂存当前效果已经产生的属性修正，默认0
+    
+        let addVal = self.calculateAddVal();
+        self.addVal.setRaw(addVal); //修正值，每次通过setRaw更新
         
     },
     prototype:{
@@ -97,8 +100,6 @@ var AttributeModify = oop.defineClass({
                     let attr = self.target.getAttr(attrName);
                     let fn = increaseMath[increase];
                     if(fn){
-                        let addVal = self.calculateAddVal();
-                        self.addVal.setRaw(addVal); //修正值，每次通过setRaw更新
                         attr.modifyAdd(self,self.addVal);
     
                         self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
