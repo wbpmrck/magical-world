@@ -7,6 +7,7 @@ const expect = require('chai').expect;
 const Levelable = require("./levelable");
 const oop = require("local-libs").oop;
 const Integer = require("../value/integer");
+const Attribute = require("../attribute/attribute");
 
  describe("levelable", function () {
      beforeEach(function () {
@@ -35,8 +36,8 @@ const Integer = require("../value/integer");
          //level up and dec the exp
          levelable1.levelUp();
          expect(levelable1.exp).to.eql(0);
-         expect(levelable1.levelCur.raw).to.eql(1);
-         expect(levelable1.levelCur.total()).to.eql(1);
+         expect(levelable1.levelCur.val.raw).to.eql(1);
+         expect(levelable1.levelCur.val.total()).to.eql(1);
          
          //get more exp
          levelable1.acquireExp(200); //can arrive level5
@@ -47,7 +48,7 @@ const Integer = require("../value/integer");
          let upped=levelable1.levelUpAll();
          expect(upped).to.eql(3);
          expect(levelable1.exp).to.eql(84);
-         expect(levelable1.levelCur.raw).to.eql(4);
+         expect(levelable1.levelCur.val.raw).to.eql(4);
          
          
      });
@@ -84,8 +85,8 @@ const Integer = require("../value/integer");
          //level up and dec the exp
          levelable1.levelUp();
          expect(levelable1.exp).to.eql(0);
-         expect(levelable1.levelCur.raw).to.eql(1);
-         expect(levelable1.levelCur.total()).to.eql(1);
+         expect(levelable1.levelCur.val.raw).to.eql(1);
+         expect(levelable1.levelCur.val.total()).to.eql(1);
     
          //get more exp
          levelable1.acquireExp(200); //can arrive level5
@@ -96,7 +97,7 @@ const Integer = require("../value/integer");
          let upped=levelable1.levelUpAll();
          expect(upped).to.eql(3);
          expect(levelable1.exp).to.eql(84);
-         expect(levelable1.levelCur.raw).to.eql(4);
+         expect(levelable1.levelCur.val.raw).to.eql(4);
      });
      it("should can customize exp function name", function () {
          let levelable1 = new Levelable({
@@ -118,8 +119,8 @@ const Integer = require("../value/integer");
          //level up and dec the exp
          levelable1.levelUp();
          expect(levelable1.exp).to.eql(0);
-         expect(levelable1.levelCur.raw).to.eql(1);
-         expect(levelable1.levelCur.total()).to.eql(1);
+         expect(levelable1.levelCur.val.raw).to.eql(1);
+         expect(levelable1.levelCur.val.total()).to.eql(1);
     
          //get more exp
          levelable1.acquireExp(400);
@@ -130,13 +131,15 @@ const Integer = require("../value/integer");
          let upped=levelable1.levelUpAll();
          expect(upped).to.eql(4);
          expect(levelable1.exp).to.eql(80);
-         expect(levelable1.levelCur.raw).to.eql(5);
+         expect(levelable1.levelCur.val.raw).to.eql(5);
      });
      
      it("should can level up even if the levelCur is modified to equal levelMax", function () {
          let levelable1 = new Levelable({
-             levelCur:new Integer(0), //number,或者Integer 对象，表示当前等级
-             levelMax:new Integer(5), //number,或者Integer 对象，表示最高等级
+             // levelCur:new Integer(0), //number,或者Integer 对象，表示当前等级
+             levelCur:new Attribute("levelCur","",0), //number,或者 Attribute 对象，表示当前等级
+             // levelMax:new Integer(5), //number,或者Integer 对象，表示最高等级
+             levelMax:new Attribute("levelMax","",5), //number,或者 Attribute 对象，表示最高等级
              exp:0, // number,表示当前获得的经验值
              expTableName:"small_02"
          });

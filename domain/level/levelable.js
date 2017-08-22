@@ -16,7 +16,8 @@
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const Integer = require("../value/integer");
-
+const Attribute = require("../attribute/attribute");
+const {EffectAndAttrCarrier} = require("../effect/effectAndAttrCarrier");
 
 /**
  * 辅助函数，用于获取升级到某个级别，需要新增的经验值
@@ -39,10 +40,11 @@ function _getNeedExp(tableName, levelToGo) {
 }
 
 var Levelable = oop.defineClass({
-    super:undefined,
+    // super:undefined,
+    super:EffectAndAttrCarrier, //todo:因为js里没有多继承，在后续的角色类中，需要集成levelable,effectCarrier,attributeCarrier等功能。这里暂时先修改levelable的基类，方便后续集成
     constructor:function({
-        levelCur, //number,或者Integer 对象，表示当前等级
-        levelMax, //number,或者Integer 对象，表示最高等级
+        levelCur, //number,或者Attribute 对象，表示当前等级
+        levelMax, //number,或者Attribute 对象，表示最高等级
         exp, // number,表示当前获得的经验值
         expTableName="small_03", // String，表示经验值增长曲线名称
     }){
@@ -51,10 +53,12 @@ var Levelable = oop.defineClass({
         event.mixin(self);
         
         if(typeof levelCur =='number'){
-            levelCur = new Integer(levelCur);
+            // levelCur = new Integer(levelCur);
+            levelCur = new Attribute("levelCur","当前等级",levelCur);
         }
         if(typeof levelMax =='number'){
-            levelMax = new Integer(levelMax);
+            // levelMax = new Integer(levelMax);
+            levelMax = new Attribute("levelMax","等级上限",levelMax);
         }
         
         self.levelCur = levelCur;
@@ -97,10 +101,12 @@ var Levelable = oop.defineClass({
          */
         levelUp:function () {
             var self = this;
-            let need = _getNeedExp(this.expTableName,this.levelCur.total()+1)
-            if(self.exp>=need && self.levelCur.raw<self.levelMax.total()){
+            // let need = _getNeedExp(this.expTableName,this.levelCur.total()+1)
+            let need = _getNeedExp(this.expTableName,this.levelCur.getVal()+1)
+            // if(self.exp>=need && self.levelCur.raw<self.levelMax.total()){
+            if(self.exp>=need && self.levelCur.val.raw<self.levelMax.getVal()){
                 self.setExp(self.exp - need);
-                self.levelCur.setRaw(self.levelCur.raw+1);
+                self.levelCur.val.setRaw(self.levelCur.val.raw+1);
                 return true;
             }else{
                 return false;
@@ -129,7 +135,8 @@ var Levelable = oop.defineClass({
          * @returns {boolean}
          */
         canLevelUp:function () {
-            return this.exp>=_getNeedExp(this.expTableName,this.levelCur.total()+1);
+            // return this.exp>=_getNeedExp(this.expTableName,this.levelCur.total()+1);
+            return this.exp>=_getNeedExp(this.expTableName,this.levelCur.getVal()+1);
         }
     
     }

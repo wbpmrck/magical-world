@@ -76,7 +76,7 @@ var SkillItem = oop.defineClass({
                 let content =[];
                 self.effects.forEach(({effectName,effectParams,customToStringTml})=>{
                     //创建一个效果实例
-                    let ef = getEffect(effectName,self.levelCur,context,effectParams);
+                    let ef = getEffect(effectName,self.levelCur.val,context,effectParams);
                     content.push(customToStringTml?customToStringTml(ef):ef.toString())
                 });
                 return content
@@ -112,7 +112,7 @@ var SkillItem = oop.defineClass({
                         self.effects.forEach(({effectName,effectParams,customToStringTml})=>{
             
                             //创建一个效果实例
-                            let ef = getEffect(effectName,self.levelCur,context,effectParams);
+                            let ef = getEffect(effectName,self.levelCur.val,context,effectParams);
             
                             //对每一个对象，进行效果安装
                             targets.forEach((target)=>{

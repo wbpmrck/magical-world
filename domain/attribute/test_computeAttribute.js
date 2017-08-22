@@ -62,6 +62,10 @@ describe("Compute Attribute", function () {
         var modifier2={addPercent:-0.1};
         agi.modifyAddPercent(modifier2,modifier2.addPercent); //modify agi from 20 to 18
         expect(atk.getVal()).to.eql(5036);
+    
+        var modifier3={addPercent:0.1};
+        atk.modifyAddPercent(modifier3,modifier3.addPercent); //modify atk =5036*1.1
+        expect(atk.getVal()).to.eql(5539);
         
     });
     
