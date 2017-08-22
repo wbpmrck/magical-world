@@ -9,6 +9,7 @@ const expect = require('chai').expect;
 const  {SkillItem,Skill,SkillType} = require("./skill");
 const {EffectAndAttrCarrier,EffectAndAttrCarrierLifeEvent} = require("../effect/effectAndAttrCarrier");
 const {WordLifeCycle,CharLifeCycle} = require("../mechanism/lifeCycle");
+const Attribute = require("../attribute/attribute");
 
 describe("passivity skill", function () {
     beforeEach(function () {
@@ -19,6 +20,11 @@ describe("passivity skill", function () {
     });
 
     it("should work with custom toString", function () {
+    
+    
+        let worldContext ={};//模拟世界上下文
+        event.mixin(worldContext);
+        
         let Warrior = oop.defineClass({
             super:EffectAndAttrCarrier,
             constructor:function(){
@@ -33,6 +39,7 @@ describe("passivity skill", function () {
         
         //create skill
         let skill1 = new Skill({
+            context:worldContext,
             levelCur:1, //number，表示当前等级
             levelMax:2, //number，表示最高等级
             exp:0, // number,表示当前获得的经验值
@@ -56,6 +63,7 @@ describe("passivity skill", function () {
         //添加力量提升效果
         item1.addEffectItem("attributeModifyByPercent",{
             attrName:"str",
+            continueTurn:1, //持续1回合
             mode:"inc",
             basePercent:100, //基础增加 10 / 1000 = 1/100
             levelFactor:10,
@@ -65,6 +73,7 @@ describe("passivity skill", function () {
         //添加敏捷提升效果
         item1.addEffectItem("attributeModifyByPercent",{
             attrName:"agi",
+            continueTurn:2, //2回合消失
             mode:"inc",
             basePercent:100, //基础增加 10 / 1000 = 1/100
             levelFactor:10,
@@ -73,9 +82,60 @@ describe("passivity skill", function () {
             return `敏捷增加${Math.abs(effect.addPercent.total())/10}%`;
         });
     
+        //添加智力提升效果
+        item1.addEffectItem("attributeModifyByPercent",{
+            attrName:"int",
+            continueTurn:'ever', //永久持续
+            mode:"inc",
+            basePercent:100, //基础增加 10 / 1000 = 1/100
+            levelFactor:10,
+            increase:"linear"
+        },(effect)=>{
+            return `智力增加${Math.abs(effect.addPercent.total())/10}%`;
+        });
+    
         let desc = skill1.toString();
         expect(desc[0][0]).to.eql("str增加11%"); //默认effect.toString的结果
         expect(desc[0][1]).to.eql("敏捷增加11%"); //通过上面自定义模板输出的描述
+        expect(desc[0][2]).to.eql("智力增加11%"); //通过上面自定义模板输出的描述
+    
+    
+        //给测试w1添加属性
+        let str = new Attribute("str","力量",10);
+        let agi = new Attribute("agi","敏捷",20);
+        let int = new Attribute("int","智力",40);
+        w1.addAttr(str).addAttr(agi).addAttr(int);
+        expect(w1.getAttr("str").getVal()).to.eql(10);
+        expect(w1.getAttr("agi").getVal()).to.eql(20);
+        expect(w1.getAttr("int").getVal()).to.eql(40);
+    
+    
+    
+        
+        //准备释放技能
+        skill1.release(worldContext);
+        expect(w1.getAttr("str").getVal()).to.eql(11);
+        expect(w1.getAttr("agi").getVal()).to.eql(22);
+        expect(w1.getAttr("int").getVal()).to.eql(44);
+        expect(w1.effects.length).to.eql(3); //3个效果
+        //模拟1回合结束
+        worldContext.emit(WordLifeCycle.TURN_END,{}); //emit turn end event,and effect should remove itself
+        expect(w1.getAttr("str").getVal()).to.eql(10); //力量加成效果消失
+        expect(w1.getAttr("agi").getVal()).to.eql(22);
+        expect(w1.getAttr("int").getVal()).to.eql(44);
+        expect(w1.effects.length).to.eql(2); //还剩下2个效果
+        //模拟2回合结束
+        worldContext.emit(WordLifeCycle.TURN_END,{}); //emit turn end event,and effect should remove itself
+        expect(w1.getAttr("str").getVal()).to.eql(10);//力量加成效果消失
+        expect(w1.getAttr("agi").getVal()).to.eql(20);//敏捷加成效果消失
+        expect(w1.getAttr("int").getVal()).to.eql(44);
+        expect(w1.effects.length).to.eql(1); //还剩下1个效果
+        //模拟3回合结束
+        worldContext.emit(WordLifeCycle.TURN_END,{}); //emit turn end event,and effect should remove itself
+        expect(w1.getAttr("str").getVal()).to.eql(10);//力量加成效果消失
+        expect(w1.getAttr("agi").getVal()).to.eql(20);//敏捷加成效果消失
+        expect(w1.getAttr("int").getVal()).to.eql(44); //智力因为是ever，持续永久不消失
+        expect(w1.effects.length).to.eql(1); //还剩下1个效果
         
     });
 });

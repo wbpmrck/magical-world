@@ -3,7 +3,7 @@
  * 世界生命周期定义
  */
 
-let iota=1;
+let iota=1000;
 let WordLifeCycle={
     AFTER_WORLD_OPEN:iota++,
     BATTLE_BEGIN:iota++,

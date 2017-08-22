@@ -19,7 +19,7 @@ let SelfChooser = oop.defineClass({
     },
     prototype:{
         chooseTarget:function (source,context,lifeCycleParams,params) {
-            return source; //返回发起者自身
+            return [source]; //返回发起者自身
         }
     }
 });

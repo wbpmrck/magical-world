@@ -53,6 +53,7 @@ var AttributeCarrier =oop.defineClass({
                     this.emit("attrChange",attr,total,raw,modify,val);
                 });
             }
+            return this;
         },
         /**
          * 移除属性

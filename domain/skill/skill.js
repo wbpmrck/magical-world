@@ -67,6 +67,7 @@ var SkillItem = oop.defineClass({
     
         toString:function () {
             var self = this;
+            let context = self.parent.context;
             // //如果写死了技能描述，则直接返回
             // if(self.desc && typeof self.desc === 'string'){
             //     return self.desc;
@@ -75,7 +76,7 @@ var SkillItem = oop.defineClass({
                 let content =[];
                 self.effects.forEach(({effectName,effectParams,customToStringTml})=>{
                     //创建一个效果实例
-                    let ef = getEffect(effectName,self.levelCur,effectParams);
+                    let ef = getEffect(effectName,self.levelCur,context,effectParams);
                     content.push(customToStringTml?customToStringTml(ef):ef.toString())
                 });
                 return content
@@ -94,8 +95,9 @@ var SkillItem = oop.defineClass({
          * 安装技能项
          * @param context：世界上下文
          */
-        install:function (context) {
+        install:function () {
             var self = this;
+            let context = self.parent.context;
             
             let _install = function (lifeCycleParams) {
                 //先看概率
@@ -110,7 +112,7 @@ var SkillItem = oop.defineClass({
                         self.effects.forEach(({effectName,effectParams,customToStringTml})=>{
             
                             //创建一个效果实例
-                            let ef = getEffect(effectName,self.levelCur,effectParams);
+                            let ef = getEffect(effectName,self.levelCur,context,effectParams);
             
                             //对每一个对象，进行效果安装
                             targets.forEach((target)=>{
@@ -138,6 +140,7 @@ var SkillItem = oop.defineClass({
 var Skill = oop.defineClass({
     super:Levelable,
     constructor:function({
+        context, //外部世界上下文，需要具备eventEmitter特点
         levelCur, //number，表示当前等级
         levelMax, //number，表示最高等级
         exp, // number,表示当前获得的经验值
@@ -153,6 +156,7 @@ var Skill = oop.defineClass({
         event.mixin(self);
         
         self.id = id;
+        self.context = context;
         self.type = type;
         self.name = name;
         self.desc = desc;
@@ -177,9 +181,10 @@ var Skill = oop.defineClass({
          * 释放技能
          * @param context：世界上下文
          */
-        release:function (context) {
+        release:function () {
+            var self = this;
             this.items.forEach((skillItem)=>{
-                skillItem.install(context);
+                skillItem.install();
             })
         },
     
