@@ -14,6 +14,7 @@ this a game totally written in javascript.
 
 # About the design
 
+- [hero design](./doc/hero.md)
 - [lifeCycle design](./doc/lifeCycle.md)
 - [battle design](./doc/battle.md)
 - [serialization rules](./doc/serialization.md)
