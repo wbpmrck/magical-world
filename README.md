@@ -15,9 +15,11 @@ this a game totally written in javascript.
 # About the design
 
 - [lifeCycle design](./doc/lifeCycle.md)
+- [battle design](./doc/battle.md)
 - [serialization rules](./doc/serialization.md)
 - [skill system](./doc/skill.md)
 - [playing method record](./doc/game.md)
+- [item design](./doc/item.md)
 
 
 # About the Route Map

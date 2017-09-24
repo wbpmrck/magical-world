@@ -57,7 +57,7 @@
             - 这类效果会订阅target上一个特殊的生命周期"AFTER_CHAR_ACTION"
             - 在角色行动结束之后，效果会减少持续回合数，如果为0，则自动触发uninstall
 
-    - (ing)开发Skill包
+    - (DONE)开发Skill包
         - (DONE)Skill 继承自 levelable,表示是一个可以升级的东西
         - (DONE)Skill 包含Skill Item,Skill Item 包含若干个effect
         - (DONE)skillItem.toString实现

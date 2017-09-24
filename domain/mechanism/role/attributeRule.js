@@ -14,6 +14,10 @@ const HeroBaseAttributes={
     VIT:iota++,
     LUK:iota++,
 };
+//给每个属性向上增加的时候，需要消耗的精气点数
+const AttributeUpPoints=[
+    {from:0,to:10,need:(curAttr)=>{return 2}} //10级以内，每次需要2个精气点来增加一个
+]
 
 const HeroBattleAttributes={
     
@@ -23,8 +27,10 @@ const HeroBattleAttributes={
     SP:iota++, //怒气值
     SP_MAX:iota++, //怒气值上限
     
-    ATK:iota++, //攻击力
-    DEF:iota++, //防御力
+    ATK:iota++, //攻击力（物理）
+    DEF:iota++, //防御力（物理）
+    M_ATK:iota++, //攻击力（魔法）
+    M_DEF:iota++, //防御力（魔法）
     SPD:iota++, //速度
     FLEE:iota++,   //闪避(千分比)
     HIT:iota++, //命中(千分比)
@@ -33,6 +39,13 @@ const HeroBattleAttributes={
     
 }
 let  ruleMap= {
+    /**力量公式
+     * atk = str*50+agi*2+level*str的平方
+     * @param str
+     * @param agi
+     * @param level
+     * @returns {number}
+     */
     [HeroBattleAttributes.ATK]: function (str, agi, level) {
         return str * 50 + agi * 2 +level.getVal()*Math.pow(str,2);
     }
@@ -64,9 +77,10 @@ module.exports={
         
         //战斗属性
         let atk = new ComputeAttribute(HeroBattleAttributes.ATK,"攻击力",undefined,[strArr,agiArr,attributeCarrier.levelCur],([_str,_agi,_level],cb)=>{
-            cb(ruleMap[HeroBattleAttributes.ATK](_str,_agi,_level)); //atk = str*50+agi*2
+            cb(ruleMap[HeroBattleAttributes.ATK](_str,_agi,_level));
         });
-        //todo:添加其他属性的计算公式，并赋值s
+        //todo:添加其他属性的计算公式，并赋值
+        
     
     
     }

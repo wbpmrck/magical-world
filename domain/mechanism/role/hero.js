@@ -24,6 +24,7 @@ let Hero = oop.defineClass({
         campCode, //阵营编号
         jobCode, //职业编号
         starLevel,//number,星数
+        vital,//number,精气点数
         str,
         agi,
         vit,
@@ -39,6 +40,8 @@ let Hero = oop.defineClass({
         self.camp = getCamp(campCode);//阵营
         self.job = getJob(jobCode);//职业
         self.star = new Star(starLevel);//星级
+        
+        self.vital = vital;//精气点数
         
     },
     prototype:{
