@@ -10,8 +10,8 @@
 
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
-const attribute = require("../attribute/attribute");
-const computeAttr = require("../attribute/computeAttr");
+const attribute = require("./attribute");
+const computeAttr = require("./computeAttr");
 
 var AttributeCarrier =oop.defineClass({
     super:undefined,
@@ -24,6 +24,21 @@ var AttributeCarrier =oop.defineClass({
         
     },
     prototype:{
+    
+        /**
+         * 导出所有的非 computed 属性的raw值
+         * @returns {{}}
+         */
+        exportAttributesRaw:function () {
+          var exported ={}; //key:attrName  value:attrVal
+            
+            for(var k in this.attrMap){
+                if(! (this.attrMap[k] instanceof computeAttr )&& (this.attrMap[k] instanceof attribute) ){
+                    exported[k] = this.attrMap[k].val.raw;
+                }
+            }
+            return exported;
+        },
     
         /**
          * 判断是否具有某个属性

@@ -1,16 +1,16 @@
 # Aug 2017
-- 2017/08/30:
+- 2017/10/30:
     - finish the data structure sync framework
     - build the server skeleton
     - build the client skeleton
 
-- 2017/08/15:
+- 2017/11/15:
     - finish the domain logic
     - add test cases to the domain logic
 
 ### details
 
-- deadline:2017年08月25日：
+- deadline:2017年10月25日：
 
     - (ing)开发battle v0.1
         - 定义战场位置、对战双方等基础规则
@@ -23,7 +23,16 @@
             - 能量槽、主动、被动技能
         - 完成单元测试，能够后台进行完整的对战流程
 
-    - 开发用户、物品体系
+    - 开发用户、物品、背包体系
+        - 创建player概念
+        - player具有物品资源列表
+            - 不管是角色已经装备的，还是资源，所有物品统一记录在列表
+            - 通过物品位置记录物品的所在：
+                - 0:列表
+                - 1:hero对象，表示在hero身上装备
+        - 角色具有装备列表
+            -（角色不持有其他物品，只记录装备的物品）
+            - 角色的装备列表引用物品列表的id
         - 把用户、背包数、卡片角色进行对应
         - 搭建整体经济体系：金币、钻石、经验石、其他材料
         - 开发简易的合成公式体系
@@ -63,3 +72,10 @@
         - (DONE)skillItem.toString实现
         - (DONE)effect.toString实现
     - (DONE)实现概率模块
+
+
+- 性能优化
+    - 属性压缩：
+        - 目前使用字符串存储attrCarrier里的属性，其实后面可以考虑使用数组
+        - 使用枚举+iota的方式，一个整数下标表示一个属性名
+        - 数据库存储可以直接数组存储
