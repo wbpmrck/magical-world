@@ -23,6 +23,9 @@ var Attribute = oop.defineClass({
         });
     },
     prototype:{
+        toString:function () {
+          return `${self.name}:${self.val.total()}`;
+        },
         /**
          * 获取当前值
          * @returns {*|Number}

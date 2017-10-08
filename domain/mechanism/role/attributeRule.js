@@ -79,7 +79,7 @@ const HeroOtherAttributes={
  */
 let  ruleMap= {
     /**
-     * 攻击力
+     * 攻击力（物理）
      */
     [HeroDeriveAttributes.ATK]: {
         deps:[HeroBaseAttributes.STR,"levelCur"],
@@ -94,6 +94,69 @@ let  ruleMap= {
         deps:[HeroBaseAttributes.VIT,HeroBaseAttributes.INT,"levelCur"],
         fomula:function (vit, int, level) {
             return (vit * 50 - int * 2)*level +level*Math.pow(vit,2);
+        }
+    },
+    /**
+     * 攻击力（魔法）
+     */
+    [HeroDeriveAttributes.M_ATK]: {
+        deps:[HeroBaseAttributes.INT,"levelCur"],
+        fomula:function (int, level) {
+            return int * 50 + level*Math.pow(int,2);
+        }
+    },
+    /**
+     * 防御力（物理）
+     */
+    [HeroDeriveAttributes.DEF]: {
+        deps:[HeroBaseAttributes.VIT,"levelCur"],
+        fomula:function (vit, level) {
+            return vit * 30 + level*Math.pow(vit,2);
+        }
+    },
+    /**
+     * 防御力（魔法）
+     */
+    [HeroDeriveAttributes.M_DEF]: {
+        deps:[HeroBaseAttributes.INT,HeroBaseAttributes.VIT,"levelCur"],
+        fomula:function (int,vit, level) {
+            return int * 30 + level*Math.pow(vit,2);
+        }
+    },
+    /**
+     * 速度
+     */
+    [HeroDeriveAttributes.SPD]: {
+        deps:[HeroBaseAttributes.AGI,HeroBaseAttributes.VIT,"levelCur"],
+        fomula:function (agi,vit, level) {
+            return agi*3-vit+level;
+        }
+    },
+    /**
+     * 闪避
+     */
+    [HeroDeriveAttributes.FLEE]: {
+        deps:[HeroBaseAttributes.STR,HeroBaseAttributes.AGI,HeroBaseAttributes.DEX,HeroBaseAttributes.VIT,HeroBaseAttributes.LUK,"levelCur"],
+        fomula:function (str,agi,dex,vit,luk,level) {
+            return agi+dex-str-vit+luk+level;
+        }
+    },
+    /**
+     * 命中
+     */
+    [HeroDeriveAttributes.HIT]: {
+        deps:[HeroBaseAttributes.DEX,HeroBaseAttributes.VIT,HeroBaseAttributes.LUK,"levelCur"],
+        fomula:function (dex,vit,luk,level) {
+            return dex-vit+luk+level;
+        }
+    },
+    /**
+     * 暴击率
+     */
+    [HeroDeriveAttributes.CRI]: {
+        deps:[HeroBaseAttributes.AGI,HeroBaseAttributes.LUK,"levelCur"],
+        fomula:function (agi,luk,level) {
+            return luk-agi+level;
         }
     }
 }
@@ -133,7 +196,7 @@ module.exports={
     
             let deriveAttr = new ComputeAttribute(deriveAttrName,deriveAttrName,undefined,attrDepsArray,function (depArray,cb) {
                 let valArray = depArray.map(attr=>attr.getVal());
-                cb(ruleMap[deriveAttrName].fomula.apply(attributeCarrier,valArray));
+                cb(ruleMap[this.name].fomula.apply(attributeCarrier,valArray));
             });
             //注入
             attributeCarrier.addAttr(deriveAttr);
@@ -152,7 +215,6 @@ module.exports={
         // let atk = new ComputeAttribute(HeroBattleAttributes.ATK,"攻击力",undefined,[strArr,agiArr,attributeCarrier.levelCur],([_str,_agi,_level],cb)=>{
         //     cb(ruleMap[HeroBattleAttributes.ATK](_str,_agi,_level));
         // });
-        // //todo:添加其他属性的计算公式，并赋值
         
     
     

@@ -41,8 +41,15 @@ describe("attributeRule", function () {
         expect(jack.levelCur.getVal()).to.eql(10);
     
     
-        expect(jack.getAttr("ATK").getVal()).to.eql(1500);
-        expect(jack.getAttr("HP_MAX").getVal()).to.eql(23200);
+        expect(jack.getAttr("ATK").getVal()).to.gt(0);
+        expect(jack.getAttr("HP_MAX").getVal()).to.gt(0);
+        expect(jack.getAttr("M_ATK").getVal()).to.gt(0);
+        expect(jack.getAttr("DEF").getVal()).to.gt(0);
+        expect(jack.getAttr("M_DEF").getVal()).to.gt(0);
+        expect(jack.getAttr("SPD").getVal()).to.gt(0);
+        expect(jack.getAttr("FLEE").getVal()).to.gt(0);
+        expect(jack.getAttr("HIT").getVal()).to.gt(0);
+        expect(jack.getAttr("CRI").getVal()).to.gt(0);
         
     });
     
