@@ -53,8 +53,8 @@ describe("EffectCarrier ", function () {
     
         //定义了一个修改属性的效果：初始20，等级因子是10，当前等级是1，增长曲线是线性
         let _effect = new AttributeModify({
-            name:"attributeModify",
-            desc:"修正属性",
+            // name:"attributeModify",
+            // desc:"修正属性",
             level:new Integer(1),
             params:{
                 attrName:"str",
@@ -87,6 +87,7 @@ describe("EffectCarrier ", function () {
         w1.installEffect(_source,_effect);
         expect(w1.getAttr("str").getVal()).to.eql(40);
         expect(w1.effects.length).to.eql(1);
+        expect(w1.hasEffect("AttributeModify")).to.eql(true);
         //prepare to uninstall
     
         //these are events emit by effectCarrier
@@ -107,6 +108,7 @@ describe("EffectCarrier ", function () {
         w1.uninstallEffect(_effect);
     
         expect(w1.effects.length).to.eql(0);
+        expect(w1.hasEffect("AttributeModify")).to.eql(false);
     
     });
     

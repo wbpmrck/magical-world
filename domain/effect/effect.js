@@ -33,7 +33,7 @@ var Effect = oop.defineClass({
         var self = this;
         event.mixin(self);
         
-        // self.name = name;
+        self.name = 'base';
         // self.desc = desc;
     
         //这里的level应该是一个 integerValue,方便以后对effect等级进行修正.

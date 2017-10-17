@@ -25,7 +25,8 @@ var AttributeModify = oop.defineClass({
      */
     constructor:function({level,params}){
         var self = this;
-        
+    
+        self.name = 'AttributeModify';
         self.addVal=new Integer(0); //暂存当前效果已经产生的属性修正，默认0
     
         let addVal = self.calculateAddVal();

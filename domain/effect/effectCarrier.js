@@ -29,6 +29,22 @@ var EffectCarrier = oop.defineClass({
     prototype:{
     
         /**
+         * 判断对象身上是否具有某种effect
+         * @param name
+         * @returns {boolean}
+         */
+        hasEffect:function (name) {
+            name = name.toLowerCase();
+            for(var i=0,j=this.effects.length;i<j;i++){
+                var item = this.effects[i];
+                if(item.name.toLowerCase() === name){
+                    return true
+                }
+            }
+            return false;
+        },
+    
+        /**
          * 从carrier身上移除指定效果对象
          * @param effect：效果对象引用
          * @returns {boolean}：是否成功移除

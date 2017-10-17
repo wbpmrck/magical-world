@@ -1,6 +1,9 @@
 /**
  * Created by kaicui on 17/8/22.
  * 表示战场上的一个英雄
+ *
+ * 注意：
+ * 1、hero被添加到一个team之后，可能会被注入一些属性，比如team属性
  */
 
 
@@ -11,6 +14,16 @@ const {getRaceCamp} = require("./camp");
 const {getJob} = require("./job");
 const {Star} = require("./star");
 const {injectHeroAttributes} = require("./attributeRule");
+
+let iota=1000;
+const HeroEvents={
+    
+    BEFORE_ACTION:iota++,
+    AFTER_ACTION:iota++,
+    
+    BEFORE_MUTATION:iota++,
+    AFTER_MUTATION:iota++,
+};
 
 
 let Hero = oop.defineClass({
@@ -44,9 +57,23 @@ let Hero = oop.defineClass({
         
     },
     prototype:{
-        
+        /** todo:拷贝出一个自身的副本
+         * 副本：包含的基本属性、装备与本体是关联的，含部分自定义信息，包括：
+         * hp值，怒气，效果列表等
+         */
+        copy:function () {
+            
+        },
+        //todo:hero触发一个主动行为，比如普通攻击，或者技能攻击
+        takeAction:function () {
+            
+        },
+        //todo:hero 接收一个修改请求，比如修改Hp等
+        takeMutation:function (mutation) {
+            
+        }
     }
 });
 
-module.exports = {Hero};
+module.exports = {Hero,HeroEvents};
 

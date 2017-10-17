@@ -25,7 +25,7 @@ var AttributeModifyByPercent = oop.defineClass({
      */
     constructor:function({level,params}){
         var self = this;
-        
+        self.name = 'AttributeModifyByPercent';
         self.addPercent=new Integer(0); //暂存当前效果已经产生的属性修正，默认0
     
         let addPercent = self.calculateAddVal();
