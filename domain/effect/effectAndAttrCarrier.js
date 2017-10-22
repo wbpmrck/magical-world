@@ -13,12 +13,13 @@ const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const AttributeCarrier = require("../attribute/attrCarrier");
 
+let iota=900;
 const EffectAndAttrCarrierLifeEvent={
-  "BEFORE_INSTALL_EFFECT":1,  //被添加效果之前触发
-  "AFTER_INSTALL_EFFECT":2,   //被添加效果之后触发
-  "AFTER_CANCEL_EFFECT":3,   //添加效果动作，被取消之后触发
-  "BEFORE_UNINSTALL_EFFECT":4,  //被移除效果之前触发
-  "AFTER_UNINSTALL_EFFECT":5,   //被移除效果之后触发
+  "BEFORE_INSTALL_EFFECT":iota++,  //被添加效果之前触发
+  "AFTER_INSTALL_EFFECT":iota++,   //被添加效果之后触发
+  "AFTER_CANCEL_EFFECT":iota++,   //添加效果动作，被取消之后触发
+  "BEFORE_UNINSTALL_EFFECT":iota++,  //被移除效果之前触发
+  "AFTER_UNINSTALL_EFFECT":iota++,   //被移除效果之后触发
 };
 
 var EffectAndAttrCarrier = oop.defineClass({
@@ -31,6 +32,29 @@ var EffectAndAttrCarrier = oop.defineClass({
     },
     prototype:{
     
+        /**
+         * 判断对象身上是否具有某种effect
+         * @param name
+         * @returns {boolean}
+         */
+        hasEffect:function (name) {
+            name = name.toLowerCase();
+            for(var i=0,j=this.effects.length;i<j;i++){
+                var item = this.effects[i];
+                if(item.name.toLowerCase() === name){
+                    return true
+                }
+            }
+            return false;
+        },
+        /**
+         * 获取对象身上的某种effect
+         * @param name
+         * @returns {boolean}
+         */
+        getEffect:function (filter) {
+            return this.effects.filter(filter);
+        },
         /**
          * 从carrier身上移除指定效果对象
          * @param effect：效果对象引用

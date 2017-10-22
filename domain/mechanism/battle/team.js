@@ -17,6 +17,12 @@
 
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
+const {HeroEvents} = require("../role/hero");
+const {HeroBaseAttributes,HeroOtherAttributes,HeroDeriveAttributes} = require("../role/attributeRule");
+let iota=1000;
+const TeamEvents={
+    DEFEATED:iota++, //队伍团灭
+};
 
 //队伍在战斗中的角色
 const TeamRole={
@@ -39,11 +45,47 @@ let Team = oop.defineClass({
         self.player = player;
         self.heros=heros;
         
+        self.heros.forEach((hero)=>{
+           hero.joinTeam(self);
+           
+           hero.on(HeroEvents.AFTER_HERO_DIE,(dead)=>{
+              self.checkTeamDefeat();
+           });
+        });
+        
         self.battle = undefined;// 一个队伍一个时刻，只能存在于一场战斗中
         self.role = TeamRole.NONE;
         
     },
     prototype:{
+    
+        /**
+         * 检查队伍是否全灭，全灭的话，向外部抛事件
+         */
+        checkTeamDefeat:function () {
+            var self = this;
+            
+            for(var i=0,j=self.heros.length;i<j;i++){
+                var hero = self.heros[i];
+                
+                //只要有一个没死透(hp>0 或者还可以重生的)，就没有团灭
+                if(!hero.isCompleteDead()){
+                    return false;
+                }
+            }
+    
+            self.emit(TeamEvents.DEFEATED,self);
+            return true;
+        },
+    
+        /**
+         * 返回符合条件的hero
+         * @param filter
+         * @returns {Array.<T>|*}
+         */
+        findHero:function (filter) {
+          return this.heros.filter(filter);
+        },
         /**
          * 加入一场战斗
          * @param battle
@@ -53,7 +95,7 @@ let Team = oop.defineClass({
             var self = this;
             self.battle = battle; //加入战斗
             self.role = isAttacker?TeamRole.ATTACKER:TeamRole.DEFENDER; //确定角色
-            
+            return self;
         },
       
         /**
@@ -64,9 +106,10 @@ let Team = oop.defineClass({
             
             self.battle = undefined;
             self.role = TeamRole.NONE;
+            return self;
         }
         
     }
 });
 
-module.exports={Team};
+module.exports={Team,TeamEvents};

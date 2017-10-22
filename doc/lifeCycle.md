@@ -57,3 +57,5 @@ AFTER_CHAR_NORMAL_ATK |角色进行普攻后|N*M|{target:<被选定的攻击对�
 AFTER_CHAR_BE_NORMAL_ATK_MISS |角色受到普攻成功躲避后|N*M|{attacker:<进攻的char对象>}|如果成功闪避进攻者的普攻，会触发此事件
 AFTER_CHAR_NORMAL_ATK_MISS |角色进行普攻Miss后|N*M|{target:<被选定的攻击对象>}|如果普通攻击落空，会触发此事件
 AFTER_CHAR_ACTION |角色行动后|N|{continueTimes:<整数>如果大于0,则还可以再行动>}|continueTimes在行动完成之后会自动-1，如果被修改为>0的值,则actor可以再次进入行动周期（还在当前回合内），`可用于实现类似2次行动的特效`
+BEFORE_HERO_DIE |角色死前|N|{cancel:<布尔值>如果true,则after_hero_die不会触发}|
+AFTER_HERO_DIE |角色死后|1|无}|

@@ -162,7 +162,9 @@ let  ruleMap= {
 }
 
 module.exports={
-    
+    HeroBaseAttributes,
+    HeroDeriveAttributes,
+    HeroOtherAttributes,
     ruleMap,
     /**
      * 根据基本属性值，把所有属性注入到指定对象

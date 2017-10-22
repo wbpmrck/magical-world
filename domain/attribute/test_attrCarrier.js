@@ -36,17 +36,19 @@ describe("AttrCarrier", function () {
         jack.addAttr(agi);
         expect(jack.getAttr("agi")).to.eql(agi);
         
-        jack.once("attrChange",(attr,total,raw,modify,val)=>{
+        jack.once("attrChange",(attr,total,raw,modify,val,oldTotal)=>{
             expect(attr).to.eql(agi);
             expect(total).to.eql(20);
+            expect(oldTotal).to.eql(10);
             expect(raw).to.eql(20);
             expect(modify).to.eql(0);
         });
         agi.updateAdd(10);//add 10 to agi
         
-        jack.once("attrChange",(attr,total,raw,modify,val)=>{
+        jack.once("attrChange",(attr,total,raw,modify,val,oldTotal)=>{
             expect(attr).to.eql(agi);
             expect(total).to.eql(30);
+            expect(oldTotal).to.eql(20);
             expect(raw).to.eql(20);
             expect(modify).to.eql(10);
         });

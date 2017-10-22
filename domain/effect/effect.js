@@ -5,7 +5,7 @@
  * continueTurn:持续的回合数
  *  如果是number，代表生效回合数，到达0就结束（需要订阅target的lifeCycle事件,在回合数小于1的时候uninstall）
  *  如果是'ever',代表永久生效，则不需要订阅回合事件
- *  如果是'continueTurn':如果是undefined则立刻Uninstall
+ *  如果是undefined，则立刻Uninstall
  *
  */
 
@@ -19,7 +19,7 @@ const EffectEvents =  {
     INSTALLED:1,
     UNINSTALLED:2,
 };
-const {WordLifeCycle,CharLifeCycle} = require("../mechanism/lifeCycle");
+const {WordLifeCycle} = require("../mechanism/lifeCycle");
 
 var Effect = oop.defineClass({
     
@@ -109,7 +109,7 @@ var Effect = oop.defineClass({
     }
 });
 
-let getEffect=function (effectName,level,worldContext, params) {
+var getEffect=function (effectName,level,worldContext, params) {
     let cons = require(`./implement/${effectName}`);
     let ef = new cons({
         // name:effectName,
@@ -120,4 +120,4 @@ let getEffect=function (effectName,level,worldContext, params) {
     });
     return ef;
 }
-module.exports = {Effect,EffectEvents,getEffect};
+module.exports = {Effect,EffectEvents,getEffect:getEffect};

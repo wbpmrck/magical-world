@@ -100,26 +100,25 @@ var SkillItem = oop.defineClass({
             let context = self.parent.context;
             
             let _install = function (lifeCycleParams) {
-                //先看概率
-                let happenSucceed = isSingleHappen(self.probability);
-                if(happenSucceed){
-                    //寻找对象
-                    let targetChooser = self.targetChooser;
-                    let targets = targetChooser.chooseTarget(self.parent.holder,context,lifeCycleParams,self.targetChooserParams);
-                    if(targets && targets.length >0){
-                        //然后进行效果安装
-                        //首先获取技能项里都有哪些效果元数据
-                        self.effects.forEach(({effectName,effectParams,customToStringTml})=>{
-            
-                            //创建一个效果实例
-                            let ef = getEffect(effectName,self.levelCur.val,context,effectParams);
-            
-                            //对每一个对象，进行效果安装
-                            targets.forEach((target)=>{
-                                target.installEffect(self.parent.holder,ef);
+                //寻找对象
+                let targetChooser = self.targetChooser;
+                let targets = targetChooser.chooseTarget(self.parent.holder,context,lifeCycleParams,self.targetChooserParams);
+                if(targets && targets.length >0){
+                    //对每一个对象进行处理
+                    targets.forEach((target)=>{
+                        //看概率
+                        let happenSucceed = isSingleHappen(self.probability);
+                        if(happenSucceed) {
+                            //然后进行效果安装
+                            //首先获取技能项里都有哪些效果元数据
+                            self.effects.forEach(({effectName, effectParams, customToStringTml}) => {
+                                //创建一个效果实例
+                                let ef = getEffect(effectName, self.levelCur.val, context, effectParams);
+                                //安装效果
+                                target.installEffect(self.parent.holder, ef);
                             })
-                        });
-                    }
+                        }
+                    });
                 }
             }
             //根据自身的生效周期（如果为空，则立刻生效),来进行处理
@@ -140,12 +139,12 @@ var SkillItem = oop.defineClass({
 var Skill = oop.defineClass({
     super:Levelable,
     constructor:function({
-        context, //外部世界上下文，需要具备eventEmitter特点
         levelCur, //number，表示当前等级
         levelMax, //number，表示最高等级
         exp, // number,表示当前获得的经验值
         expTableName, // String，表示经验值增长曲线名称
     },{
+        context, //外部世界上下文，需要具备eventEmitter特点(注意：如果构造函数这里无法确定context,也可以在技能的release方法中传入实时的context)
         type,// SkillType 枚举，表示主动/被动
         id, //技能id
         name, //技能名称
@@ -181,8 +180,9 @@ var Skill = oop.defineClass({
          * 释放技能
          * @param context：世界上下文
          */
-        release:function () {
+        release:function (context) {
             var self = this;
+            self.context = context;
             this.items.forEach((skillItem)=>{
                 skillItem.install();
             })

@@ -64,8 +64,8 @@ var AttributeCarrier =oop.defineClass({
             if(attr){
                 this.attrMap[attr.name] = attr;
                 //添加监听
-                this.attrListenerId[attr.name]=attr.on("valueChange",(total,raw,modify,val)=>{
-                    this.emit("attrChange",attr,total,raw,modify,val);
+                this.attrListenerId[attr.name]=attr.on("valueChange",(total,raw,modify,val,oldTotal)=>{
+                    this.emit("attrChange",attr,total,raw,modify,val,oldTotal);
                 });
             }
             return this;

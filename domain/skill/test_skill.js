@@ -39,11 +39,12 @@ describe("passivity skill", function () {
         
         //create skill
         let skill1 = new Skill({
-            context:worldContext,
+            // context:worldContext,
             levelCur:1, //number，表示当前等级
             levelMax:2, //number，表示最高等级
             exp:0, // number,表示当前获得的经验值
         },{
+            // context:worldContext,
             type:SkillType.PASSIVE,// SkillType 枚举，表示主动/被动
             id:1, //技能id
             name:"无双", //技能名称
