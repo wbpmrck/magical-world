@@ -5,8 +5,10 @@
 
 const oop = require("local-libs").oop;
 const expect = require('chai').expect;
-const {Hero} = require("./hero");
-const {getRaceCamp} = require("./camp");
+// const {Hero} = require("../role/hero");
+// const {getRaceCamp} = require("../role/camp");
+
+const {make,ref} = require('../../factory/factory'); //对象构造工厂，通过配置可以构造各种对象
 
 
 describe("Battle", function () {
@@ -18,27 +20,21 @@ describe("Battle", function () {
     });
 
     it("should can work individually", function () {
-        let raceCamp = getRaceCamp(1);
+        //先创建2个队伍，每个队伍6个英雄
+        let hero1 = make({key:"光战1"});
+        let hero2 = make({key:"光战1"});
+        let hero3 = make({key:"光战1"});
+        let hero4 = make({key:"光战1"});
+        let hero5 = make({key:"光战1"});
+        let hero6 = make({key:"光战1"});
         
-        expect(raceCamp.getRaceCode()).to.eq(1);
-        expect(raceCamp.getRaceName()).to.eq('LIGHT');
-        expect(raceCamp.getCampCode()).to.eq(1);
-        expect(raceCamp.getCampName()).to.eq('JUSTICE');
-    
-    
-        let raceCamp2 = getRaceCamp(4);
-    
-        expect(raceCamp2.getRaceCode()).to.eq(4);
-        expect(raceCamp2.getRaceName()).to.eq('HELL');
-        expect(raceCamp2.getCampCode()).to.eq(2);
-        expect(raceCamp2.getCampName()).to.eq('EVIL');
-    
-        let raceCamp3 = getRaceCamp(8);
-    
-        expect(raceCamp3.getRaceCode()).to.eq(8);
-        expect(raceCamp3.getRaceName()).to.eq('ENTS');
-        expect(raceCamp3.getCampCode()).to.eq(0);
-        expect(raceCamp3.getCampName()).to.eq('NEUTRAL');
+        let hero7 = make({key:"地狱游侠1"});
+        let hero8 = make({key:"地狱游侠1"});
+        let hero9 = make({key:"地狱游侠1"});
+        let hero10 = make({key:"地狱游侠1"});
+        let hero11 = make({key:"地狱游侠1"});
+        let hero12 = make({key:"地狱游侠1"});
+        // expect(raceCamp3.getCampName()).to.eq('NEUTRAL');
     });
   
     

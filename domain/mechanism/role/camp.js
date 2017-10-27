@@ -96,6 +96,9 @@ var Race = oop.defineClass({
  * 返回阵营编码对应的阵营对象
  * @param campCode
  */
-module.exports.getRaceCamp=function (raceCampCode) {
-    return new Race({code:raceCampCode});
-};
+module.exports={
+    CAMPS,
+    RACES,
+    getRaceCamp:function (raceCampCode) {
+        return new Race({code:raceCampCode});
+    }};

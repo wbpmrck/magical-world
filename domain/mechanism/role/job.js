@@ -7,18 +7,21 @@
 let iota=1;
 
 const JOBS={
-    WARRIOR:{code:iota++,name:"WARRIOR"},
-    ASSASSIN:{code:iota++,name:"ASSASSIN"},
-    MAGE:{code:iota++,name:"MAGE"},
-    PRIEST:{code:iota++,name:"PRIEST"},
-    WARLOCK:{code:iota++,name:"WARLOCK"},
-    KNIGHT:{code:iota++,name:"KNIGHT"},
+    WARRIOR:{code:iota++,name:"WARRIOR"}, //战士
+    ASSASSIN:{code:iota++,name:"ASSASSIN"}, //刺客
+    MAGE:{code:iota++,name:"MAGE"}, //法师
+    PRIEST:{code:iota++,name:"PRIEST"}, //牧师
+    WARLOCK:{code:iota++,name:"WARLOCK"}, //术士
+    KNIGHT:{code:iota++,name:"KNIGHT"}, //骑士
 }
 
-module.exports.getJob=function (jobCode) {
-    for(var k in JOBS){
-        if(JOBS[k].code===jobCode){
-            return JOBS[k];
+module.exports= {
+    JOBS,
+    getJob:function (jobCode) {
+        for (var k in JOBS) {
+            if (JOBS[k].code === jobCode) {
+                return JOBS[k];
+            }
         }
     }
 }
