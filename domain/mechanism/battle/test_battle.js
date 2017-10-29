@@ -5,13 +5,13 @@
 
 const oop = require("local-libs").oop;
 const expect = require('chai').expect;
-// const {Hero} = require("../role/hero");
-// const {getRaceCamp} = require("../role/camp");
+const {Team,TeamEvents} = require("./team");
+const {Battle,BattleEvents} = require("./battle");
 
 const {make,ref} = require('../../factory/factory'); //对象构造工厂，通过配置可以构造各种对象
 
 
-describe("Battle", function () {
+xdescribe("Battle", function () {
     beforeEach(function () {
         //run before each test
     });
@@ -34,6 +34,27 @@ describe("Battle", function () {
         let hero10 = make({key:"地狱游侠1"});
         let hero11 = make({key:"地狱游侠1"});
         let hero12 = make({key:"地狱游侠1"});
+        
+        //team1
+        let team1 = new Team({
+            id:1001,
+            heros:[hero1,hero2,hero3,hero4,hero5,hero6],//玩家组成队伍的英雄列表。数组。0~5分别代表所处位置，前(2)->中(2)->后(2)
+        });
+        let team2 = new Team({
+            id:1002,
+            heros:[hero7,hero8,hero9,hero10,hero11,hero12],//玩家组成队伍的英雄列表。数组。0~5分别代表所处位置，前(2)->中(2)->后(2)
+        });
+        
+        //battle
+        let bat = new Battle({
+            id:123, //战斗记录编号
+            type:1, //战斗类型
+            attackTeam:team1, //攻方队伍
+            defendTeam:team2//防守方队伍
+        });
+        
+        bat.run();
+        
         // expect(raceCamp3.getCampName()).to.eq('NEUTRAL');
     });
   

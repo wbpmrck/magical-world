@@ -52,6 +52,7 @@ let Hero = oop.defineClass({
         self.skills = skills;
     
         self.skills&&self.skills.forEach((sk)=>{
+            sk.holder = self;
             if(sk.type === SkillType.PASSIVE){
                 sk.release(self.context); //立刻释放被动技能
             }
@@ -80,6 +81,10 @@ let Hero = oop.defineClass({
         
     },
     prototype:{
+        
+        toString:function () {
+          return `${this.name}:[${this.id}],hp:[${this.getAttr(HeroOtherAttributes.HP).getVal()}/${this.getAttr(HeroDeriveAttributes.HP_MAX).getVal()}]`
+        },
     
         /**
          * 判断自身是否完全死透了（hp<0 并且没有被标记重生效果）

@@ -10,6 +10,7 @@ const {HeroBaseAttributes,HeroOtherAttributes,HeroDeriveAttributes} = require(".
 const {TeamEvents} = require("./team");
 const {HeroEvents} = require("../role/hero");
 const {EffectAndAttrCarrierLifeEvent} = require("../../effect/effectAndAttrCarrier");
+const logger = require("../../../log/logger");
 
 const BattleEvents=require("../lifeCycle").BattleEvents;
 
@@ -156,6 +157,8 @@ let Battle = oop.defineClass({
         defendTeam=undefined //防守方队伍
     }){
         var self = this;
+    
+        event.mixin(self);
         
         self.status = BattleStatus.INIT;
         self.id = id;
@@ -271,8 +274,11 @@ let Battle = oop.defineClass({
          */
         nextTurn:function () {
             var self = this;
+    
+            
             //增加回合数
             self.process.turns++;
+            logger.debug(`准备开始第${self.process.turns}回合`);
             //回合开始
             self.emit(BattleEvents.TURN_BEGIN);
     
@@ -281,9 +287,11 @@ let Battle = oop.defineClass({
             
             //决定下一个行动人
             while (self.status !== BattleStatus.END){
+                logger.debug(`准备选择 下一个行动人`);
                 let nextActor = self.chooseNextActorHero();
     
                 if(nextActor){
+                    logger.debug(`下一个行动人准备行动:${nextActor.toString()}`);
                     //拿到行动人，让行动人开始action，进行动作
                     nextActor.startAction();
                     //行动完毕的Hero，记录到已行动队列
@@ -291,8 +299,10 @@ let Battle = oop.defineClass({
         
                 }else{
                     //如果没有行动人，说明这一个回合该结束了
+                    logger.debug(`准备结束第${self.process.turns}回合`);
                     //回合结束
                     self.emit(BattleEvents.TURN_END);
+                    break;
                 }
             }
             
@@ -309,9 +319,12 @@ let Battle = oop.defineClass({
                 return hero.canAction();
             });
             
+            logger.debug(`攻击方，可以行动的有${canActionHeros.length}人`);
+            
             canActionHeros = canActionHeros.concat(self.defendTeam.findHero(function (hero) {
                 return hero.canAction();
             }));
+            logger.debug(`双方合计，可以行动的有${canActionHeros.length}人`);
             
             //选最快的,且当前回合并没有行动过的(注意：列表里，进攻方英雄排列在前面，所以如果2个英雄SPD一样，进攻方英雄优先出手。另外，位置靠前的优先出手)
             let fastestSpeed = 0,
@@ -319,8 +332,14 @@ let Battle = oop.defineClass({
             
             for(var i=0,j=canActionHeros.length;i<j;i++){
                 let hero = canActionHeros[i];
-                if( self.process.activeQueue.findIndex((h)=>h===hero)>-1 && hero.getAttr(HeroDeriveAttributes.SPD).getVal()>fastestSpeed){
+                logger.debug(`评估英雄:[${hero.toString()}]是否可以行动`);
+                if(
+                    self.process.activeQueue.findIndex((h)=>h===hero) < 0 &&
+                    hero.getAttr(HeroDeriveAttributes.SPD).getVal()>fastestSpeed
+                ){
                     fastedHero = hero;
+                    fastestSpeed = hero.getAttr(HeroDeriveAttributes.SPD).getVal();
+                    logger.debug(`更改英雄:[${hero.toString()}]为优先行动人`);
                 }
             }
             
@@ -333,7 +352,8 @@ let Battle = oop.defineClass({
          */
         run:function () {
             var self = this;
-            
+    
+            logger.debug("战斗开始");
             //战斗开始
             self.emit(BattleEvents.BATTLE_BEGIN);
             
@@ -346,9 +366,14 @@ let Battle = oop.defineClass({
                     self.status = BattleStatus.TIMEOUT;
                 }
             }
-
+    
+            logger.debug(`战斗结束,状态=${self.status}`);
             //战斗结束
             self.emit(BattleEvents.BATTLE_END);
+            
+            //队伍离开战斗
+            self.attackTeam.quitBattle();
+            self.defendTeam.quitBattle();
             
             return undefined; //todo:以后需要输出一个战斗报告
         }

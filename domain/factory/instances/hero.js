@@ -5,6 +5,7 @@
 const oop = require("local-libs").oop;
 const expect = require('chai').expect;
 const {Hero} = require("../../mechanism/role/hero");
+const {HeroBaseAttributes,HeroOtherAttributes} = require("../../mechanism/role/attributeRule");
 const {CAMPS, RACES,getRaceCamp} = require("../../mechanism/role/camp");
 const {JOBS} = require("../../mechanism/role/job");
 const {ref,seed} = require("../factory");
@@ -26,16 +27,26 @@ module.exports={
                 
                     id:seed(),//英雄id
                     name:`光战1`,//英雄名称
+                    skills:[
+                        ref({key:'普攻1'}),
+                        ref({key:'狂击1'}),
+                        ref({key:'狂热1'}),
+                        
+                    ],
                     raceCampCode:RACES.LIGHT, //种族&阵营编号
                     jobCode:JOBS.WARRIOR, //职业编号
                     starLevel:1,//number,星数
                     rawAttributes:{
-                        STR:30,
-                        AGI:10,
-                        VIT:30,
-                        INT:10,
-                        DEX:30,
-                        LUK:10
+                        [HeroBaseAttributes.STR]:30,
+                        [HeroBaseAttributes.AGI]:10,
+                        [HeroBaseAttributes.VIT]:30,
+                        [HeroBaseAttributes.INT]:10,
+                        [HeroBaseAttributes.DEX]:30,
+                        [HeroBaseAttributes.LUK]:10,
+                        [HeroOtherAttributes.HP]:300,
+                        [HeroOtherAttributes.SP]:0,
+                        [HeroOtherAttributes.SP_MAX]:100,
+                        [HeroOtherAttributes.CRI_ATK]:0
                     }
                 }
             ]
@@ -54,16 +65,24 @@ module.exports={
                 
                     id:seed(),//英雄id
                     name:`地狱游侠1`,//英雄名称
+                    skills:[
+                        ref({key:'狂热1'}),
+                        ref({key:'狂击1'})
+                    ],
                     raceCampCode:RACES.HELL, //种族&阵营编号
                     jobCode:JOBS.KNIGHT, //职业编号
                     starLevel:1,//number,星数
                     rawAttributes:{
-                        STR:20,
-                        AGI:20,
-                        VIT:20,
-                        INT:20,
-                        DEX:10,
-                        LUK:10
+                        [HeroBaseAttributes.STR]:20,
+                        [HeroBaseAttributes.AGI]:20,
+                        [HeroBaseAttributes.VIT]:20,
+                        [HeroBaseAttributes.INT]:20,
+                        [HeroBaseAttributes.DEX]:10,
+                        [HeroBaseAttributes.LUK]:10,
+                        [HeroOtherAttributes.HP]:300,
+                        [HeroOtherAttributes.SP]:0,
+                        [HeroOtherAttributes.SP_MAX]:100,
+                        [HeroOtherAttributes.CRI_ATK]:0
                     }
                 }
             ]

@@ -67,6 +67,8 @@ const HeroOtherAttributes={
     
     SP_MAX:"SP_MAX", //怒气值上限
     CRI_ATK:"CRI_ATK", //暴击伤害加成(千分比)
+    IGNORE_DEF:"IGNORE_DEF", //无视物理防御的比率(千分比)
+    IGNORE_M_DEF:"IGNORE_M_DEF", //无视魔法防御的比率(千分比)
 };
 
 

@@ -37,7 +37,7 @@ var SkillItem = oop.defineClass({
     
     constructor:function({
         levelCur, //Integer 对象，表示当前等级
-        probability,//Integer 对象，表示成功释放概率
+        probability,//number，表示成功释放概率
         installCycle, //(可空)在什么生命周期去触发里面的effect的install
         targetChooserName, //一个实现了targetChooser基类的对象的名字
         targetChooserParams,//chooser需要的参数
@@ -46,6 +46,7 @@ var SkillItem = oop.defineClass({
         // name, //技能项名称
         // desc, //技能项描述，可以是空，或者是一个function(subEffects)
         parent, //技能项持有者对象 (技能对象)
+        effects=[], //技能项内部的效果元数据列表
     }){
         var self = this;
         event.mixin(self);
@@ -61,7 +62,8 @@ var SkillItem = oop.defineClass({
         self.targetChooser = getChooser(targetChooserName);
         self.targetChooserParams = targetChooserParams;
         
-        self.effects =[]; //效果项目列表。注意这里的效果，并不是效果实例，而是描述效果的类型和强度参数等 {effectName, effectDesc,effectParams}
+        self.effects =effects; //效果项目列表。注意这里的效果，并不是效果实例，而是描述效果的类型和强度参数等 {effectName, effectDesc,effectParams}
+        
     },
     prototype:{
     
@@ -125,11 +127,12 @@ var SkillItem = oop.defineClass({
             if(self.installCycle){
                 let source = self.parent.holder;
                 context.on(self.installCycle,(lifeCycleParams)=>{
+                    lifeCycleParams.context = context;
                     _install(lifeCycleParams);
                 });
             }else{
                 //如果不需在特定周期触发，那直接触发
-                _install({});
+                _install({context});
             }
             
         }
@@ -150,6 +153,15 @@ var Skill = oop.defineClass({
         name, //技能名称
         desc, //技能描述，可以是空，或者是一个function(subItems)
         holder, //技能持有者对象 (可以是人，也可以是物品)
+        items=[],/*
+                     {
+                     id, //技能项id
+                     probability,//number，表示成功释放概率
+                     installCycle, //(可空)在什么生命周期去触发里面的effect的install
+                     targetChooserName, //一个实现了targetChooser基类的对象的名字
+                     targetChooserParams,//chooser需要的参数
+                     }
+                    */
     }){
         var self = this;
         event.mixin(self);
@@ -161,6 +173,11 @@ var Skill = oop.defineClass({
         self.desc = desc;
         self.holder=  holder;
         self.items =[]; //技能项目初始化
+    
+        items.forEach((i)=>{
+            self.addSkillItem(i);
+        })
+        
     },
     prototype:{
         /**
@@ -174,7 +191,7 @@ var Skill = oop.defineClass({
             self.items.forEach((it)=>{
                 content.push(it.toString())
             });
-            return content
+            return content;
         },
         /**
          * 释放技能
@@ -198,7 +215,8 @@ var Skill = oop.defineClass({
             id, //技能项id
             // name, //技能项名称
             // desc, //技能项描述
-            probability,//Integer 对象，表示成功释放概率
+            effects,//内部效果列表
+            probability,//number，表示成功释放概率
             installCycle, //(可空)在什么生命周期去触发里面的effect的install
             targetChooserName, //一个实现了targetChooser基类的对象的名字
             targetChooserParams,//chooser需要的参数
@@ -213,6 +231,7 @@ var Skill = oop.defineClass({
                 id:id, //技能项id
                 // name:name, //技能项名称
                 // desc:desc, //技能项描述
+                effects:effects,
                 parent:this, //技能项持有者对象 (技能对象)
             });
             this.items.push(item);

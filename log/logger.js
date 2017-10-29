@@ -9,10 +9,10 @@ const util = require('util');
 
 
 module.exports={
-    // "debug":util.debuglog('debug'),
-    "debug":function () {
-        console.log.apply(this,arguments)
-    },
+    "debug":util.debuglog('debug'),
+    // "debug":function () {
+    //     console.log.apply(this,arguments)
+    // },
     "info":util.debuglog('info'),
     "error":util.debuglog('error')
 }
