@@ -80,7 +80,7 @@ let Mutation = oop.defineClass({
             
             //如果是属性变化
             if(self.type === MUTATION_TYPE.ATTR_CHANGE){
-                desc=`[${self.who.name}]发动[${self.skill.name}]`;
+                desc=`[${self.who.name}].[${self.effect.name}]${self.attrChanged}`;
             }
             else{
                 if(self.type === MUTATION_TYPE.EFFECT_ADDED){

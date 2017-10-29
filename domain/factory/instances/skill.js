@@ -39,9 +39,10 @@ module.exports={
                                     effectName:"damageByATKAndDEF", //普通伤害计算
                                     effectParams:{
                                         isMagic:false, //是否魔法攻击（决定计算参数是ATK还是MATK)
-                                        
+                                        atkRatePerLevel:0,//普通攻击的伤害，不随着等级提升增加
+                                        increase:'linear',//等级提升，atk增长函数
                                         atkRate:1000,// ATK按照1000/1000倍率 计算（1倍）
-                                        ignoreDEF:false, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）
+                                        ignoreDEF:0, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）
                                         
                                     }
                                 }
@@ -117,7 +118,7 @@ module.exports={
                     type:SkillType.ACTIVE,// SkillType 枚举，表示主动/被动
                     id:1, //技能id
                     name:"狂击1", //技能名称
-                    desc:"使用时,对所有敌人造成120%ATK的物理伤害，无视防御", //技能描述
+                    desc:"使用时,对所有敌人造成120%ATK的物理伤害，无视防御，必中", //技能描述
                     items:[
                         {
                             id:seed(), //技能项id
@@ -131,8 +132,11 @@ module.exports={
                                     effectName:"damageByATKAndDEF",
                                     effectParams:{
                                         isMagic:false, //是否魔法攻击（决定计算参数是ATK还是MATK)
-                                        atkRate:1200,// ATK按照1000/1000倍率 计算（1倍）
-                                        ignoreDEF:true, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）
+                                        canFlee:false, //无法躲避，必中
+                                        atkRate:1000,// ATK按照1000/1000倍率 计算（1倍）
+                                        increase:'linear',//等级提升，atk增长函数
+                                        atkRatePerLevel:200,//每提升1级，多20% atk参与计算
+                                        ignoreDEF:1000, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
                                     }
                                 }
                             ]

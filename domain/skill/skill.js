@@ -25,6 +25,7 @@ const Levelable = require("../level/levelable");
 const {getChooser} = require("../mechanism/chooseTarget/targetChooser");
 const {Effect,EffectEvents,getEffect} = require("../effect/effect");
 const {isSingleHappen,multyChoose,getRandNum} = require("../math/random");
+const logger = require("../../log/logger");
 
 const SkillType={
     ACTIVE:1,//主动 对于主动技能，release 的时机是有Holder自己决定的（比如能量满）
@@ -102,6 +103,7 @@ var SkillItem = oop.defineClass({
             let context = self.parent.context;
             
             let _install = function (lifeCycleParams) {
+                logger.debug(`准备install:[${self.toString()}`);
                 //寻找对象
                 let targetChooser = self.targetChooser;
                 let targets = targetChooser.chooseTarget(self.parent.holder,context,lifeCycleParams,self.targetChooserParams);
@@ -126,6 +128,7 @@ var SkillItem = oop.defineClass({
             //根据自身的生效周期（如果为空，则立刻生效),来进行处理
             if(self.installCycle){
                 let source = self.parent.holder;
+                logger.debug(`准备在${self.installCycle}周期注册install:[${self.toString()}`);
                 context.on(self.installCycle,(lifeCycleParams)=>{
                     lifeCycleParams.context = context;
                     _install(lifeCycleParams);
@@ -200,6 +203,7 @@ var Skill = oop.defineClass({
         release:function (context) {
             var self = this;
             self.context = context;
+            logger.debug(`${self.holder.name}准备 release技能:[${self.name}`);
             this.items.forEach((skillItem)=>{
                 skillItem.install();
             })

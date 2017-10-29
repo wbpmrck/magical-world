@@ -69,6 +69,8 @@ const HeroOtherAttributes={
     CRI_ATK:"CRI_ATK", //暴击伤害加成(千分比)
     IGNORE_DEF:"IGNORE_DEF", //无视物理防御的比率(千分比)
     IGNORE_M_DEF:"IGNORE_M_DEF", //无视魔法防御的比率(千分比)
+    REDUCE_ATK:"REDUCE_ATK", //减少物理伤害比率(千分比)
+    REDUCE_M_ATK:"REDUCE_M_ATK", //减少魔法伤害比率(千分比)
 };
 
 
