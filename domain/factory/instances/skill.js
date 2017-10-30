@@ -30,7 +30,7 @@ module.exports={
                         {
                             id:seed(), //技能项id
                             probability:1000,//Integer 对象，表示成功释放概率
-                            installCycle:BattleEvents.BATTLE_BEGIN, //(可空)在什么生命周期去触发里面的effect的install
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
                             targetChooserName:"enemyPositionOrderChooser", //选择最靠前的，活着的敌人
                             targetChooserParams:{count:1,mode:0,from:0,alive:true},//chooser需要的参数，从0号位置向后查找，选择1个活着的敌人
                             effects:[
@@ -39,6 +39,7 @@ module.exports={
                                     effectName:"damageByATKAndDEF", //普通伤害计算
                                     effectParams:{
                                         isMagic:false, //是否魔法攻击（决定计算参数是ATK还是MATK)
+                                        canFlee:true, //可以被躲避
                                         atkRatePerLevel:0,//普通攻击的伤害，不随着等级提升增加
                                         increase:'linear',//等级提升，atk增长函数
                                         atkRate:1000,// ATK按照1000/1000倍率 计算（1倍）
@@ -70,7 +71,7 @@ module.exports={
                         {
                             id:seed(), //技能项id
                             probability:1000,//Integer 对象，表示成功释放概率
-                            installCycle:BattleEvents.BATTLE_BEGIN, //(可空)在什么生命周期去触发里面的effect的install
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
                             targetChooserName:"SelfChooser", //技能对象，应该是持有者自己
                             targetChooserParams:undefined,//chooser需要的参数:无
                             effects:[
@@ -123,7 +124,7 @@ module.exports={
                         {
                             id:seed(), //技能项id
                             probability:1000,//Integer 对象，表示成功释放概率
-                            installCycle:BattleEvents.BATTLE_BEGIN, //(可空)在什么生命周期去触发里面的effect的install
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
                             targetChooserName:"allEnemyChooser", //选择所有活着的敌人
                             targetChooserParams:{alive:true},//chooser需要的参数
                             effects:[

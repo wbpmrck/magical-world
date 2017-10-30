@@ -42,7 +42,7 @@ const HeroDeriveAttributes={
     FLEE:"FLEE",   //闪避(千分比)
     HIT:"HIT", //命中(千分比)
     CRI:"CRI", //暴击率(千分比)
-    CRI_ATK:"CRI_ATK", //暴击伤害加成(千分比)
+    // CRI_ATK:"CRI_ATK", //暴击伤害加成(千分比)
     
     // HP:iota++, //血量
     // HP_MAX:iota++, //最大血量
@@ -88,7 +88,8 @@ let  ruleMap= {
     [HeroDeriveAttributes.ATK]: {
         deps:[HeroBaseAttributes.STR,"levelCur"],
         fomula:function (str, level) {
-            return str * 50 + level*Math.pow(str,2);
+            return str+2+level;
+            // return str * 50 + level*Math.pow(str,2);
         }
     },
     /**
@@ -97,7 +98,8 @@ let  ruleMap= {
     [HeroDeriveAttributes.HP_MAX]: {
         deps:[HeroBaseAttributes.VIT,HeroBaseAttributes.INT,"levelCur"],
         fomula:function (vit, int, level) {
-            return (vit * 50 - int * 2)*level +level*Math.pow(vit,2);
+            return vit*4+int+level
+            // return (vit * 50 - int * 2)*level +level*Math.pow(vit,2);
         }
     },
     /**
@@ -106,7 +108,8 @@ let  ruleMap= {
     [HeroDeriveAttributes.M_ATK]: {
         deps:[HeroBaseAttributes.INT,"levelCur"],
         fomula:function (int, level) {
-            return int * 50 + level*Math.pow(int,2);
+            return int+level;
+            // return int * 50 + level*Math.pow(int,2);
         }
     },
     /**
@@ -115,7 +118,8 @@ let  ruleMap= {
     [HeroDeriveAttributes.DEF]: {
         deps:[HeroBaseAttributes.VIT,"levelCur"],
         fomula:function (vit, level) {
-            return vit * 30 + level*Math.pow(vit,2);
+            return vit + level;
+            // return vit * 30 + level*Math.pow(vit,2);
         }
     },
     /**
@@ -124,7 +128,9 @@ let  ruleMap= {
     [HeroDeriveAttributes.M_DEF]: {
         deps:[HeroBaseAttributes.INT,HeroBaseAttributes.VIT,"levelCur"],
         fomula:function (int,vit, level) {
-            return int * 30 + level*Math.pow(vit,2);
+            
+            return vit + int +level;
+            // return int * 30 + level*Math.pow(vit,2);
         }
     },
     /**
@@ -142,7 +148,7 @@ let  ruleMap= {
     [HeroDeriveAttributes.FLEE]: {
         deps:[HeroBaseAttributes.STR,HeroBaseAttributes.AGI,HeroBaseAttributes.DEX,HeroBaseAttributes.VIT,HeroBaseAttributes.LUK,"levelCur"],
         fomula:function (str,agi,dex,vit,luk,level) {
-            return agi+dex-str-vit+luk+level;
+            return agi+Math.max(dex-str-vit+luk,0)+level;
         }
     },
     /**
@@ -151,7 +157,7 @@ let  ruleMap= {
     [HeroDeriveAttributes.HIT]: {
         deps:[HeroBaseAttributes.DEX,HeroBaseAttributes.VIT,HeroBaseAttributes.LUK,"levelCur"],
         fomula:function (dex,vit,luk,level) {
-            return dex-vit+luk+level;
+            return Math.max(dex-vit,0)+luk+level;
         }
     },
     /**
@@ -160,7 +166,7 @@ let  ruleMap= {
     [HeroDeriveAttributes.CRI]: {
         deps:[HeroBaseAttributes.AGI,HeroBaseAttributes.LUK,"levelCur"],
         fomula:function (agi,luk,level) {
-            return luk-agi+level;
+            return Math.max(luk-agi,0)+level;
         }
     }
 }

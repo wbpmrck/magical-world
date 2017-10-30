@@ -13,6 +13,7 @@ const {EffectAndAttrCarrierLifeEvent} = require("../../effect/effectAndAttrCarri
 const logger = require("../../../log/logger");
 
 const BattleEvents=require("../lifeCycle").BattleEvents;
+const {delegateEvent} = require("../../util/event");
 
 const BattleStatus ={
     INIT:0, //初始化
@@ -230,10 +231,11 @@ let Battle = oop.defineClass({
                 });
                 
                 //代理内部hero的所有事件
-                hero.on("*",function () {
-                    let args = [].slice.call(arguments);
-                    self.emit.apply(this,args);
-                });
+                // hero.on("*",function () {
+                //     let args = [].slice.call(arguments);
+                //     self.emit.apply(self,args);
+                // });
+                delegateEvent(hero,self);
             });
             self.defendTeam.heros.forEach((hero)=>{
                 hero.on(HeroEvents.BEFORE_ACTION,function(skillToRelease){
@@ -249,10 +251,11 @@ let Battle = oop.defineClass({
                     _handleAttrChange(this,attr,oldTotal,total);
                 });
                 //代理内部hero的所有事件
-                hero.on("*",function () {
-                    let args = [].slice.call(arguments);
-                    self.emit.apply(this,args);
-                });
+                // hero.on("*",function () {
+                //     let args = [].slice.call(arguments);
+                //     self.emit.apply(this,args);
+                // });
+                delegateEvent(hero,self);
             });
         },
         /**
@@ -278,7 +281,7 @@ let Battle = oop.defineClass({
             
             //增加回合数
             self.process.turns++;
-            logger.debug(`准备开始第${self.process.turns}回合`);
+            logger.debug(`\r\n \r\n 准备开始第${self.process.turns}回合\r\n`);
             //回合开始
             self.emit(BattleEvents.TURN_BEGIN);
     
@@ -287,11 +290,11 @@ let Battle = oop.defineClass({
             
             //决定下一个行动人
             while (self.status !== BattleStatus.END){
-                logger.debug(`准备选择 下一个行动人`);
+                // logger.debug(`准备选择 下一个行动人`);
                 let nextActor = self.chooseNextActorHero();
     
                 if(nextActor){
-                    logger.debug(`下一个行动人准备行动:${nextActor.toString()}`);
+                    logger.debug(`\r\n下一人准备行动:${nextActor.toString()}`);
                     //拿到行动人，让行动人开始action，进行动作
                     nextActor.startAction();
                     //行动完毕的Hero，记录到已行动队列
@@ -299,7 +302,7 @@ let Battle = oop.defineClass({
         
                 }else{
                     //如果没有行动人，说明这一个回合该结束了
-                    logger.debug(`准备结束第${self.process.turns}回合`);
+                    logger.debug(`准备结束第${self.process.turns}回合 \r\n \r\n`);
                     //回合结束
                     self.emit(BattleEvents.TURN_END);
                     break;
@@ -319,12 +322,12 @@ let Battle = oop.defineClass({
                 return hero.canAction();
             });
             
-            logger.debug(`攻击方，可以行动的有${canActionHeros.length}人`);
+            // logger.debug(`攻击方，可以行动的有${canActionHeros.length}人`);
             
             canActionHeros = canActionHeros.concat(self.defendTeam.findHero(function (hero) {
                 return hero.canAction();
             }));
-            logger.debug(`双方合计，可以行动的有${canActionHeros.length}人`);
+            // logger.debug(`双方合计，可以行动的有${canActionHeros.length}人`);
             
             //选最快的,且当前回合并没有行动过的(注意：列表里，进攻方英雄排列在前面，所以如果2个英雄SPD一样，进攻方英雄优先出手。另外，位置靠前的优先出手)
             let fastestSpeed = 0,
@@ -332,14 +335,14 @@ let Battle = oop.defineClass({
             
             for(var i=0,j=canActionHeros.length;i<j;i++){
                 let hero = canActionHeros[i];
-                logger.debug(`评估英雄:[${hero.toString()}]是否可以行动`);
+                // logger.debug(`评估英雄:[${hero.toString()}]是否可以行动`);
                 if(
                     self.process.activeQueue.findIndex((h)=>h===hero) < 0 &&
                     hero.getAttr(HeroDeriveAttributes.SPD).getVal()>fastestSpeed
                 ){
                     fastedHero = hero;
                     fastestSpeed = hero.getAttr(HeroDeriveAttributes.SPD).getVal();
-                    logger.debug(`更改英雄:[${hero.toString()}]为优先行动人`);
+                    // logger.debug(`更改英雄:[${hero.toString()}]为优先行动人`);
                 }
             }
             

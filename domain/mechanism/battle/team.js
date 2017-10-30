@@ -19,6 +19,8 @@ const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const {HeroEvents} = require("../role/hero");
 const {HeroBaseAttributes,HeroOtherAttributes,HeroDeriveAttributes} = require("../role/attributeRule");
+
+// const {delegateEvent} = require("../../util/event");
 let iota=1000;
 const TeamEvents={
     DEFEATED:iota++, //队伍团灭
@@ -31,18 +33,22 @@ const TeamRole={
     DEFENDER:2,
 }
 
+/**
+ * 2017年10月30日：
+ * 一个队伍，目前设计为只和英雄有关系，和player没有直接关系。
+ *
+ * 以后可能允许不同player的英雄一起组成一个队伍
+ */
 let Team = oop.defineClass({
     super:undefined,
     constructor:function({
         id,//队伍编号
-        // player,//玩家
         heros,//玩家组成队伍的英雄列表。数组。0~5分别代表所处位置，前(2)->中(2)->后(2)
     }){
         var self = this;
         event.mixin(self);
         
         self.id = id;
-        // self.player = player;
         self.heros=heros;
         
         self.heros.forEach((hero)=>{
@@ -96,10 +102,7 @@ let Team = oop.defineClass({
             self.battle = battle; //加入战斗
             self.role = isAttacker?TeamRole.ATTACKER:TeamRole.DEFENDER; //确定角色
             
-            //每个Hero加入战场上下文
-            self.heros.forEach((h)=>{
-                h.context = battle;
-            });
+            
             return self;
         },
       
@@ -112,11 +115,7 @@ let Team = oop.defineClass({
             self.battle = undefined;
             self.role = TeamRole.NONE;
     
-            //每个Hero离开战场上下文
-            self.heros.forEach((h)=>{
-                h.context = undefined;
-            });
-            
+         
             return self;
         }
         

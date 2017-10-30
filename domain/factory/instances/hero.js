@@ -33,20 +33,25 @@ module.exports={
                         ref({key:'狂热1'}),
                         
                     ],
+                    
                     raceCampCode:RACES.LIGHT, //种族&阵营编号
                     jobCode:JOBS.WARRIOR, //职业编号
                     starLevel:1,//number,星数
                     rawAttributes:{
                         [HeroBaseAttributes.STR]:30,
-                        [HeroBaseAttributes.AGI]:10,
+                        [HeroBaseAttributes.AGI]:70,
                         [HeroBaseAttributes.VIT]:30,
                         [HeroBaseAttributes.INT]:10,
                         [HeroBaseAttributes.DEX]:30,
-                        [HeroBaseAttributes.LUK]:10,
-                        [HeroOtherAttributes.HP]:300,
+                        [HeroBaseAttributes.LUK]:150,
+                        [HeroOtherAttributes.HP]:146,
                         [HeroOtherAttributes.SP]:0,
-                        [HeroOtherAttributes.SP_MAX]:100,
-                        [HeroOtherAttributes.CRI_ATK]:0
+                        [HeroOtherAttributes.SP_MAX]:50,
+                        [HeroOtherAttributes.CRI_ATK]:0,
+                        [HeroOtherAttributes.IGNORE_DEF]:0, //无视物理防御的比率(千分比)
+                        [HeroOtherAttributes.IGNORE_M_DEF]:0, //无视魔法防御的比率(千分比)
+                        [HeroOtherAttributes.REDUCE_ATK]:0, //减少物理伤害比率(千分比)
+                        [HeroOtherAttributes.REDUCE_M_ATK]:0, //减少魔法伤害比率(千分比)
                     }
                 }
             ]
@@ -66,23 +71,28 @@ module.exports={
                     id:seed(),//英雄id
                     name:`地狱游侠1`,//英雄名称
                     skills:[
+                        ref({key:'普攻1'}),
+                        ref({key:'狂击1'}),
                         ref({key:'狂热1'}),
-                        ref({key:'狂击1'})
                     ],
                     raceCampCode:RACES.HELL, //种族&阵营编号
                     jobCode:JOBS.KNIGHT, //职业编号
                     starLevel:1,//number,星数
                     rawAttributes:{
                         [HeroBaseAttributes.STR]:20,
-                        [HeroBaseAttributes.AGI]:20,
+                        [HeroBaseAttributes.AGI]:70,
                         [HeroBaseAttributes.VIT]:20,
                         [HeroBaseAttributes.INT]:20,
                         [HeroBaseAttributes.DEX]:10,
-                        [HeroBaseAttributes.LUK]:10,
-                        [HeroOtherAttributes.HP]:300,
+                        [HeroBaseAttributes.LUK]:150,
+                        [HeroOtherAttributes.HP]:112,
                         [HeroOtherAttributes.SP]:0,
-                        [HeroOtherAttributes.SP_MAX]:100,
-                        [HeroOtherAttributes.CRI_ATK]:0
+                        [HeroOtherAttributes.SP_MAX]:50,
+                        [HeroOtherAttributes.CRI_ATK]:0,
+                        [HeroOtherAttributes.IGNORE_DEF]:0, //无视物理防御的比率(千分比)
+                        [HeroOtherAttributes.IGNORE_M_DEF]:0, //无视魔法防御的比率(千分比)
+                        [HeroOtherAttributes.REDUCE_ATK]:0, //减少物理伤害比率(千分比)
+                        [HeroOtherAttributes.REDUCE_M_ATK]:0, //减少魔法伤害比率(千分比)
                     }
                 }
             ]

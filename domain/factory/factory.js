@@ -69,7 +69,7 @@ var make=function ({
                     })
                 }
                 //param是对象
-                if(typeof param ==='object'){
+                else if(typeof param ==='object'){
     
                     //如果参数是一个ref引用，则填充引用
                     if(param.t==='ref'){

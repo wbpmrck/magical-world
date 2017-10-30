@@ -59,3 +59,5 @@ AFTER_CHAR_NORMAL_ATK_MISS |角色进行普攻Miss后|N*M|{target:<被选定的�
 AFTER_CHAR_ACTION |角色行动后|N|{continueTimes:<整数>如果大于0,则还可以再行动>}|continueTimes在行动完成之后会自动-1，如果被修改为>0的值,则actor可以再次进入行动周期（还在当前回合内），`可用于实现类似2次行动的特效`
 BEFORE_HERO_DIE |角色死前|N|{cancel:<布尔值>如果true,则after_hero_die不会触发}|
 AFTER_HERO_DIE |角色死后|1|无}|
+BEFORE_MUTATION |角色受到属性修改前(一次性修改，非modify)|N|{from:造成mutation的effect,mutation:对象{key:attrName  value:changeNum (+代表增加  -代表减少)}}|
+AFTER_MUTATION |角色受到属性修改后(一次性修改，非modify)|N|{from:造成mutation的effect,mutation:对象{key:attrName  value:changeNum (+代表增加  -代表减少)}}|

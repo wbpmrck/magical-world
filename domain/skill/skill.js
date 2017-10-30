@@ -128,7 +128,7 @@ var SkillItem = oop.defineClass({
             //根据自身的生效周期（如果为空，则立刻生效),来进行处理
             if(self.installCycle){
                 let source = self.parent.holder;
-                logger.debug(`准备在${self.installCycle}周期注册install:[${self.toString()}`);
+                logger.debug(`准备在${self.installCycle}周期注册install:[${self.toString()}]`);
                 context.on(self.installCycle,(lifeCycleParams)=>{
                     lifeCycleParams.context = context;
                     _install(lifeCycleParams);
@@ -203,7 +203,7 @@ var Skill = oop.defineClass({
         release:function (context) {
             var self = this;
             self.context = context;
-            logger.debug(`${self.holder.name}准备 release技能:[${self.name}`);
+            logger.debug(`${self.holder.name}准备 release技能:[${self.name}]`);
             this.items.forEach((skillItem)=>{
                 skillItem.install();
             })

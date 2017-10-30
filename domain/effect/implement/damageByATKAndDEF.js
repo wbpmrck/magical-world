@@ -17,6 +17,7 @@ const Integer = require("../../value/integer");
 const {HeroBaseAttributes, HeroDeriveAttributes, HeroOtherAttributes} = require('../../mechanism/role/attributeRule');
 const {isSingleHappen,multyChoose} = require("../../math/random");
 const {WordLifeCycle,BattleEvents,HeroEvents} = require("../../mechanism/lifeCycle");
+const logger = require('../../../log/logger');
 
 var DamageByATKAndDEF = oop.defineClass({
     super:Effect,
@@ -45,7 +46,7 @@ var DamageByATKAndDEF = oop.defineClass({
         toString:function () {
             var self = this;
             let {isMagic,atkRate,atkRatePerLevel,ignoreDEF} = self.params;
-            return `造成基于${self.atkRate/10}%的${isMagic?'M_ATK':'ATK'}的伤害${ignoreDEF?",无视%"+ignoreDEF/10+"防御":""}`;
+            return `造成基于${atkRate/10}%${isMagic?'M_ATK':'ATK'}的伤害${ignoreDEF?",无视%"+ignoreDEF/10+"防御":""}]`;
         },
         /**
          * 根据等级计算参与计算的atk的比例
@@ -85,6 +86,7 @@ var DamageByATKAndDEF = oop.defineClass({
             //调用基类方法
             oop.getSupper(self).onInstall.call(self,source,target);
             
+            logger.debug(`\r\n source:${source.toString(true)} \r\n --> \r\n target:${target.toString(true)}  \r\n`);
             //实现自己的逻辑：计算"应得伤害"和"实际伤害"
             
             if(source && target){
@@ -92,6 +94,9 @@ var DamageByATKAndDEF = oop.defineClass({
                 let atk = isMagic?source.getAttr(HeroDeriveAttributes.M_ATK).getVal():source.getAttr(HeroDeriveAttributes.ATK).getVal();
                 let def = isMagic?target.getAttr(HeroDeriveAttributes.M_DEF).getVal():target.getAttr(HeroDeriveAttributes.DEF).getVal();
     
+                let cri = source.getAttr(HeroDeriveAttributes.CRI).getVal();
+                let cri_atk = source.getAttr(HeroOtherAttributes.CRI_ATK).getVal();
+                let reduce_atk = isMagic?target.getAttr(HeroOtherAttributes.REDUCE_M_ATK).getVal():target.getAttr(HeroOtherAttributes.REDUCE_M_ATK).getVal();
     
                 /**
                  * 计算"应得伤害"
@@ -100,6 +105,8 @@ var DamageByATKAndDEF = oop.defineClass({
                 function doDamage() {
                     let d = 0;
     
+                    logger.debug(`准备计算伤害`);
+                    
                     //如果是神圣攻击，则计算防御无视百分比
                     if(ignoreDEF){
                         let rawDef = isMagic?target.getAttr(HeroDeriveAttributes.M_DEF).val.raw:target.getAttr(HeroDeriveAttributes.DEF).val.raw;
@@ -114,12 +121,27 @@ var DamageByATKAndDEF = oop.defineClass({
                     }
                     //加成计算
                     
-                    //todo:判断是否暴击
+                    //如果是暴击
+                    logger.debug(`判断是否暴击，暴击率[${cri/10}%]`);
+                    if(isSingleHappen(cri)){
+                        
+                        //暴击伤害=  应得伤害 X (2倍 + 暴击伤害加成%)
+                        d = parseInt(d*(2+ (cri_atk/1000)));
+                        logger.debug(`触发暴击，暴击后伤害[${d}]`);
+                    }
                     
-                    //todo:减伤处理s
+                    //减伤处理
+                    d = parseInt( d * (1-reduce_atk/1000));
+                    logger.debug(`减伤[${reduce_atk/10}%]后伤害[${d}]`);
     
+                    //派发mutation给target
+                    target.takeMutation({
+                        from:self,
+                        mutation:{
+                            [HeroOtherAttributes.HP]:0-d
+                        }
+                    });
     
-                    return d;
                 }
     
                 
@@ -127,19 +149,23 @@ var DamageByATKAndDEF = oop.defineClass({
                 if(canFlee){
                     //闪避率 = 对象的flee - 发起者的hit
                     let flee = target.getAttr(HeroDeriveAttributes.FLEE).getVal() - source.getAttr(HeroDeriveAttributes.HIT).getVal();
-                    
+    
+                    logger.debug(`判断对方[${target.toString()}]是否可以闪避,最终flee=[${flee/10}%]`);
                     
                     if(isSingleHappen(flee)){
                         //成功躲避
+                        logger.debug(`对方[${target.toString()}]成功躲避`);
                         
                         //触发对应生命周期事件
                         target.emit(HeroEvents.AFTER_HERO_FLEE,source,self);
                         source.emit(HeroEvents.AFTER_HERO_MISS,target,self);
                     }else{
+                        logger.debug(`对方[${target.toString()}]躲避失败`);
                         //没有躲避，继续计算伤害
                         doDamage();
                     }
                 }else{
+                    logger.debug(`必中效果，不接受对方[${target.toString()}]躲避`);
                     //这是一个必中效果，直接计算伤害
                     doDamage();
                 }

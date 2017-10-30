@@ -31,7 +31,8 @@ let EnemyPositionOrderChooser = oop.defineClass({
             
             //context此时应该是Battle对象
             let sourceTeam = source.team; //发起选择的人所在队伍
-            let enemyTeam = context.getEnemyTeam(sourceTeam); //敌人队伍
+            let battle = source.team.battle;
+            let enemyTeam = battle.getEnemyTeam(sourceTeam); //敌人队伍
             
             let index=params.from; //当前查找起始位置
             //找指定位置是否有对象

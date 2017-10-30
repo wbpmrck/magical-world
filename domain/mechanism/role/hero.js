@@ -16,9 +16,11 @@ const {getJob} = require("./job");
 const {Star} = require("./star");
 const {injectHeroAttributes,HeroBaseAttributes,HeroDeriveAttributes,HeroOtherAttributes} = require("./attributeRule");
 const  statusEnum = require("../../effect/implement/statusEnum");
-
+const logger = require('../../../log/logger');
 const HeroEvents=require("../lifeCycle").HeroEvents;
 
+
+const SP_ADD_PER_EFFECT =20 ;//每次普通攻击之后，增加10点sp
 
 let Hero = oop.defineClass({
     super:Levelable,
@@ -51,26 +53,25 @@ let Hero = oop.defineClass({
         
         self.skills = skills;
     
-        self.skills&&self.skills.forEach((sk)=>{
-            sk.holder = self;
-            if(sk.type === SkillType.PASSIVE){
-                sk.release(self.context); //立刻释放被动技能
-            }
-        })
-        
+       
         self.isDead = false;//是否已死亡
         
         //检测hp变化，如果到0，且当前没有重生效果，会发射死亡事件
-        self.on("attrChange",(attr,total,raw,modify,val)=>{
+        self.on("attrChange",(attr,total,raw,modify,val,oldTotal)=>{
            if(attr.name===HeroOtherAttributes.HP){
                if(total<=0){
                    self.emit(HeroEvents.BEFORE_HERO_DIE);
     
+                   
+                   logger.debug(`英雄死亡:[${self}]`);
                    //设置死亡标记
                    self.isDead = true;
     
                    self.emit(HeroEvents.AFTER_HERO_DIE);
                }else{
+                   if(oldTotal<=0){
+                       logger.debug(`英雄复活:[${self}]`);
+                   }
                    //设置死亡标记
                    self.isDead = false;
                }
@@ -81,11 +82,57 @@ let Hero = oop.defineClass({
         
     },
     prototype:{
-        
-        toString:function () {
-          return `${this.name}:[${this.id}],hp:[${this.getAttr(HeroOtherAttributes.HP).getVal()}/${this.getAttr(HeroDeriveAttributes.HP_MAX).getVal()}]`
+    
+        /**
+         * 显示英雄详细信息
+         * @param detail
+         * @returns {string}
+         */
+        toString:function (detail) {
+            if(!detail){
+                return `${this.name}:[${this.id}],hp:[${this.getAttr(HeroOtherAttributes.HP).getVal()}/${this.getAttr(HeroDeriveAttributes.HP_MAX).getVal()}],sp:[${this.getAttr(HeroOtherAttributes.SP).getVal()}/${this.getAttr(HeroOtherAttributes.SP_MAX).getVal()}],SPD:[${this.getAttr(HeroDeriveAttributes.SPD).getVal()}]`
+            }else{
+                return `
+                ${this.name}:[${this.id}]:\r\n
+                hp:[${this.getAttr(HeroOtherAttributes.HP).getVal()}/${this.getAttr(HeroDeriveAttributes.HP_MAX).getVal()}],
+                sp:[${this.getAttr(HeroOtherAttributes.SP).getVal()}/${this.getAttr(HeroOtherAttributes.SP_MAX).getVal()}],
+                SPD:[${this.getAttr(HeroDeriveAttributes.SPD).getVal()}],
+                CRI:[${this.getAttr(HeroDeriveAttributes.CRI).getVal()}],
+                HIT:[${this.getAttr(HeroDeriveAttributes.HIT).getVal()}],
+                FLEE:[${this.getAttr(HeroDeriveAttributes.FLEE).getVal()}],
+                ATK:[${this.getAttr(HeroDeriveAttributes.ATK).getVal()}],
+                DEF:[${this.getAttr(HeroDeriveAttributes.DEF).getVal()}],
+                M_ATK:[${this.getAttr(HeroDeriveAttributes.M_ATK).getVal()}],
+                M_DEF:[${this.getAttr(HeroDeriveAttributes.M_DEF).getVal()}],
+                `
+            }
+          
         },
     
+        /**
+         * 将英雄绑定到玩家对象，开始英雄生命周期
+         * @param player
+         */
+        initOnPlayer:function (player) {
+            var self = this;
+            
+            self.context = player;
+            
+            //玩家关注所有hero的事件
+            player.watch(self);
+            self.skills&&self.skills.forEach((sk)=>{
+                sk.holder = self;
+                if(sk.type === SkillType.PASSIVE){
+            
+                    logger.debug(`准备释放[${self.toString()}]的被动技能,context=${self.context}`);
+                    sk.release(self.context); //立刻释放被动技能
+                    logger.debug(`完成释放[${self.toString()}]的被动技能,context=${self.context}`);
+                }
+            });
+            
+            return self;
+    
+        },
         /**
          * 判断自身是否完全死透了（hp<0 并且没有被标记重生效果）
          * @returns {boolean}
@@ -118,8 +165,8 @@ let Hero = oop.defineClass({
         canAction:function () {
             var self = this;
             
-            //默认是可以行动的
-            let can = true;
+            //默认活着的是可以行动的
+            let can = !self.isDead;
             
             //判断自身的效果列表里，是否还有眩晕、冰冻效果
             let statusEffects = self.getEffect(function (ef) {
@@ -140,12 +187,31 @@ let Hero = oop.defineClass({
                 1.获取自己怒气值，如果满了，则触发1技能
              */
             if(self.getAttr(HeroOtherAttributes.SP).getVal()>=self.getAttr(HeroOtherAttributes.SP_MAX).getVal()){
+                
+                logger.debug(`[${self}]怒气满，准备发动主动技能!`)
                 skillIndex = 1;
             }
             //释放技能（注意普通攻击也被当做技能处理，固定为0技能）
             self.releaseSkill(skillIndex);
             
-            //注意，释放技能之后，释放者增加怒气值等，这些操作，全部在对应effect的逻辑里实现。
+            //注意，释放1技能之后，怒气值清空。否则增加怒气
+            if(skillIndex===0){
+                //获得怒气
+                self.takeMutation({
+                    from:self,
+                    mutation:{
+                        [HeroOtherAttributes.SP]:SP_ADD_PER_EFFECT
+                    }
+                });
+            }else{
+                //怒气清空
+                self.takeMutation({
+                    from:self,
+                    mutation:{
+                        [HeroOtherAttributes.SP]: 0-self.getAttr(HeroOtherAttributes.SP).getVal()
+                    }
+                });
+            }
             
         },
         /**
@@ -164,8 +230,21 @@ let Hero = oop.defineClass({
             
             self.emit(HeroEvents.AFTER_ACTION,skillToRelease);
         },
-        //todo:hero 接收一个修改请求，比如修改Hp等
-        takeMutation:function (mutation) {
+        /**
+         * 接收一个属性集合修改请求（注意，这里的修改，是一次性修改，而不是modify）
+         * @param from:修改来源对象
+         * @param mutation：key:attrName  value:changeNum (+代表增加  -代表减少)
+         */
+        takeMutation:function ({from,mutation}) {
+            var self = this;
+            logger.debug(`[${self.toString()}]准备接收mutation:${JSON.stringify(mutation)}`);
+    
+            self.emit(HeroEvents.BEFORE_MUTATION,from,mutation);
+            //对每一个要修改的属性,进行修改
+            for(var attName in mutation){
+                self.getAttr(attName).updateAdd(mutation[attName]);
+            }
+            self.emit(HeroEvents.AFTER_MUTATION,from,mutation);
             
         },
     

@@ -11,7 +11,7 @@ const {Battle,BattleEvents} = require("./battle");
 const {make,ref} = require('../../factory/factory'); //对象构造工厂，通过配置可以构造各种对象
 
 
-xdescribe("Battle", function () {
+describe("Battle", function () {
     beforeEach(function () {
         //run before each test
     });
@@ -20,21 +20,26 @@ xdescribe("Battle", function () {
     });
 
     it("should can work individually", function () {
+        //创建2个玩家
+        let player_shinhwa = make({key:"shinhwa"});
+        let player_weatherpop = make({key:"weatherpop"});
+        
         //先创建2个队伍，每个队伍6个英雄
-        let hero1 = make({key:"光战1"});
-        let hero2 = make({key:"光战1"});
-        let hero3 = make({key:"光战1"});
-        let hero4 = make({key:"光战1"});
-        let hero5 = make({key:"光战1"});
-        let hero6 = make({key:"光战1"});
+        let hero1 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
+        let hero2 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
+        let hero3 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
+        let hero4 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
+        let hero5 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
+        let hero6 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
         
-        let hero7 = make({key:"地狱游侠1"});
-        let hero8 = make({key:"地狱游侠1"});
-        let hero9 = make({key:"地狱游侠1"});
-        let hero10 = make({key:"地狱游侠1"});
-        let hero11 = make({key:"地狱游侠1"});
-        let hero12 = make({key:"地狱游侠1"});
         
+        let hero7 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
+        let hero8 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
+        let hero9 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
+        let hero10 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
+        let hero11 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
+        let hero12 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
+        //
         //team1
         let team1 = new Team({
             id:1001,
@@ -52,6 +57,9 @@ xdescribe("Battle", function () {
             attackTeam:team1, //攻方队伍
             defendTeam:team2//防守方队伍
         });
+        
+        player_shinhwa.watch(bat);
+        player_weatherpop.watch(bat);
         
         bat.run();
         
