@@ -115,6 +115,8 @@ var DamageByATKAndDEF = oop.defineClass({
                  */
                 function doDamage() {
                     let d = 0;
+                    
+                    let remark={};//额外的备注信息
     
                     logger.debug(`准备计算伤害`);
                     
@@ -138,6 +140,7 @@ var DamageByATKAndDEF = oop.defineClass({
                         
                         //暴击伤害=  应得伤害 X (2倍 + 暴击伤害加成%)
                         d = parseInt(d*(2+ (cri_atk/1000)));
+                        remark.cri = true;
                         logger.debug(`触发暴击，暴击后伤害[${d}]`);
                     }
                     
@@ -150,7 +153,8 @@ var DamageByATKAndDEF = oop.defineClass({
                         from:self,
                         mutation:{
                             [HeroOtherAttributes.HP]:0-d
-                        }
+                        },
+                        remark:remark
                     });
     
                 }

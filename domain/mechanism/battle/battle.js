@@ -71,7 +71,7 @@ let Mutation = oop.defineClass({
         type,//mutation 类型，见 `MUTATION_TYPE`
         who,//发生变化的对象
         from, //变化发生的来源对象（攻击者、帮助者等）
-        
+         remark,//备注信息
         effect,//被添加/移除的效果 【type!=ATTR_CHANGE时有效】
         
         attr,//发生变化的属性  【type==ATTR_CHANGE时有效】
@@ -80,6 +80,7 @@ let Mutation = oop.defineClass({
         var self = this;
         
         self.type = type;
+        self.remark = remark;
         self.who = who;
         self.from = from;
         self.effect = effect;
@@ -94,6 +95,7 @@ let Mutation = oop.defineClass({
             var self = this;
             return {
                 type:self.type,
+                remark:self.remark,
                 who:self.who.toJSONObject({serializeLevel:1}),
                 from:self.from?self.from.toJSONObject({serializeLevel:1}):undefined,
                 effect:self.effect===undefined?undefined:self.effect.toJSONObject({serializeLevel:1}),
@@ -192,6 +194,7 @@ let BattleDetail =oop.defineClass({
             
         },
         addMutation:function (
+            remark,//备注信息
             type,//mutation 类型，见 `MUTATION_TYPE`
             who,//发生变化的对象
             from, //变化发生的来源对象（攻击者、帮助者等）
@@ -204,6 +207,7 @@ let BattleDetail =oop.defineClass({
             var self = this;
             let mutation = new Mutation({
                 type,
+                remark,
                 who,
                 from,
                 effect,
@@ -307,21 +311,21 @@ let Battle = oop.defineClass({
            
             
             // let _handleAttrChange=function (who,attr,oldTotal,newTotal) {
-            let _handleAttrChange=function (who,attr,changed) {
+            let _handleAttrChange=function (remark,who,attr,changed) {
                 // self.battleDetail.addMutation(MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,newTotal-oldTotal);
-                self.battleDetail.addMutation(MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,changed);
+                self.battleDetail.addMutation(remark,MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,changed);
             };
             let _handleEffectAdd=function (who,from,effect) {
-                self.battleDetail.addMutation(MUTATION_TYPE.EFFECT_ADDED,who,from,effect);
+                self.battleDetail.addMutation(undefined,MUTATION_TYPE.EFFECT_ADDED,who,from,effect);
             };
             let _handleEffectRemove=function (who,from,effect) {
-                self.battleDetail.addMutation(MUTATION_TYPE.EFFECT_REMOVED,who,from,effect);
+                self.battleDetail.addMutation(undefined,MUTATION_TYPE.EFFECT_REMOVED,who,from,effect);
             };
             let _handleReleaseSkill=function (event,who,skillToRelease) {
                 //增加作战记录，某个英雄开始行动
                 self.battleDetail.addAction(event,who,skillToRelease);
             };
-            let _handleMutation=function (from,mutation,to) {
+            let _handleMutation=function (from,mutation,to,remark) {
                 from = from.source;
             
                     
@@ -342,7 +346,7 @@ let Battle = oop.defineClass({
                         p === HeroOtherAttributes.SP ||
                         p === HeroOtherAttributes.SP_MAX
                     ){
-                        _handleAttrChange(to,p,mutation[p]);
+                        _handleAttrChange(remark,to,p,mutation[p]);
                     }
                 }
             };
@@ -358,8 +362,8 @@ let Battle = oop.defineClass({
                 hero.on(EffectAndAttrCarrierLifeEvent.BEFORE_UNINSTALL_EFFECT,function(ef){
                     _handleEffectRemove(this,ef.source,ef);
                 });
-                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation){
-                    _handleMutation(from,mutation,this);
+                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation,remark){
+                    _handleMutation(from,mutation,this,remark);
                 });
                 // hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
                 //
@@ -403,8 +407,8 @@ let Battle = oop.defineClass({
                 //         _handleAttrChange(this,attr,oldTotal,total);
                 //     }
                 // });
-                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation){
-                    _handleMutation(from,mutation,this);
+                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation,remark){
+                    _handleMutation(from,mutation,this,remark);
                 });
                 //代理内部hero的所有事件
                 // hero.on("*",function () {

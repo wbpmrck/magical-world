@@ -43,7 +43,7 @@ module.exports={
                         [HeroBaseAttributes.VIT]:30,
                         [HeroBaseAttributes.INT]:10,
                         [HeroBaseAttributes.DEX]:30,
-                        [HeroBaseAttributes.LUK]:150,
+                        [HeroBaseAttributes.LUK]:250,
                         [HeroOtherAttributes.HP]:146,
                         [HeroOtherAttributes.SP]:0,
                         [HeroOtherAttributes.SP_MAX]:50,
