@@ -54,6 +54,7 @@ var Effect = oop.defineClass({
     },
     prototype:{
     
+       
         /**
          * 当等级变化的时候会触发，子类应该重写这个方法
          * @param nowLevel

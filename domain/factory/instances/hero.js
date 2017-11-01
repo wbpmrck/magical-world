@@ -34,8 +34,8 @@ module.exports={
                         
                     ],
                     
-                    raceCampCode:RACES.LIGHT, //种族&阵营编号
-                    jobCode:JOBS.WARRIOR, //职业编号
+                    raceCampCode:RACES.LIGHT.code, //种族&阵营编号
+                    jobCode:JOBS.WARRIOR.code, //职业编号
                     starLevel:1,//number,星数
                     rawAttributes:{
                         [HeroBaseAttributes.STR]:30,
@@ -75,8 +75,8 @@ module.exports={
                         ref({key:'狂击1'}),
                         ref({key:'狂热1'}),
                     ],
-                    raceCampCode:RACES.HELL, //种族&阵营编号
-                    jobCode:JOBS.KNIGHT, //职业编号
+                    raceCampCode:RACES.HELL.code, //种族&阵营编号
+                    jobCode:JOBS.KNIGHT.code, //职业编号
                     starLevel:1,//number,星数
                     rawAttributes:{
                         [HeroBaseAttributes.STR]:20,

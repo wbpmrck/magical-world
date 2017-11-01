@@ -7,7 +7,7 @@ const logger = require("../../log/logger");
 
 var globalInstancesConfig={}; //存储构造实例的配置项
 var globalInstancesCache={}; //存储全局singleton对象缓存
-var globalSeed = 1000;
+var globalSeed = Math.floor( ( (+new Date()) / 1000 ) )*10000;
 
 //启动时读取 ./instances 目录下所有的instances，注册到自己的字典里
 glob(path.join(__dirname,"./instances/*.js"), {}, function (er, files) {

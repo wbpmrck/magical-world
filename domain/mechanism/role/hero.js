@@ -84,6 +84,28 @@ let Hero = oop.defineClass({
     prototype:{
     
         /**
+         * 将对象内容完全转化为不附带循环引用的纯对象
+         * @param serializeLevel:决定序列化英雄信息的数量和程度
+         */
+        toJSONObject:function ({serializeLevel}) {
+            var self = this;
+            if(serializeLevel === 1){
+                return {
+                    id:self.id,
+                    name:self.name,
+                    camp:self.camp,
+                    job:self.job,
+                    star:self.star.level,
+                    attrMap:{
+                        [HeroOtherAttributes.HP]:self.getAttr(HeroOtherAttributes.HP).getVal(),
+                        [HeroDeriveAttributes.HP_MAX]:self.getAttr(HeroDeriveAttributes.HP_MAX).getVal(),
+                        [HeroOtherAttributes.SP]:self.getAttr(HeroOtherAttributes.SP).getVal(),
+                        [HeroOtherAttributes.SP_MAX]:self.getAttr(HeroOtherAttributes.SP_MAX).getVal()
+                    }
+                }
+            }
+        },
+        /**
          * 显示英雄详细信息
          * @param detail
          * @returns {string}
@@ -232,19 +254,20 @@ let Hero = oop.defineClass({
         },
         /**
          * 接收一个属性集合修改请求（注意，这里的修改，是一次性修改，而不是modify）
-         * @param from:修改来源对象
+         * @param from:修改来源effect对象
+         * @param remark:本次改动的备注，用于配合数据展示一些备注信息
          * @param mutation：key:attrName  value:changeNum (+代表增加  -代表减少)
          */
-        takeMutation:function ({from,mutation}) {
+        takeMutation:function ({from,mutation,remark}) {
             var self = this;
             logger.debug(`[${self.toString()}]准备接收mutation:${JSON.stringify(mutation)}`);
     
-            self.emit(HeroEvents.BEFORE_MUTATION,from,mutation);
+            self.emit(HeroEvents.BEFORE_MUTATION,from,mutation,remark);
             //对每一个要修改的属性,进行修改
             for(var attName in mutation){
                 self.getAttr(attName).updateAdd(mutation[attName]);
             }
-            self.emit(HeroEvents.AFTER_MUTATION,from,mutation);
+            self.emit(HeroEvents.AFTER_MUTATION,from,mutation,remark);
             
         },
     

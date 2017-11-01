@@ -8,11 +8,11 @@ const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const {HeroBaseAttributes,HeroOtherAttributes,HeroDeriveAttributes} = require("../role/attributeRule");
 const {TeamEvents} = require("./team");
-const {HeroEvents} = require("../role/hero");
+// const {HeroEvents} = require("../role/hero");
 const {EffectAndAttrCarrierLifeEvent} = require("../../effect/effectAndAttrCarrier");
 const logger = require("../../../log/logger");
 
-const BattleEvents=require("../lifeCycle").BattleEvents;
+const {HeroEvents,BattleEvents}=require("../lifeCycle");
 const {delegateEvent} = require("../../util/event");
 
 const BattleStatus ={
@@ -28,18 +28,32 @@ const MAX_BATTLE_TURN = 20; //最大回合数
 let Action = oop.defineClass({
     super:undefined,
     constructor:function({
-        who,//发动动作的hero
-        skill,//发动的技能
+    
+        who,//发动动作的hero (如果是系统事件（比如回合开始)则是空 )
+        
+        eventCode,//事件编码（通过这个可以区分是什么类型的事件）
+        
+        param,//事件参数。比如事件是 技能释放的话，这里应该存技能对象（这个对象必须实现 toJSONObject 方法）
     }){
         var self = this;
         
+        self.eventCode = eventCode,
         self.who = who;
-        self.skill = skill;
+        self.param = param;
     },
     prototype:{
+        //将对象内容完全转化为不附带循环引用的纯对象
+        toJSONObject:function () {
+            var self = this;
+            return {
+                eventCode:self.eventCode,
+                who:self.who?self.who.toJSONObject({serializeLevel:1}):undefined, //只需要最简单的英雄信息，用于界面展示
+                param:self.param?self.param.toJSONObject({serializeLevel:1}):undefined,
+            }
+        },
         toString:function () {
             var self = this;
-            return `[${self.who.name}]发动[${self.skill.name}]`;
+            return `事件编码[${self.eventCode}]`;
         }
     }
 });
@@ -75,6 +89,18 @@ let Mutation = oop.defineClass({
     },
     prototype:{
     
+        //将对象内容完全转化为不附带循环引用的纯对象
+        toJSONObject:function () {
+            var self = this;
+            return {
+                type:self.type,
+                who:self.who.toJSONObject({serializeLevel:1}),
+                from:self.from?self.from.toJSONObject({serializeLevel:1}):undefined,
+                effect:self.effect===undefined?undefined:self.effect.toJSONObject({serializeLevel:1}),
+                attr:self.attr===undefined?undefined:self.attr.name,
+                attrChanged:self.attrChanged===undefined?undefined:self.attrChanged
+            }
+        },
         toString:function () {
             var self = this;
             let desc=undefined;
@@ -106,20 +132,63 @@ let BattleDetail =oop.defineClass({
         var self = this;
         self.battle = battle;
         
-        //战斗记录明细。2维数组
-        // 一条明细，是一个数组，0元素代表一个主动action，以及其后续带来的对世界的变更事件集合（在界面展示上，他们是一个时刻出现的）
-        //一些特殊事件，比如回合开始之类，也会作为一个单独的item来记录触发。其后续产生的mutation都归于他下面
+        //战斗记录明细。3维数组
+        //1维：一个记录是一个回合数组（2维）
+        //2维：一条记录，是一个事件数组，0元素代表一个主动action，以及其后续带来的对世界的变更事件集合（在界面展示上，他们是一个时刻出现的）
+        //3维：1个记录，是一个事件，比如回合开始之类，也会作为一个单独的item来记录触发。其后续产生的mutation都归于他下面
         self.ticks=[];
+        
+        //key:heroId,value:number
+        self.report={
+            damage:{
+                
+            }
+            ,
+            heal:{
+                
+            }
+        };
         
     },
     prototype:{
+    
+        /**
+         * 将对象内容完全转化为不附带循环引用的纯对象
+         */
+        toJSONObject:function () {
+            var self = this;
+            var schema={
+                attackTeam:self.battle.attackTeam.toJSONObject({serializeLevel:1}),
+                defendTeam:self.battle.defendTeam.toJSONObject({serializeLevel:1}),
+                ticks:[],
+                report:self.report,
+            };
+            
+            schema.ticks = self.ticks.map((tickArray)=>{
+                return tickArray.map((turn)=>{
+                    return turn.map((tick)=>{
+                        return tick.toJSONObject();
+                    });
+                });
+            });
+            //
+            return schema;
+        },
         addAction:function (
+            eventCode,
             who,//发动动作的hero
-            skill//发动的技能
+            param//事件参数
         ) {
             var self = this;
-            let action = new Action({who,skill});
-            self.ticks.push([action]); //新开一个时间刻度，起始是触发该时刻的action
+            let action = new Action({who,eventCode,param});
+            
+            //非回合开始事件
+            if(eventCode !== BattleEvents.TURN_BEGIN){
+                self.ticks[self.ticks.length-1].push([action]); //新开一个时间刻度，起始是触发该时刻的action
+            }else{
+                self.ticks.push([[action]]);
+            }
+            
         },
         addMutation:function (
             type,//mutation 类型，见 `MUTATION_TYPE`
@@ -140,7 +209,8 @@ let BattleDetail =oop.defineClass({
                 attr,
                 attrChanged,
             });
-            self.ticks[self.ticks.length-1].push(mutation); //当前时刻事件的末尾，追加mutation
+            let curTurn =self.ticks[self.ticks.length-1];
+            curTurn[curTurn.length-1].push(mutation); //当前时刻事件的末尾，追加mutation
         }
     }
 });
@@ -164,6 +234,7 @@ let Battle = oop.defineClass({
         self.status = BattleStatus.INIT;
         self.id = id;
         self.type = type;
+        self.createTime = new Date();
         self.attackTeam = attackTeam.joinBattle(self,true);
         
         self.defendTeam = defendTeam.joinBattle(self,false);
@@ -182,7 +253,32 @@ let Battle = oop.defineClass({
         
     },
     prototype:{
-        
+    
+        /**
+         * 将对象内容完全转化为不附带循环引用的纯对象
+         */
+        toJSONObject:function () {
+            var self = this;
+            var schema={
+                id:self.id,
+                time:self.createTime,
+                attacker:self.attackTeam.player.toJSONObject({serializeLevel:1}),
+                defender:self.defendTeam.player.toJSONObject({serializeLevel:1}),
+                winner:self.winner?self.winner.heros[0].context.account:undefined,
+                detail:self.battleDetail.toJSONObject()
+            };
+            
+            return schema;
+        },
+    
+        /**
+         * 将对象完全序列化
+         * @param options
+         */
+        toJSONString:function () {
+            var self = this;
+            return JSON.stringify(self.toJSONObject());
+        },
     
         /**
          * 初始化战斗
@@ -199,6 +295,14 @@ let Battle = oop.defineClass({
                 self.winner = self.attackTeam;
                 self.status = BattleStatus.END;
             });
+            
+            self.on(BattleEvents.TURN_BEGIN,function () {
+                self.battleDetail.addAction(BattleEvents.TURN_BEGIN);
+            });
+           
+            self.on(BattleEvents.TURN_END,function () {
+                self.battleDetail.addAction(BattleEvents.TURN_END);
+            });
            
             
             let _handleAttrChange=function (who,attr,oldTotal,newTotal) {
@@ -210,24 +314,48 @@ let Battle = oop.defineClass({
             let _handleEffectRemove=function (who,from,effect) {
                 self.battleDetail.addMutation(MUTATION_TYPE.EFFECT_REMOVED,who,from,effect);
             };
-            let _handleReleaseSkill=function (who,skillToRelease) {
+            let _handleReleaseSkill=function (event,who,skillToRelease) {
                 //增加作战记录，某个英雄开始行动
-                self.battleDetail.addAction(who,skillToRelease);
+                self.battleDetail.addAction(event,who,skillToRelease);
+            };
+            let _handleMutation=function (from,mutation,to) {
+                from = from.source;
+                //筛选出对Hp的增加、减少操作，记录输出、治疗量汇总数据
+                if(mutation.hasOwnProperty(HeroOtherAttributes.HP)){
+                    let changed = mutation[HeroOtherAttributes.HP];
+                    if(changed<0){
+                        self.battleDetail.report.damage[from.id] = +(self.battleDetail.report.damage[from.id]||0)+ Math.abs(changed);
+                    }else{
+                        self.battleDetail.report.heal[from.id] = +(self.battleDetail.report.heal[from.id]||0)+ Math.abs(changed);
+                    }
+                }
             };
             
-            //todo:监听战场所有成员的属性改变事件、effect事件、释放技能事件
+            //监听战场所有成员的属性改变事件、effect事件、释放技能事件
             self.attackTeam.heros.forEach((hero)=>{
                 hero.on(HeroEvents.BEFORE_ACTION,function(skillToRelease){
-                    _handleReleaseSkill(this,skillToRelease);
+                    _handleReleaseSkill(HeroEvents.BEFORE_ACTION,this,skillToRelease);
                 });
                 hero.on(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,function(context,source,ef){
                     _handleEffectAdd(this,source,ef);
                 });
-                hero.on(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,function(ef){
+                hero.on(EffectAndAttrCarrierLifeEvent.BEFORE_UNINSTALL_EFFECT,function(ef){
                     _handleEffectRemove(this,ef.source,ef);
                 });
+                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation){
+                    _handleMutation(from,mutation,this);
+                });
                 hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
-                    _handleAttrChange(this,attr,oldTotal,total);
+                    
+                    //只记录:hp,sp相关属性变化日志
+                    if(
+                        attr.name ===HeroOtherAttributes.HP ||
+                        attr.name === HeroDeriveAttributes.HP_MAX ||
+                        attr.name === HeroOtherAttributes.SP ||
+                        attr.name === HeroOtherAttributes.SP_MAX
+                    ){
+                        _handleAttrChange(this,attr,oldTotal,total);
+                    }
                 });
                 
                 //代理内部hero的所有事件
@@ -239,7 +367,7 @@ let Battle = oop.defineClass({
             });
             self.defendTeam.heros.forEach((hero)=>{
                 hero.on(HeroEvents.BEFORE_ACTION,function(skillToRelease){
-                    _handleReleaseSkill(this,skillToRelease);
+                    _handleReleaseSkill(HeroEvents.BEFORE_ACTION,this,skillToRelease);
                 });
                 hero.on(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,function(context,source,ef){
                     _handleEffectAdd(this,source,ef);
@@ -248,7 +376,19 @@ let Battle = oop.defineClass({
                     _handleEffectRemove(this,ef.source,ef);
                 });
                 hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
-                    _handleAttrChange(this,attr,oldTotal,total);
+        
+                    //只记录:hp,sp相关属性变化日志
+                    if(
+                        attr.name ===HeroOtherAttributes.HP ||
+                        attr.name === HeroDeriveAttributes.HP_MAX ||
+                        attr.name === HeroOtherAttributes.SP ||
+                        attr.name === HeroOtherAttributes.SP_MAX
+                    ){
+                        _handleAttrChange(this,attr,oldTotal,total);
+                    }
+                });
+                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation){
+                    _handleMutation(from,mutation,this);
                 });
                 //代理内部hero的所有事件
                 // hero.on("*",function () {
@@ -378,7 +518,7 @@ let Battle = oop.defineClass({
             self.attackTeam.quitBattle();
             self.defendTeam.quitBattle();
             
-            return undefined; //todo:以后需要输出一个战斗报告
+            return undefined;
         }
     
     }

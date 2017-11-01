@@ -1,5 +1,5 @@
 bin/
-
+**/data/*.json
 
 # Other files and folders
 .idea/

@@ -37,7 +37,7 @@ const TeamRole={
  * 2017年10月30日：
  * 一个队伍，目前设计为只和英雄有关系，和player没有直接关系。
  *
- * 以后可能允许不同player的英雄一起组成一个队伍
+ * todo:以后可能允许不同player的英雄一起组成一个队伍
  */
 let Team = oop.defineClass({
     super:undefined,
@@ -50,6 +50,8 @@ let Team = oop.defineClass({
         
         self.id = id;
         self.heros=heros;
+        
+        self.player = self.heros[0].context;//todo:暂时以第一个英雄所属的玩家，来代表这个队伍
         
         self.heros.forEach((hero)=>{
            hero.joinTeam(self);
@@ -64,7 +66,19 @@ let Team = oop.defineClass({
         
     },
     prototype:{
-    
+        //将对象内容完全转化为不附带循环引用的纯对象
+        toJSONObject:function ({serializeLevel}) {
+            var self = this;
+            return {
+                id:self.id,
+                heros:self.heros.map((h)=>{return h.toJSONObject({serializeLevel})}),
+                role:self.role,
+                player:self.player.toJSONObject({serializeLevel})
+            }
+        },
+        toString:function () {
+          return `team:[${this.id}],heros:[${this.heros.map( (h)=>h.toString() )}]`
+        },
         /**
          * 检查队伍是否全灭，全灭的话，向外部抛事件
          */

@@ -68,6 +68,10 @@ var SkillItem = oop.defineClass({
     },
     prototype:{
     
+        //todo:将对象内容完全转化为不附带循环引用的纯对象
+        toJSONObject:function ({serializeLevel}) {
+        
+        },
         toString:function () {
             var self = this;
             let context = self.parent.context;
@@ -183,6 +187,19 @@ var Skill = oop.defineClass({
         
     },
     prototype:{
+        //将对象内容完全转化为不附带循环引用的纯对象
+        toJSONObject:function ({serializeLevel}) {
+            var self = this;
+            
+            if(serializeLevel === 1){
+                //只需要展示相关的信息
+                return {
+                    id:self.id,
+                    name:self.name,
+                    desc:self.desc
+                }
+            }
+        },
         /**
          * 技能的详细信息，需要根据每个子元素来拼接
          * @returns {string}

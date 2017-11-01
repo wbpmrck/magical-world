@@ -42,7 +42,18 @@ var DamageByATKAndDEF = oop.defineClass({
         self.atkRate = self.calculateLevelRate();
     },
     prototype:{
+    
+        //将对象内容完全转化为不附带循环引用的纯对象
+        toJSONObject:function ({serializeLevel}) {
+            var self = this;
         
+            if(serializeLevel === 1){
+                //只需要展示相关的信息
+                return {
+                    name:self.name,
+                }
+            }
+        },
         toString:function () {
             var self = this;
             let {isMagic,atkRate,atkRatePerLevel,ignoreDEF} = self.params;

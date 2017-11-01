@@ -23,11 +23,23 @@ var Player = oop.defineClass({
         self.id = id;
         self.account = account;
         self.name = name;
-        self.avatat = avatar;
+        self.avatar = avatar;
         self.vipLevel = vipLevel;
         
     },
     prototype:{
+    
+        //将对象内容完全转化为不附带循环引用的纯对象
+        toJSONObject:function ({serializeLevel}) {
+            var self = this;
+            if(serializeLevel === 1){
+                return {
+                    id:self.id,
+                    name:self.name,
+                    avatar:self.avatar,
+                }
+            }
+        },
         toString:function () {
             var self = this;
             return `玩家[${self.id}][${self.name}]`;
