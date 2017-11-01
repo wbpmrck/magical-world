@@ -97,7 +97,8 @@ let Mutation = oop.defineClass({
                 who:self.who.toJSONObject({serializeLevel:1}),
                 from:self.from?self.from.toJSONObject({serializeLevel:1}):undefined,
                 effect:self.effect===undefined?undefined:self.effect.toJSONObject({serializeLevel:1}),
-                attr:self.attr===undefined?undefined:self.attr.name,
+                attr:self.attr,
+                // attr:self.attr===undefined?undefined:self.attr.name,
                 attrChanged:self.attrChanged===undefined?undefined:self.attrChanged
             }
         },
@@ -305,8 +306,10 @@ let Battle = oop.defineClass({
             });
            
             
-            let _handleAttrChange=function (who,attr,oldTotal,newTotal) {
-                self.battleDetail.addMutation(MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,newTotal-oldTotal);
+            // let _handleAttrChange=function (who,attr,oldTotal,newTotal) {
+            let _handleAttrChange=function (who,attr,changed) {
+                // self.battleDetail.addMutation(MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,newTotal-oldTotal);
+                self.battleDetail.addMutation(MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,changed);
             };
             let _handleEffectAdd=function (who,from,effect) {
                 self.battleDetail.addMutation(MUTATION_TYPE.EFFECT_ADDED,who,from,effect);
@@ -320,6 +323,8 @@ let Battle = oop.defineClass({
             };
             let _handleMutation=function (from,mutation,to) {
                 from = from.source;
+            
+                    
                 //筛选出对Hp的增加、减少操作，记录输出、治疗量汇总数据
                 if(mutation.hasOwnProperty(HeroOtherAttributes.HP)){
                     let changed = mutation[HeroOtherAttributes.HP];
@@ -327,6 +332,17 @@ let Battle = oop.defineClass({
                         self.battleDetail.report.damage[from.id] = +(self.battleDetail.report.damage[from.id]||0)+ Math.abs(changed);
                     }else{
                         self.battleDetail.report.heal[from.id] = +(self.battleDetail.report.heal[from.id]||0)+ Math.abs(changed);
+                    }
+                }
+                //只记录:hp,sp相关属性变化日志
+                for(var p in mutation){
+                    if(
+                        p === HeroOtherAttributes.HP ||
+                        p === HeroDeriveAttributes.HP_MAX ||
+                        p === HeroOtherAttributes.SP ||
+                        p === HeroOtherAttributes.SP_MAX
+                    ){
+                        _handleAttrChange(to,p,mutation[p]);
                     }
                 }
             };
@@ -345,18 +361,18 @@ let Battle = oop.defineClass({
                 hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation){
                     _handleMutation(from,mutation,this);
                 });
-                hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
-                    
-                    //只记录:hp,sp相关属性变化日志
-                    if(
-                        attr.name ===HeroOtherAttributes.HP ||
-                        attr.name === HeroDeriveAttributes.HP_MAX ||
-                        attr.name === HeroOtherAttributes.SP ||
-                        attr.name === HeroOtherAttributes.SP_MAX
-                    ){
-                        _handleAttrChange(this,attr,oldTotal,total);
-                    }
-                });
+                // hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
+                //
+                //     //只记录:hp,sp相关属性变化日志
+                //     if(
+                //         attr.name ===HeroOtherAttributes.HP ||
+                //         attr.name === HeroDeriveAttributes.HP_MAX ||
+                //         attr.name === HeroOtherAttributes.SP ||
+                //         attr.name === HeroOtherAttributes.SP_MAX
+                //     ){
+                //         _handleAttrChange(this,attr,oldTotal,total);
+                //     }
+                // });
                 
                 //代理内部hero的所有事件
                 // hero.on("*",function () {
@@ -375,18 +391,18 @@ let Battle = oop.defineClass({
                 hero.on(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,function(ef){
                     _handleEffectRemove(this,ef.source,ef);
                 });
-                hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
-        
-                    //只记录:hp,sp相关属性变化日志
-                    if(
-                        attr.name ===HeroOtherAttributes.HP ||
-                        attr.name === HeroDeriveAttributes.HP_MAX ||
-                        attr.name === HeroOtherAttributes.SP ||
-                        attr.name === HeroOtherAttributes.SP_MAX
-                    ){
-                        _handleAttrChange(this,attr,oldTotal,total);
-                    }
-                });
+                // hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
+                //
+                //     //只记录:hp,sp相关属性变化日志
+                //     if(
+                //         attr.name ===HeroOtherAttributes.HP ||
+                //         attr.name === HeroDeriveAttributes.HP_MAX ||
+                //         attr.name === HeroOtherAttributes.SP ||
+                //         attr.name === HeroOtherAttributes.SP_MAX
+                //     ){
+                //         _handleAttrChange(this,attr,oldTotal,total);
+                //     }
+                // });
                 hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation){
                     _handleMutation(from,mutation,this);
                 });
