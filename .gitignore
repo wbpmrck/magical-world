@@ -1,5 +1,6 @@
 bin/
 **/data/*.json
+**/egretProject/
 
 # Other files and folders
 .idea/
