@@ -126,8 +126,11 @@ let Team = oop.defineClass({
         quitBattle:function () {
             var self = this;
             
-            self.battle = undefined;
-            self.role = TeamRole.NONE;
+            //todo:为了防止战斗结果报告里找不到role,这逻辑先改为异步更新了
+            setTimeout(function () {
+                self.battle = undefined;
+                self.role = TeamRole.NONE;
+            },200);
     
          
             return self;

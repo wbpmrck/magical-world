@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <script src="../js/vue.js"></script>
+  </head>
+  <body>
+
+  <div id="root">
+    <h1>请点击要播放的记录</h1>
+
+    <ul>
+      <li v-for="item in records" style="cursor: pointer" @click="go(item)">{{item}}</li>
+    </ul>
+  </div>
+
+    <script>
+      // You can also require other files to run in this process
+      require('./index.js')
+    </script>
+  </body>
+</html>

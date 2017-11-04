@@ -93,6 +93,7 @@ let Hero = oop.defineClass({
                 return {
                     id:self.id,
                     name:self.name,
+                    level:self.levelCur.getVal(),
                     camp:self.camp,
                     job:self.job,
                     star:self.star.level,

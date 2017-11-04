@@ -20,6 +20,7 @@ const EffectEvents =  {
     UNINSTALLED:2,
 };
 const {WordLifeCycle} = require("../mechanism/lifeCycle");
+var seed=1000;
 
 var Effect = oop.defineClass({
     
@@ -33,6 +34,7 @@ var Effect = oop.defineClass({
         var self = this;
         event.mixin(self);
         
+        self.id = seed++;
         self.name = 'base';
         // self.desc = desc;
     

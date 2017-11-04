@@ -50,6 +50,7 @@ var DamageByATKAndDEF = oop.defineClass({
             if(serializeLevel === 1){
                 //只需要展示相关的信息
                 return {
+                    id:self.id,
                     name:self.name,
                 }
             }
