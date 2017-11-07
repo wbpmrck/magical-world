@@ -1,0 +1,7 @@
+<div id="record-list">
+    <h1>请点击要播放的记录</h1>
+
+    <ul>
+        <li v-for="item in records" style="cursor: pointer" @click="go(item)">{{item}}</li>
+    </ul>
+</div>

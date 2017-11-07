@@ -1,0 +1,20 @@
+<div id="record-play">
+    <div class="pause btn" @click="toggleStart(false)">{{paused?"继续":"暂停"}}</div>
+    <div id="title">{{recordData.attacker.name}}  VS  {{recordData.defender.name}}</div>
+
+    <div id="teams">
+        <div id="attacker" class="team">
+
+            <Hero v-for="(hero,index) in recordData.detail.attackTeam.heros" :hero-data="hero" :index="index" :battle-end="end"></Hero>
+
+        </div>
+        <div id="defender"  class="team">
+            <Hero v-for="(hero,index) in recordData.detail.defendTeam.heros" :hero-data="hero" :index="index" :battle-end="end"></Hero>
+        </div>
+    </div>
+    <div id="events">
+        <ul>
+            <li v-for="evt in events">{{evt|displayEvent}}</li>
+        </ul>
+    </div>
+</div>

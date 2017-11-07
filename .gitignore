@@ -2,6 +2,8 @@ bin/
 **/data/*.json
 **/egretProject/
 
+
 **/electron/node_modules
+**/electron/**/dist
 # Other files and folders
 .idea/

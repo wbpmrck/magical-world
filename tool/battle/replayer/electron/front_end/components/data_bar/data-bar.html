@@ -1,0 +1,8 @@
+<!--props:["text","value","totalValue","color","bgColor"],-->
+<div class="data-bar">
+    <div class="data-text" :title="value+'/'+totalValue">{{text}}</div>
+    <div class="bar-bg"  :title="value+'/'+totalValue" :style="{backgroundColor:bgColor}">
+        <div class="bar-cur" :style="{backgroundColor:color,width:width}"></div>
+        <div class="value-desc">{{value}}/{{totalValue}}</div>
+    </div>
+</div>

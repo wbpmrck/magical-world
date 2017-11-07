@@ -1,0 +1,33 @@
+
+<div class="hero outline">
+
+    <div class="hero-info">
+        <div class="level">
+            level:{{heroData.level}}
+        </div>
+        <div class="star-bar">
+            <div class="star" v-for="n in heroData.star"></div>
+        </div>
+
+
+        <h2>{{'('+index+'号)'+heroData.name}}</h2>
+
+        <DataBar text="HP" :value="heroData.attrMap.HP" :total-value="heroData.attrMap.HP_MAX" color="red" bg-color="white"></DataBar>
+        <DataBar text="SP" :value="heroData.attrMap.SP" :total-value="heroData.attrMap.SP_MAX" color="blue" bg-color="white"></DataBar>
+        <DataBar v-show="battleEnd" text="总输出" :value="heroData.total.damage" :total-value="heroData.total.max_damage" color="#EEB62F" bg-color="white"></DataBar>
+        <DataBar v-show="battleEnd" text="总治疗" :value="heroData.total.heal" :total-value="heroData.total.max_heal" color="#A5D6D8" bg-color="white"></DataBar>
+
+    </div>
+
+    <div class="hero-effects outline">
+        <ul>
+            <li v-for="effect in heroData.effects">{{effect}}</li>
+        </ul>
+    </div>
+    <div class="hero-log outline">
+        <ul>
+            <li v-for="evt in heroData.logs">{{evt|displayEvent}}</li>
+        </ul>
+    </div>
+
+</div>

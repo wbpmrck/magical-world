@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>magic</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!--<meta content="width=device-width, initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />-->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <!--样式表-->
+    <link rel="stylesheet" href="../../res/css/reset.css?__inline">
+    <link rel="stylesheet" href="../../res/css/style.css?__inline">
+
+    <script src="../../libs/vue.js?__inline"></script>
+    <script src="../../libs/vue-router.js?__inline"></script>
+</head>
+
+<body>
+
+<div id="root">
+    <router-view></router-view>
+</div>
+    <!--入口脚本-->
+    <script type="text/javascript">
+        var entry = require("./index.js");
+        entry.init();
+    </script>
+</body>
+</html>

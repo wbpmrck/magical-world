@@ -7,17 +7,27 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const url = require('url')
 
+const { default: installExtension, VUEJS_DEVTOOLS } =require( 'electron-devtools-installer');
+
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
+
 function createWindow () {
+    
+    installExtension(VUEJS_DEVTOOLS)
+        .then((name) => console.log(`Added Extension:  ${name}`))
+        .catch((err) => console.log('An error occurred: ', err));
+    
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1000, height: 850})
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, '/page/index/index.html'),
+    // pathname: path.join(__dirname, '/page/index/index.html'),
+    pathname: path.join(__dirname, '/front_end/dist/views/root/index.html'),
     // pathname: path.join(__dirname, '/page/player/player.html'),
     protocol: 'file:',
     slashes: true
@@ -56,6 +66,8 @@ app.on('activate', function () {
     createWindow()
   }
 })
+
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

@@ -1,0 +1,151 @@
+body,#root{
+    width: 100%;
+    height: 100%;
+
+    /*background-image: url("../../res/image/star.png?__inline");*/
+
+}
+
+.outline{
+    border: solid 1px red;
+}
+#record-list{
+    background-color: #888888;
+}
+
+#record-play{
+    text-align: center;
+}
+#record-play #title{
+    font-size: 18px;
+    color: brown;
+}
+#record-play #teams{
+    display: flex;
+}
+
+.pause{
+    position: absolute;
+    left: 10px;
+    top:10px;
+    width: 50px;
+    height: 20px;
+
+    font-size: 14px;
+
+    border: solid 2px #33ffff;
+    border-radius: 1px;
+}
+
+/*
+    组队分区
+ */
+
+.team{
+    max-width: 700px;
+    text-align: left;
+
+    margin: 25px 20px;
+
+    border: dashed 2px #673588;
+}
+
+/*
+    英雄卡片区域
+ */
+.hero{
+    position: relative;
+    display: inline-block;
+
+    width: 100px;
+    margin: 5px;
+    box-sizing: border-box;
+}
+.hero-info{
+    height: 120px;
+    text-align: center;
+}
+.hero-info h2{
+    display: inline-block;
+    font-size: 14px;
+    color: aquamarine;
+}
+.hero-info .level{
+    position: absolute;
+    top:-16px;
+    right: -10px;
+    width: 50px;
+    border: solid 1px #3fa41f;
+    border-radius: 2px;
+
+    font-size: 12px;
+    background-color: #3fa41f;
+}
+.hero-info .star{
+    position: absolute;
+    top:-12px;
+
+    width: 22px;
+    height: 22px;
+    background-size: contain;
+    background-image: url("../../res/image/star.png?__inline");
+}
+
+.hero-effects{
+    height: 40px;
+}
+.hero-log{
+    height: 50px;
+    overflow: scroll;
+}
+
+
+/*
+    数据条
+ */
+
+.data-bar{
+    display: flex;
+
+    height: 14px;
+    font-size: 12px;
+
+    padding: 0 4px;
+
+    margin: 10px 0;
+}
+
+.data-bar .data-text{
+    width: 40px;
+
+    vertical-align: middle;
+
+}
+/*背景槽*/
+.data-bar .bar-bg{
+    flex: 1;
+    position: relative;
+    vertical-align: middle;
+}
+/*前景槽*/
+.data-bar .bar-cur{
+    position: absolute;
+    height: 100%;
+    left: 0;
+
+    /*动画效果*/
+    transition-property:width;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
+/*槽内数值描述*/
+.data-bar .value-desc{
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    text-align: center;
+    line-height: 14px;
+    font-size: 12px;
+}
