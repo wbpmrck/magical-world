@@ -116,6 +116,8 @@ let Team = oop.defineClass({
             self.battle = battle; //加入战斗
             self.role = isAttacker?TeamRole.ATTACKER:TeamRole.DEFENDER; //确定角色
             
+            //加入战斗之后，player代理battle的事件。这样hero的skill就可以正确捕获对应事件
+            self.player.watch(battle);
             
             return self;
         },
@@ -125,7 +127,14 @@ let Team = oop.defineClass({
          */
         quitBattle:function () {
             var self = this;
+    
+            self.player.unWatch(self.battle);
             
+            
+            for(var i=0,j=self.heros.length;i<j;i++){
+                var hero = self.heros[i];
+                hero.removeBattleEffects();
+            }
             //todo:为了防止战斗结果报告里找不到role,这逻辑先改为异步更新了
             setTimeout(function () {
                 self.battle = undefined;

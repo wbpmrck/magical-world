@@ -6,6 +6,10 @@
  * 约束：来自同一个释放者的，同名状态无法叠加，多次附加只会更新持续回合数（此逻辑等以后做数值平衡的时候再决定是否增加。非必须）
  *使用场景：
  *  1、主动技能：(有30的几率)对目标造成2回合眩晕（注意，概率控制，由skillItem确定。effect主要处理生效之后的情况）
+ *
+ *  注意：
+ *  1、应该只把"影响hero行动方式"的状态放入status管理，目前包括（行动、大招）的控制
+ *  2、其他的"状态"，比如燃烧、毒素，这种持续造成伤害的，可以设计其他的effect来实现
  */
 
 
@@ -21,14 +25,13 @@ var Status = oop.defineClass({
     /**
      *
      * @param level
-     * @param params:{status:状态名,baseTurn:基础回合数，levelFactor:用于被等级除的除数，决定随着等级提升、回合数的增长情况,stopAction:bool 是否阻止行动,stopSkill:bool 是否阻止放技能}
+     * @param params:{status:状态名,stopAction:bool 是否阻止行动,stopSkill:bool 是否阻止放技能}
      */
     constructor:function({level,params}){
         var self = this;
         self.name = 'Status';
         
-        self.maxTurn =self.calculateContinueTurn();
-        params.continueTurn = self.maxTurn; // 基类通过 continueTurn 实现自动控制效果监听、移除
+        self.maxTurn =params.continueTurn; //缓存最大持续回合
     },
     prototype:{
     
@@ -38,29 +41,13 @@ var Status = oop.defineClass({
             
             return `效果:[${status},${stopAction?"stopAction":""},${stopSkill?"stopSkill":""}]持续[${continueTurn}/${self.maxTurn}]回合`;
         },
-        /**
-         * 根据当前状态，计算应该修正的属性值
-         * @returns {*}
-         */
-        calculateContinueTurn:function () {
-            var self = this;
-            if(self.params.baseTurn!==undefined) {
-                let {baseTurn, levelFactor} = self.params;
-                
-                return baseTurn + parseInt(self.level.total()/levelFactor);
-            }else{
-                return 0;
-            }
-        },
+       
         /**
          * 实现基类方法
          * @param nowLevel
          */
         onLevelChange:function (nowLevel) {
             var self = this;
-            let turnPassed = self.maxTurn - self.params.continueTurn;
-            self.maxTurn =self.calculateContinueTurn(); //等级变化的时候，重新计算持续回合数
-            self.params.continueTurn = self.maxTurn - turnPassed;
         },
         /**
          * 覆盖基类实现
@@ -70,13 +57,15 @@ var Status = oop.defineClass({
          */
         onInstall:function (source,target) {
             var self = this;
-    
-            //调用基类方法
-            oop.getSupper(self).onInstall.call(self,source,target);
-            
             //todo:判断是否已经有同样来源的同样的status,有的话，移除旧的，替换新的（此逻辑等以后做数值平衡的时候再决定是否增加。非必须）
+            
+            //调用基类方法
+            oop.getSupper(self).onAfterInstall.call(self,source,target);
+            // oop.getSupper(self).onInstall.call(self,source,target);
+            
+
     
-            self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
+            // self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
           
             return this;
         },
@@ -84,9 +73,10 @@ var Status = oop.defineClass({
             var self = this;
            
             //调用基类方法
-            oop.getSupper(self).onUninstall.call(self);
+            oop.getSupper(self).onAfterUnInstall.call(self);
+            // oop.getSupper(self).onUninstall.call(self);
     
-            self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
+            // self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
             return this;
         }
     }

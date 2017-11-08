@@ -71,7 +71,7 @@ module.exports={
                         {
                             id:seed(), //技能项id
                             probability:1000,//Integer 对象，表示成功释放概率
-                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
+                            installCycle:BattleEvents.BATTLE_BEGIN, //(可空)在什么生命周期去触发里面的effect的install
                             targetChooserName:"SelfChooser", //技能对象，应该是持有者自己
                             targetChooserParams:undefined,//chooser需要的参数:无
                             effects:[
@@ -79,6 +79,7 @@ module.exports={
                                     //攻击力提升效果
                                     effectName:"attributeModifyByPercent",
                                     effectParams:{
+                                        removeAfterBattle:true,
                                         attrName:HeroDeriveAttributes.ATK,
                                         continueTurn:3, //持续3回合
                                         mode:"inc",
@@ -91,6 +92,7 @@ module.exports={
                                     //HP_MAX提升效果
                                     effectName:"attributeModifyByPercent",
                                     effectParams:{
+                                        removeAfterBattle:true,
                                         attrName:HeroDeriveAttributes.HP_MAX,
                                         continueTurn:3, //3回合消失
                                         mode:"inc",

@@ -26,6 +26,7 @@ describe("attributeModify :", function () {
             // desc:"修正属性",
             level:new integer(1),
             params:{
+                continueTurn:"ever",
                 attrName:"str",
                 mode:"inc",
                 basePoint:20,

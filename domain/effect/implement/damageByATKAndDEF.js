@@ -95,8 +95,6 @@ var DamageByATKAndDEF = oop.defineClass({
         onInstall:function (source,target) {
             var self = this;
             
-            //调用基类方法
-            oop.getSupper(self).onInstall.call(self,source,target);
             
             logger.debug(`\r\n source:${source.toString(true)} \r\n --> \r\n target:${target.toString(true)}  \r\n`);
             //实现自己的逻辑：计算"应得伤害"和"实际伤害"
@@ -152,7 +150,7 @@ var DamageByATKAndDEF = oop.defineClass({
     
                     //派发mutation给target
                     target.takeMutation({
-                        from:self,
+                        from:source,
                         mutation:{
                             [HeroOtherAttributes.HP]:0-d
                         },
@@ -188,7 +186,9 @@ var DamageByATKAndDEF = oop.defineClass({
                 }
                 
                 
-                self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
+                // self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
+                //调用基类方法
+                oop.getSupper(self).onAfterInstall.call(self,source,target);
             }
             
             return this;
@@ -197,9 +197,8 @@ var DamageByATKAndDEF = oop.defineClass({
             var self = this;
             
             //调用基类方法
-            oop.getSupper(self).onUninstall.call(self);
-            
-            self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
+            oop.getSupper(self).onAfterUnInstall.call(self);
+            // self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
             return this;
         }
     }

@@ -218,6 +218,7 @@ describe("EffectAndAttrCarrier ", function () {
             desc:"修改属性",
             level:new Integer(1),
             params:{
+                continueTurn:'ever',
                 attrName:"str",
                 mode:"inc",
                 basePoint:20,
@@ -245,8 +246,8 @@ describe("EffectAndAttrCarrier ", function () {
         });
         w1.installEffect(_source,_effect);
         expect(w1.getAttr("str").getVal()).to.eql(40);
-        expect(_effect.source).to.eql(undefined);
-        expect(_effect.target).to.eql(undefined);
+        expect(_effect.source).to.eql(_source);
+        expect(_effect.target).to.eql(w1);
        
     });
     

@@ -85,7 +85,7 @@ var AttributeReset = oop.defineClass({
             var self = this;
     
             //调用基类方法
-            oop.getSupper(self).onInstall.call(self,source,target);
+            // oop.getSupper(self).onInstall.call(self,source,target);
             
             //实现自己的逻辑：给目标角色增加属性
             // self.params={attrName:属性名,mode:"inc"or"dec"表示增加还是减少,basePoint:基础修正点数(整数),levelFactor:用于和等级相乘的因子,increase:增长函数名，参见math/increase.js}
@@ -93,15 +93,16 @@ var AttributeReset = oop.defineClass({
             if(self.params.attrName){
                 let {attrName,mode,basePoint,levelFactor,increase} = self.params;
                 
-                if(self.target.getAttr && typeof self.target.getAttr ==='function'){
+                if(target.getAttr && typeof target.getAttr ==='function'){
                     
                     //获取到目标需要修正的属性对象
-                    let attr = self.target.getAttr(attrName);
+                    let attr = target.getAttr(attrName);
                     let fn = increaseMath[increase];
                     if(fn){
                         attr.updateAdd(self.addVal.total());
     
-                        self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
+                        oop.getSupper(self).onAfterInstall.call(self,source,target);
+                        // self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
                     }
                 }
             }
@@ -112,9 +113,10 @@ var AttributeReset = oop.defineClass({
             var self = this;
            
             //调用基类方法
-            oop.getSupper(self).onUninstall.call(self);
+            oop.getSupper(self).onAfterUnInstall.call(self);
+            // oop.getSupper(self).onUninstall.call(self);
     
-            self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
+            // self.emit(EffectEvents.UNINSTALLED,self); //发射事件，通知外部
             return this;
         }
     }

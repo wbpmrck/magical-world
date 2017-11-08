@@ -10,6 +10,7 @@ const integer = require("../../value/integer");
 
 const {EffectEvents} = require("../effect");
 const {WordLifeCycle,CharLifeCycle} = require("../../mechanism/lifeCycle");
+const  {Hero,HeroEvents} = require("../../mechanism/role/hero");
 
 
 describe("statusEffect :", function () {
@@ -29,8 +30,7 @@ describe("statusEffect :", function () {
             level:new integer(1),
             params:{
                 status:statusEnum.Frozen, //状态：冰冻
-                baseTurn:2, //基础回合数
-                levelFactor:20, //  等级/levelFactor + baseTurn = 实际生效回合数
+                continueTurn:2, //回合数
                 stopAction:true,
                 stopSkill:true,
             },
@@ -38,9 +38,28 @@ describe("statusEffect :", function () {
         });
         
         //定义一个模拟的作用对象
-        let target = {
-           
-        };
+        let target = new Hero({
+            levelCur:0, //number,或者Integer 对象，表示当前等级
+            levelMax:4, //number,或者Integer 对象，表示最高等级
+            exp:0, // number,表示当前获得的经验值
+        },{
+            id:1,//英雄id
+            name:"stormWarrior",//英雄名称
+            raceCampCode:1, //种族&阵营编号
+            jobCode:1, //职业编号
+            starLevel:1,//number,星数
+            rawAttributes:{
+                STR:10,
+                AGI:20,
+                VIT:30,
+                INT:40,
+                DEX:50,
+                LUK:60,
+                SP:100,
+                SP_MAX:100,
+            }
+        });
+        
         let source = {};//假的作用源
     
         frozenEffect.once(EffectEvents.INSTALLED,(ef)=>{
@@ -49,34 +68,37 @@ describe("statusEffect :", function () {
             expect(ef.target).to.eql(target);
         });
     
-        frozenEffect.onInstall(source,target);
     
+        //放置效果之前，英雄是可以放大招、行动的
+        expect(target.canAction()).to.eql(true);
+        expect(target.canBigSkill()).to.eql(true);
+    
+        target.installEffect(source,frozenEffect);
     
         expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill]持续[2/2]回合");
+        //放置效果后，英雄不可以放大招、行动
+        expect(target.canAction()).to.eql(false);
+        expect(target.canBigSkill()).to.eql(false);
         
         
         //模拟经过一个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-      
-        
-        //然后给effect进行升级
-        let levelModifier ={addVal:new integer(18)};
-        frozenEffect.level.addModifier(levelModifier,levelModifier); //升了1级
         expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill]持续[1/2]回合");
+        expect(target.canAction()).to.eql(false);
+        expect(target.canBigSkill()).to.eql(false);
         
-        //然后给effect进行再次升级
-        levelModifier.addVal.addModifier({},{addVal:1}); //又升了1级
-        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill]持续[2/3]回合");
-    
-    
         frozenEffect.once(EffectEvents.UNINSTALLED,(ef)=>{
             expect(ef).to.eql(frozenEffect);
             expect(ef.source).to.eql(undefined);
             expect(ef.target).to.eql(undefined);
         });
     
-        //然后移除效果
-        frozenEffect.onUninstall();
+        //模拟经过一个回合
+        worldContext.emit(WordLifeCycle.TURN_END);
+        expect(target.canAction()).to.eql(true);
+        expect(target.canBigSkill()).to.eql(true);
+        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill]持续[0/2]回合");
+        
     });
     
 });

@@ -61,8 +61,6 @@ describe("Battle", function () {
             defendTeam:team2//防守方队伍
         });
         
-        player_shinhwa.watch(bat);
-        player_weatherpop.watch(bat);
         
         //先输出战斗前日志
         let logDir = path.join(__dirname,`../../../tool/battle/replayer/data`)
@@ -71,10 +69,25 @@ describe("Battle", function () {
         let endfile = path.join(logDir,`battle-${battleId}-end.json`);
         
         fs.writeFileSync(beginfile,bat.toJSONString());
+    
+        bat.on(BattleEvents.TURN_BEGIN,function (curTurn) {
+            if(curTurn<=3){
+                expect(hero1.effects.length).to.eql(2);
+            }else{
+                //3回合之后，所有英雄身上应该没有效果
+                expect(hero1.effects.length).to.eql(0);
+            }
+        });
+        
         bat.run();
+      
         
         console.log("winner:"+bat.winner.toString());
         fs.writeFileSync(endfile,bat.toJSONString());
+    
+        
+        //战斗之后，所有英雄身上应该没有效果
+        expect(hero1.effects.length).to.eql(0);
         
         // expect(raceCamp3.getCampName()).to.eq('NEUTRAL');
     });

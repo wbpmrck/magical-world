@@ -402,7 +402,7 @@ let Battle = oop.defineClass({
                 self.battleDetail.addAction(event,who);
             };
             let _handleMutation=function (from,mutation,to,remark,mutationResult) {
-                from = from.source;
+                // from = from.source;
             
                     
                 //筛选出对Hp的增加、减少操作，记录输出、治疗量汇总数据
@@ -632,6 +632,7 @@ let Battle = oop.defineClass({
             logger.debug(`战斗结束,状态=${self.status}`);
             //战斗结束
             self.emit(BattleEvents.BATTLE_END);
+            
             
             //队伍离开战斗
             self.attackTeam.quitBattle();

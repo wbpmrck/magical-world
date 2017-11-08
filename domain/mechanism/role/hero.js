@@ -143,8 +143,6 @@ let Hero = oop.defineClass({
             
             self.context = player;
             
-            //玩家关注所有hero的事件
-            player.watch(self);
             self.skills&&self.skills.forEach((sk)=>{
                 sk.holder = self;
                 if(sk.type === SkillType.PASSIVE){
@@ -184,6 +182,24 @@ let Hero = oop.defineClass({
         },
     
         /**
+         * 当前是否可以放大招
+         * @returns {boolean}
+         */
+        canBigSkill:function () {
+            var self = this;
+            let can = self.getAttr(HeroOtherAttributes.SP).getVal()>=self.getAttr(HeroOtherAttributes.SP_MAX).getVal();
+    
+            //判断自身的效果列表里，是否存在封印效果
+            let statusEffects = self.getEffect(function (ef) {
+                return ef.name ==='Status' && ef.params.stopSkill===true
+            });
+            if(statusEffects && statusEffects.length > 0){
+                can = false;
+            }
+            return can;
+        },
+    
+        /**
          * 角色是否可以进行行动
          * @returns {boolean}
          */
@@ -209,11 +225,11 @@ let Hero = oop.defineClass({
             var self = this;
             let skillIndex = 0; //默认是普通攻击（0技能）
             /*
-                1.获取自己怒气值，如果满了，则触发1技能
+                如果满足大招要求（怒气、无封印)，则触发1技能
              */
-            if(self.getAttr(HeroOtherAttributes.SP).getVal()>=self.getAttr(HeroOtherAttributes.SP_MAX).getVal()){
-                
-                logger.debug(`[${self}]怒气满，准备发动主动技能!`)
+            // if(self.getAttr(HeroOtherAttributes.SP).getVal()>=self.getAttr(HeroOtherAttributes.SP_MAX).getVal()){
+            if(self.canBigSkill()){
+                logger.debug(`[${self}]，准备发动主动技能!`)
                 skillIndex = 1;
             }
             //释放技能（注意普通攻击也被当做技能处理，固定为0技能）

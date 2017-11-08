@@ -7,7 +7,7 @@
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const logger = require("../../log/logger");
-const {delegateEvent} = require("../util/event");
+const {delegateEvent,unDelegateEvent} = require("../util/event");
 var Player = oop.defineClass({
     super:undefined,
     constructor:function({
@@ -50,6 +50,13 @@ var Player = oop.defineClass({
          */
         watch:function (object) {
             delegateEvent(object,this);
+        },
+        /**
+         * 取消对对象的关注，并取消订阅关系
+         * @param object
+         */
+        unWatch:function (object) {
+            unDelegateEvent(object,this);
         }
     }
 });
