@@ -42,8 +42,13 @@ Vue.filter('displayEvent', function (evtObject) {
             text = "";
         }
     }
-    else if(effect && effect.name==='damageByATKAndDEF'){
-        text=undefined;
+    else if(effect){
+        if(effect.name==='damageByATKAndDEF'){
+            text=undefined;
+        }else{
+            text=`[${who.name}]${type==2?"新增":"移除"}[${effect.name}]效果`;
+        }
+        
     }else if(attr){
         if(attr==="HP"){
             if(attrChanged<0){

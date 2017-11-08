@@ -63,7 +63,7 @@ var SkillItem = oop.defineClass({
         self.targetChooser = getChooser(targetChooserName);
         self.targetChooserParams = targetChooserParams;
         
-        self.effects =effects; //效果项目列表。注意这里的效果，并不是效果实例，而是描述效果的类型和强度参数等 {effectName, effectDesc,effectParams}
+        self.effects =effects; //效果项目列表。注意这里的效果，并不是效果实例，而是描述效果的类型和强度参数等 {effectName, effectDesc,effectParams,effectPossibility}
         
     },
     prototype:{
@@ -81,7 +81,7 @@ var SkillItem = oop.defineClass({
             // }else{
                 //否则根据effect的信息，以及外部传入的自定义模板函数来获取
                 let content =[];
-                self.effects.forEach(({effectName,effectParams,customToStringTml})=>{
+                self.effects.forEach(({effectName,effectParams,customToStringTml,effectPossibility})=>{
                     //创建一个效果实例
                     let ef = getEffect(effectName,self.levelCur.val,context,effectParams);
                     content.push(customToStringTml?customToStringTml(ef):ef.toString())
@@ -93,10 +93,12 @@ var SkillItem = oop.defineClass({
          * 添加一个效果项
          * @param effectName
          * @param effectParams
+         * @param customToStringTml
+         * @param effectPossibility:效果触发几率
          */
-        addEffectItem:function (effectName,effectParams,customToStringTml) {
+        addEffectItem:function (effectName,effectParams,customToStringTml,effectPossibility) {
           var self = this;
-          self.effects.push({effectName,effectParams,customToStringTml});
+          self.effects.push({effectName,effectParams,customToStringTml,effectPossibility});
         },
         /**
          * 安装技能项
@@ -115,16 +117,29 @@ var SkillItem = oop.defineClass({
                     //对每一个对象进行处理
                     targets.forEach((target)=>{
                         //看概率
+                        logger.debug(`判断skillItem[${self.toString()}]在概率[${self.probability}/1000]下是否触发`);
                         let happenSucceed = isSingleHappen(self.probability);
                         if(happenSucceed) {
                             //然后进行效果安装
                             //首先获取技能项里都有哪些效果元数据
-                            self.effects.forEach(({effectName, effectParams, customToStringTml}) => {
+                            self.effects.forEach(({effectName, effectParams, customToStringTml,effectPossibility}) => {
+                                logger.debug(`效果项[${effectName}]：概率[${effectPossibility}/1000]`);
+                                //如果效果也定义了触发几率
+                                if(effectPossibility!==undefined){
+                                    logger.debug(`效果项[${effectName}]在概率[${effectPossibility}/1000]下是否触发`);
+                                    if(!isSingleHappen(effectPossibility)){
+                                        logger.debug(`效果项[${effectName}]在概率[${effectPossibility}/1000]下没有触发`);
+                                        return;
+                                    }
+                                }
                                 //创建一个效果实例
                                 let ef = getEffect(effectName, self.levelCur.val, context, effectParams);
                                 //安装效果
                                 target.installEffect(self.parent.holder, ef);
                             })
+                        }
+                        else{
+                            logger.debug(`技能项[${self.toString()}]在概率[${self.probability}/1000]下没有触发`);
                         }
                     });
                 }
@@ -167,6 +182,7 @@ var Skill = oop.defineClass({
                      installCycle, //(可空)在什么生命周期去触发里面的effect的install
                      targetChooserName, //一个实现了targetChooser基类的对象的名字
                      targetChooserParams,//chooser需要的参数
+                     effects,//效果列表
                      }
                     */
     }){

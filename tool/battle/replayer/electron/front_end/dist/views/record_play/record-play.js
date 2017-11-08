@@ -154,7 +154,7 @@ module.exports={
     
                     var rounds = self.recordData.detail.ticks;
                     var ticks = rounds[self.currentRound];
-                    var frames = ticks[self.currentTick];
+                    var frames = ticks?ticks[self.currentTick]:undefined;
                     let jumpFrame=false;//是否跳过本帧，不通过timer直接进入下一帧(用于跳过一些不需要展示的frame)
                     let changeTurn = false;//当前是回合衔接处（影响停顿时间）
                     //如果暂停了，取消定时器

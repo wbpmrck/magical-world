@@ -148,6 +148,11 @@ var Effect = oop.defineClass({
 });
 
 var getEffect=function (effectName,level,worldContext, params) {
+    
+    //todo:因为部分效果会利用params来保存自己的一些状态，所以必须保证params参数是一个完全独立的pojo,每个effect独享
+    //这里使用序列化来处理
+    params = JSON.parse(JSON.stringify(params));
+    
     let cons = require(`./implement/${effectName}`);
     let ef = new cons({
         // name:effectName,

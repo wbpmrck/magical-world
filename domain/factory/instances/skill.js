@@ -8,9 +8,9 @@ const {WordLifeCycle,BattleEvents,HeroEvents} = require("../../mechanism/lifeCyc
 const {SkillItem,Skill,SkillType} = require("../../skill/skill");
 const {HeroBaseAttributes,HeroDeriveAttributes,HeroOtherAttributes} = require("../../mechanism/role/attributeRule");
 const {ref,seed} = require("../factory");
+const statusEnum = require("../../effect/implement/statusEnum");
 
 module.exports={
-    //定义hero工厂可以创建的实例列表
     instances:[
         {
             singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
@@ -140,6 +140,59 @@ module.exports={
                                         increase:'linear',//等级提升，atk增长函数
                                         atkRatePerLevel:200,//每提升1级，多20% atk参与计算
                                         ignoreDEF:1000, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"雷暴1",
+            constructor:Skill,
+            params:[
+                {
+                    levelCur:1, //number，表示当前等级
+                    levelMax:10, //number，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },{
+                    type:SkillType.ACTIVE,// SkillType 枚举，表示主动/被动
+                    id:1, //技能id
+                    name:"雷暴1", //技能名称
+                    desc:"使用时,对所有敌人造成90%ATK的物理伤害，并有30%几率眩晕敌人2回合", //技能描述
+                    items:[
+                        {
+                            id:seed(), //技能项id
+                            probability:1000,//Integer 对象，表示成功释放概率
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
+                            targetChooserName:"allEnemyChooser", //选择所有活着的敌人
+                            targetChooserParams:{alive:true},//chooser需要的参数
+                            effects:[
+                                {
+                                    //造成无视防御的伤害
+                                    effectName:"damageByATKAndDEF",
+                                    effectParams:{
+                                        isMagic:false, //是否魔法攻击（决定计算参数是ATK还是MATK)
+                                        canFlee:false, //无法躲避，必中
+                                        atkRate:1000,// ATK按照1000/1000倍率 计算（1倍）
+                                        increase:'linear',//等级提升，atk增长函数
+                                        atkRatePerLevel:200,//每提升1级，多20% atk参与计算
+                                        ignoreDEF:1000, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
+                                    }
+                                },
+                                {
+                                    //概率造成眩晕
+                                    effectName:"status",
+                                    effectPossibility:300,//眩晕概率
+                                    effectParams:{
+                                        id:seed(), //技能项id
+                                        removeAfterBattle:true,
+                                        status:statusEnum.Dizzy, //状态：眩晕
+                                        continueTurn:2, //回合数
+                                        stopAction:true,
+                                        stopSkill:true,
                                     }
                                 }
                             ]

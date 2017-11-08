@@ -57,7 +57,7 @@
         - (DONE)Mutation
             - 状态修改
             - 对英雄属性、效果的修改，都在Mutation里
-            - (ing)战斗报告里，属性变化事件，订阅mutation而不是attrChange来完成（因为需要remark信息)
+            - (DONE)战斗报告里，属性变化事件，订阅mutation而不是attrChange来完成（因为需要remark信息)
         - (DONE)定义战斗流程
             - 能量槽、主动、被动技能
         - (DONE)完成单元测试，能够后台进行完整的对战流程

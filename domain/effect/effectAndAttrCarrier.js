@@ -38,7 +38,7 @@ var EffectAndAttrCarrier = oop.defineClass({
         removeBattleEffects:function () {
             var self = this;
             
-            for(var i=0,j=self.effects.length;i<j;i++){
+            for(var i=self.effects.length-1;i>=0;i--){
                 var item = self.effects[i];
                 if(item.params.removeAfterBattle){
                     self.uninstallEffect(item);

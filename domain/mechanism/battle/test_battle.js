@@ -70,12 +70,13 @@ describe("Battle", function () {
         
         fs.writeFileSync(beginfile,bat.toJSONString());
     
+        //检查被动技能效果持续回合
         bat.on(BattleEvents.TURN_BEGIN,function (curTurn) {
             if(curTurn<=3){
-                expect(hero1.effects.length).to.eql(2);
+                expect(hero1.effects.filter((ef)=>{return ef.name=='AttributeModifyByPercent'}).length).to.eql(2);
             }else{
                 //3回合之后，所有英雄身上应该没有效果
-                expect(hero1.effects.length).to.eql(0);
+                expect(hero1.effects.filter((ef)=>{return ef.name=='AttributeModifyByPercent'}).length).to.eql(0);
             }
         });
         

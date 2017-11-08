@@ -72,16 +72,16 @@ module.exports={
                     name:`地狱游侠1`,//英雄名称
                     skills:[
                         ref({key:'普攻1'}),
-                        ref({key:'狂击1'}),
+                        ref({key:'雷暴1'}),
                         ref({key:'狂热1'}),
                     ],
                     raceCampCode:RACES.HELL.code, //种族&阵营编号
                     jobCode:JOBS.KNIGHT.code, //职业编号
                     starLevel:1,//number,星数
                     rawAttributes:{
-                        [HeroBaseAttributes.STR]:20,
+                        [HeroBaseAttributes.STR]:30,
                         [HeroBaseAttributes.AGI]:70,
-                        [HeroBaseAttributes.VIT]:20,
+                        [HeroBaseAttributes.VIT]:24,
                         [HeroBaseAttributes.INT]:20,
                         [HeroBaseAttributes.DEX]:10,
                         [HeroBaseAttributes.LUK]:150,
