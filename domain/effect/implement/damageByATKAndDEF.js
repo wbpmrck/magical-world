@@ -117,7 +117,8 @@ var DamageByATKAndDEF = oop.defineClass({
                 function doDamage() {
                     let d = 0;
                     
-                    let remark={};//额外的备注信息
+                    let remark={
+                    };//额外的备注信息
     
                     logger.debug(`准备计算伤害`);
                     

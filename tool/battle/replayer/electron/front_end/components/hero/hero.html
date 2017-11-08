@@ -1,5 +1,5 @@
 
-<div class="hero outline">
+<div class="hero" :class="{active:curActor===heroData.id,flee:currentUIState==='flee',cri:currentUIState==='cri',dead:isDead,'hp-add':currentUIStateDesc=='HP_ADD','hp-dec':currentUIStateDesc=='HP_DEC','sp-add':currentUIStateDesc=='SP_ADD','sp-dec':currentUIStateDesc=='SP_DEC',}">
 
     <div class="hero-info">
         <div class="level">
@@ -14,17 +14,17 @@
 
         <DataBar text="HP" :value="heroData.attrMap.HP" :total-value="heroData.attrMap.HP_MAX" color="red" bg-color="white"></DataBar>
         <DataBar text="SP" :value="heroData.attrMap.SP" :total-value="heroData.attrMap.SP_MAX" color="blue" bg-color="white"></DataBar>
-        <DataBar v-show="battleEnd" text="总输出" :value="heroData.total.damage" :total-value="heroData.total.max_damage" color="#EEB62F" bg-color="white"></DataBar>
-        <DataBar v-show="battleEnd" text="总治疗" :value="heroData.total.heal" :total-value="heroData.total.max_heal" color="#A5D6D8" bg-color="white"></DataBar>
+        <DataBar v-show="battleEnd" text="dmg" :value="heroData.total.damage" :total-value="heroData.total.max_damage" color="#EEB62F" bg-color="white"></DataBar>
+        <DataBar v-show="battleEnd" text="heal" :value="heroData.total.heal" :total-value="heroData.total.max_heal" color="#A5D6D8" bg-color="white"></DataBar>
 
     </div>
 
-    <div class="hero-effects outline">
+    <div class="hero-effects">
         <ul>
             <li v-for="effect in heroData.effects">{{effect}}</li>
         </ul>
     </div>
-    <div class="hero-log outline">
+    <div class="hero-log">
         <ul>
             <li v-for="evt in heroData.logs">{{evt|displayEvent}}</li>
         </ul>

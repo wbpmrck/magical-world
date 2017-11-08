@@ -71,9 +71,11 @@ let Hero = oop.defineClass({
                }else{
                    if(oldTotal<=0){
                        logger.debug(`英雄复活:[${self}]`);
+                       self.emit(HeroEvents.BEFORE_HERO_REBORN);
+                       //设置死亡标记
+                       self.isDead = false;
+                       self.emit(HeroEvents.AFTER_HERO_REBORN);
                    }
-                   //设置死亡标记
-                   self.isDead = false;
                }
            }
         });
@@ -264,11 +266,14 @@ let Hero = oop.defineClass({
             logger.debug(`[${self.toString()}]准备接收mutation:${JSON.stringify(mutation)}`);
     
             self.emit(HeroEvents.BEFORE_MUTATION,from,mutation,remark);
+            
+            let mutationResult = {};//key:attrName value:value after mutation
             //对每一个要修改的属性,进行修改
             for(var attName in mutation){
                 self.getAttr(attName).updateAdd(mutation[attName]);
+                mutationResult[attName]=self.getAttr(attName).getVal();
             }
-            self.emit(HeroEvents.AFTER_MUTATION,from,mutation,remark);
+            self.emit(HeroEvents.AFTER_MUTATION,from,mutation,remark,mutationResult);
             
         },
     

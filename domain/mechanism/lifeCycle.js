@@ -55,6 +55,9 @@ const HeroEvents={
     BEFORE_HERO_DIE:iota++,
     AFTER_HERO_DIE:iota++,
     
+    BEFORE_HERO_REBORN:iota++,
+    AFTER_HERO_REBORN:iota++,
+    
     AFTER_HERO_FLEE:iota++, //闪避别人的进攻时 (进攻者,effect)
     AFTER_HERO_MISS:iota++, //攻击MISS的时候 (闪避者,effect)
 };

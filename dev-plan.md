@@ -31,9 +31,24 @@
                     - battle详情，记录战斗详细过程(做动画回放)
                 - (ing)开发图形界面，根据battle.detail里的信息，完整展示战斗过程
                     - (DONE)增加伤害、治疗统计
-                    - 需要实现battleDetail需要的各种对象的toJSON(option)方法
+                    - （DONE)需要实现battleDetail需要的各种对象的toJSON(option)方法
                         - 根据输入参数，决定序列化的粒度粗细
                         - 最好还可以实现fromJSON(context,json)方法
+                    - (DONE)把action,mutation之间的动画播放间隔加上
+                    - (DONE)实现躲避、暴击、受到伤害等效果的展示
+                        - (DONE)攻击者：边框变色，卡牌变大，位移
+                        - (DONE)所有事件日志显示适配
+                            - 收到伤害
+                            - 躲避
+                            - 被暴击
+                        - (DONE)属性变化
+                            - 数值增加:
+                                - 绿色数字上浮
+                            - 数值减少:
+                                - 红色数字落地
+                        - (DONE)躲避:边框绿色闪过，日志增加
+                        - (DONE)暴击:剧烈抖动，日志增加
+
         - (DONE)Action
             - 英雄行为
             - 对技能的使用，都在Action里
@@ -45,7 +60,7 @@
             - (ing)战斗报告里，属性变化事件，订阅mutation而不是attrChange来完成（因为需要remark信息)
         - (DONE)定义战斗流程
             - 能量槽、主动、被动技能
-        - 完成单元测试，能够后台进行完整的对战流程
+        - (DONE)完成单元测试，能够后台进行完整的对战流程
 
     - (ing)开发基础技能体系
         - (DONE)完善主动、被动技能的触发方式
@@ -56,9 +71,9 @@
         - 完善测试用例
             - chooser 测试
             - effect 测试
-        - 问题解决
-            - HP,HP_MAX(SP,SP_MAX)之间的关系，还未实现
-                - 当MAX变化的时候，需要自动更新HP的值，如果HP>HP_MAX,需要修改
+        - (DONE)问题解决
+            - (DONE)HP,HP_MAX(SP,SP_MAX)之间的关系，还未实现
+                - (DONE)当MAX变化的时候，需要自动更新HP的值，如果HP>HP_MAX,需要修改
 
 
     - 开发用户、物品、背包体系

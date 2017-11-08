@@ -48,7 +48,7 @@ let Action = oop.defineClass({
             return {
                 eventCode:self.eventCode,
                 who:self.who?self.who.toJSONObject({serializeLevel:1}):undefined, //只需要最简单的英雄信息，用于界面展示
-                param:self.param?self.param.toJSONObject({serializeLevel:1}):undefined,
+                param:self.param?( self.param.toJSONObject?self.param.toJSONObject({serializeLevel:1}):self.param ):undefined,
             }
         },
         toString:function () {
@@ -76,6 +76,7 @@ let Mutation = oop.defineClass({
         
         attr,//发生变化的属性  【type==ATTR_CHANGE时有效】
         attrChanged,//属性变化量(+-)  【type==ATTR_CHANGE时有效】
+        attrTotal,
     }){
         var self = this;
         
@@ -86,6 +87,7 @@ let Mutation = oop.defineClass({
         self.effect = effect;
         self.attr = attr;
         self.attrChanged = attrChanged;
+        self.attrTotal = attrTotal;
         
     },
     prototype:{
@@ -101,7 +103,8 @@ let Mutation = oop.defineClass({
                 effect:self.effect===undefined?undefined:self.effect.toJSONObject({serializeLevel:1}),
                 attr:self.attr,
                 // attr:self.attr===undefined?undefined:self.attr.name,
-                attrChanged:self.attrChanged===undefined?undefined:self.attrChanged
+                attrChanged:self.attrChanged===undefined?undefined:self.attrChanged,
+                attrTotal:self.attrTotal===undefined?undefined:self.attrTotal
             }
         },
         toString:function () {
@@ -186,7 +189,7 @@ let BattleDetail =oop.defineClass({
             let action = new Action({who,eventCode,param});
             
             //非回合开始事件
-            if(eventCode !== BattleEvents.TURN_BEGIN){
+            if(eventCode !== BattleEvents.TURN_BEGIN && eventCode !== BattleEvents.BATTLE_BEGIN ){
                 self.ticks[self.ticks.length-1].push([action]); //新开一个时间刻度，起始是触发该时刻的action
             }else{
                 self.ticks.push([[action]]);
@@ -202,7 +205,8 @@ let BattleDetail =oop.defineClass({
             effect,//被添加/移除的效果 【type!=ATTR_CHANGE时有效】
     
             attr,//发生变化的属性  【type==ATTR_CHANGE时有效】
-            attrChanged//属性变化量(+-)  【type==ATTR_CHANGE时有效】
+            attrChanged,//属性变化量(+-)  【type==ATTR_CHANGE时有效】
+            curTotal //变化后的属性值 (当前存在属性上下限的时候，attrChanged仍然保留希望更新的数值，而curTotal表示更新后的实际总值)
         ) {
             var self = this;
             let mutation = new Mutation({
@@ -213,6 +217,7 @@ let BattleDetail =oop.defineClass({
                 effect,
                 attr,
                 attrChanged,
+                attrTotal:curTotal,
             });
             let curTurn =self.ticks[self.ticks.length-1];
             curTurn[curTurn.length-1].push(mutation); //当前时刻事件的末尾，追加mutation
@@ -301,19 +306,26 @@ let Battle = oop.defineClass({
                 self.status = BattleStatus.END;
             });
             
-            self.on(BattleEvents.TURN_BEGIN,function () {
-                self.battleDetail.addAction(BattleEvents.TURN_BEGIN);
+            self.on(BattleEvents.TURN_BEGIN,function (curTurn) {
+                self.battleDetail.addAction(BattleEvents.TURN_BEGIN,undefined,curTurn);
             });
            
-            self.on(BattleEvents.TURN_END,function () {
-                self.battleDetail.addAction(BattleEvents.TURN_END);
+            self.on(BattleEvents.TURN_END,function (curTurn) {
+                self.battleDetail.addAction(BattleEvents.TURN_END,undefined,curTurn);
+            });
+            self.on(BattleEvents.BATTLE_BEGIN,function () {
+                self.battleDetail.addAction(BattleEvents.BATTLE_BEGIN,undefined,undefined);
+            });
+           
+            self.on(BattleEvents.BATTLE_END,function () {
+                self.battleDetail.addAction(BattleEvents.BATTLE_END,undefined,undefined);
             });
            
             
             // let _handleAttrChange=function (who,attr,oldTotal,newTotal) {
-            let _handleAttrChange=function (remark,who,attr,changed) {
+            let _handleAttrChange=function (remark,who,attr,changed,curTotal) {
                 // self.battleDetail.addMutation(MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,newTotal-oldTotal);
-                self.battleDetail.addMutation(remark,MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,changed);
+                self.battleDetail.addMutation(remark,MUTATION_TYPE.ATTR_CHANGE,who,undefined,undefined,attr,changed,curTotal);
             };
             let _handleEffectAdd=function (who,from,effect) {
                 self.battleDetail.addMutation(undefined,MUTATION_TYPE.EFFECT_ADDED,who,from,effect);
@@ -325,7 +337,71 @@ let Battle = oop.defineClass({
                 //增加作战记录，某个英雄开始行动
                 self.battleDetail.addAction(event,who,skillToRelease);
             };
-            let _handleMutation=function (from,mutation,to,remark) {
+    
+    
+            /**
+             * 构造一个可以序列化自身的躲闪事件对象（这样是为了减少内存里每个对象都保存toJSONObject的开销
+             * @param attacker
+             * @param effect
+             * @constructor
+             */
+            function FleeParam({attacker,effect}) {
+                var self = this;
+                
+                self.attacker = attacker;
+                self.effect = effect;
+            }
+            FleeParam.prototype.toJSONObject=function({serializeLevel}){
+                return {
+                    attacker:this.attacker.toJSONObject({serializeLevel}),
+                    effect:this.effect.toJSONObject({serializeLevel}),
+                }
+            };
+            function MissParam({missWho,effect}) {
+                var self = this;
+                
+                self.missWho = missWho;
+                self.effect = effect;
+            }
+            MissParam.prototype.toJSONObject=function({serializeLevel}){
+                return {
+                    missWho:this.missWho.toJSONObject({serializeLevel}),
+                    effect:this.effect.toJSONObject({serializeLevel}),
+                }
+            };
+            /**
+             *
+             * @param event
+             * @param who
+             * @param attacker:躲避的谁的攻击
+             * @param effect：躲避掉的效果
+             * @private
+             */
+            let _handleFlee=function (event,who,attacker,effect) {
+                //增加作战记录，某个英雄开始行动
+                self.battleDetail.addAction(event,who,new FleeParam({attacker,effect}));
+            };
+            /**
+             *
+             * @param event
+             * @param who
+             * @param missWho:没有打中谁
+             * @param effect：Miss的效果
+             * @private
+             */
+            let _handleMiss=function (event,who,missWho,effect) {
+                //增加作战记录，某个英雄开始行动
+                self.battleDetail.addAction(event,who,new MissParam({missWho,effect}));
+            };
+            let _handleDie=function (event,who) {
+                //增加作战记录，某个英雄死亡
+                self.battleDetail.addAction(event,who);
+            };
+            let _handleReborn=function (event,who) {
+                //增加作战记录，某个英雄死亡
+                self.battleDetail.addAction(event,who);
+            };
+            let _handleMutation=function (from,mutation,to,remark,mutationResult) {
                 from = from.source;
             
                     
@@ -346,7 +422,7 @@ let Battle = oop.defineClass({
                         p === HeroOtherAttributes.SP ||
                         p === HeroOtherAttributes.SP_MAX
                     ){
-                        _handleAttrChange(remark,to,p,mutation[p]);
+                        _handleAttrChange(remark,to,p,mutation[p],mutationResult[p]);
                     }
                 }
             };
@@ -362,8 +438,20 @@ let Battle = oop.defineClass({
                 hero.on(EffectAndAttrCarrierLifeEvent.BEFORE_UNINSTALL_EFFECT,function(ef){
                     _handleEffectRemove(this,ef.source,ef);
                 });
-                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation,remark){
-                    _handleMutation(from,mutation,this,remark);
+                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation,remark,mutationResult){
+                    _handleMutation(from,mutation,this,remark,mutationResult);
+                });
+                hero.on(HeroEvents.AFTER_HERO_MISS,function(missWho,effect){
+                    _handleMiss(HeroEvents.AFTER_HERO_MISS,this,missWho,effect);
+                });
+                hero.on(HeroEvents.AFTER_HERO_FLEE,function(attacker,effect){
+                    _handleFlee(HeroEvents.AFTER_HERO_FLEE,this,attacker,effect);
+                });
+                hero.on(HeroEvents.AFTER_HERO_DIE,function(){
+                    _handleDie(HeroEvents.AFTER_HERO_DIE,this);
+                });
+                hero.on(HeroEvents.AFTER_HERO_REBORN,function(){
+                    _handleReborn(HeroEvents.AFTER_HERO_REBORN,this);
                 });
                 // hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
                 //
@@ -395,6 +483,7 @@ let Battle = oop.defineClass({
                 hero.on(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,function(ef){
                     _handleEffectRemove(this,ef.source,ef);
                 });
+                
                 // hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
                 //
                 //     //只记录:hp,sp相关属性变化日志
@@ -407,8 +496,18 @@ let Battle = oop.defineClass({
                 //         _handleAttrChange(this,attr,oldTotal,total);
                 //     }
                 // });
-                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation,remark){
-                    _handleMutation(from,mutation,this,remark);
+                hero.on(HeroEvents.AFTER_MUTATION,function(from,mutation,remark,mutationResult){
+                    _handleMutation(from,mutation,this,remark,mutationResult);
+                });
+    
+                hero.on(HeroEvents.AFTER_HERO_MISS,function(missWho,effect){
+                    _handleMiss(HeroEvents.AFTER_HERO_MISS,this,missWho,effect);
+                });
+                hero.on(HeroEvents.AFTER_HERO_FLEE,function(attacker,effect){
+                    _handleFlee(HeroEvents.AFTER_HERO_FLEE,this,attacker,effect);
+                });
+                hero.on(HeroEvents.AFTER_HERO_DIE,function(){
+                    _handleDie(HeroEvents.AFTER_HERO_DIE,this);
                 });
                 //代理内部hero的所有事件
                 // hero.on("*",function () {
@@ -443,7 +542,7 @@ let Battle = oop.defineClass({
             self.process.turns++;
             logger.debug(`\r\n \r\n 准备开始第${self.process.turns}回合\r\n`);
             //回合开始
-            self.emit(BattleEvents.TURN_BEGIN);
+            self.emit(BattleEvents.TURN_BEGIN,self.process.turns);
     
             //初始化当前回合已行动队列
             self.process.activeQueue=[];
@@ -464,7 +563,7 @@ let Battle = oop.defineClass({
                     //如果没有行动人，说明这一个回合该结束了
                     logger.debug(`准备结束第${self.process.turns}回合 \r\n \r\n`);
                     //回合结束
-                    self.emit(BattleEvents.TURN_END);
+                    self.emit(BattleEvents.TURN_END,self.process.turns);
                     break;
                 }
             }

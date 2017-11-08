@@ -214,6 +214,17 @@ module.exports={
             attributeCarrier.addAttr(deriveAttr);
         }
         
+        
+        //设置属性直接关系
+        let hp = attributeCarrier.getAttr(HeroOtherAttributes.HP);
+        if(hp){
+            hp.setValueRange({min:0,max:attributeCarrier.getAttr(HeroDeriveAttributes.HP_MAX)});
+        }
+        let sp = attributeCarrier.getAttr(HeroOtherAttributes.SP);
+        if(sp){
+            sp.setValueRange({min:0,max:attributeCarrier.getAttr(HeroOtherAttributes.SP_MAX)});
+        }
+        
         // // 基础属性
         // let strArr=new Attribute(HeroBaseAttributes.STR,"力量",str);
         // let agiArr=new Attribute(HeroBaseAttributes.AGI,"敏捷",agi);

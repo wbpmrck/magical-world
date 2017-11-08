@@ -29,6 +29,32 @@ var Attribute = oop.defineClass({
           return `${self.name}:${self.val.total()}`;
         },
         /**
+         * 设置表示取值范围的属性attr（或Number)（如果变更，本属性的值会随之调整）
+         * @param min
+         * @param max
+         */
+        setValueRange:function ({min,max}) {
+            var self = this;
+            
+            let minVal = min.getVal?min.getVal():min;
+            let maxVal = max.getVal?max.getVal():max;
+            
+            self.val.changeRawRange({min:minVal,max:maxVal});
+            
+            //订阅变化
+            if(min.on){
+                min.on("valueChange",function (total,raw,modify,val,oldTotal) {
+                    self.val.changeRawRange({min:total,max:maxVal});
+                });
+            }
+            if(max.on){
+                max.on("valueChange",function (total,raw,modify,val,oldTotal) {
+                    self.val.changeRawRange({min:minVal,max:total});
+                });
+            }
+            
+        },
+        /**
          * 获取当前值
          * @returns {*|Number}
          */

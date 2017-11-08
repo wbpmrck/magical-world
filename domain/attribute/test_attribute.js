@@ -85,4 +85,25 @@ describe("Attribute", function () {
     });
     
     
+    it("should can set value range", function () {
+        
+        let hp = new Attribute("hp","当前hp",10); //init a val,raw = 10
+        let hp_max = new Attribute("hp_max","最大hp",20); //init a val,raw = 20
+        
+        expect(hp.getVal()).to.eql(10);
+        expect(hp_max.getVal()).to.eql(20);
+        
+        hp.setValueRange({min:0,max:hp_max});
+        
+        hp.updateAdd(20);
+        expect(hp.getVal()).to.eql(20); //arrive max
+    
+        hp.updateAdd(-120);
+        expect(hp.getVal()).to.eql(0);
+    
+        hp.updateAdd(10);
+        expect(hp.getVal()).to.eql(10); //arrive max
+        
+    });
+    
 });
