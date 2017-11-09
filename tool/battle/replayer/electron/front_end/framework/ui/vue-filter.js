@@ -51,7 +51,7 @@ Vue.filter('displayEvent', function (evtObject) {
         
     }else if(attr){
         if(attr==="HP"){
-            if(attrChanged<0){
+            if(attrChanged<=0){
                if(remark && remark.cri){
                    text=`[${who.name}]受到${Math.abs(attrChanged)}点暴击伤害`;
                }else{

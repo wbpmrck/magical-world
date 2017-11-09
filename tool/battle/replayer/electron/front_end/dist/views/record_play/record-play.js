@@ -206,11 +206,15 @@ module.exports={
                                 }else{
                                     //对象添加效果
                                     if(frameEvent.type==2){
-                                        happenHero.effects.unshift(frameEvent.effect.id+frameEvent.effect.name);
+                                        happenHero.effects.unshift(frameEvent.effect);
+                                        // happenHero.effects.unshift(frameEvent.effect.id+frameEvent.effect.name);
                                     }
                                     //对象删除效果
                                     if(frameEvent.type==3){
-                                        happenHero.effects.remove(frameEvent.effect.id+frameEvent.effect.name);
+                                        // happenHero.effects.remove(frameEvent.effect.id+frameEvent.effect.name);
+                                        happenHero.effects.remove(function (ef) {
+                                            return ef.id === frameEvent.effect.id
+                                        });
                                     }
                                 }
                             }

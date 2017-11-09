@@ -79,6 +79,7 @@ module.exports={
                                     //攻击力提升效果
                                     effectName:"attributeModifyByPercent",
                                     effectParams:{
+                                        icon:"atk-up",
                                         removeAfterBattle:true,
                                         attrName:HeroDeriveAttributes.ATK,
                                         continueTurn:3, //持续3回合
@@ -92,6 +93,7 @@ module.exports={
                                     //HP_MAX提升效果
                                     effectName:"attributeModifyByPercent",
                                     effectParams:{
+                                        icon:"hp-up",
                                         removeAfterBattle:true,
                                         attrName:HeroDeriveAttributes.HP_MAX,
                                         continueTurn:3, //3回合消失
@@ -179,7 +181,7 @@ module.exports={
                                         atkRate:1000,// ATK按照1000/1000倍率 计算（1倍）
                                         increase:'linear',//等级提升，atk增长函数
                                         atkRatePerLevel:200,//每提升1级，多20% atk参与计算
-                                        ignoreDEF:1000, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
+                                        ignoreDEF:0, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
                                     }
                                 },
                                 {
@@ -187,11 +189,117 @@ module.exports={
                                     effectName:"status",
                                     effectPossibility:300,//眩晕概率
                                     effectParams:{
-                                        id:seed(), //技能项id
+                                        icon:"dizzy",
                                         removeAfterBattle:true,
                                         status:statusEnum.Dizzy, //状态：眩晕
                                         continueTurn:2, //回合数
                                         stopAction:true,
+                                        stopSkill:true,
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"暴风雪1",
+            constructor:Skill,
+            params:[
+                {
+                    levelCur:1, //number，表示当前等级
+                    levelMax:10, //number，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },{
+                    type:SkillType.ACTIVE,// SkillType 枚举，表示主动/被动
+                    id:1, //技能id
+                    name:"暴风雪1", //技能名称
+                    desc:"使用时,对所有敌人造成90%ATK的魔法伤害，并有30%几率冰冻敌人2回合", //技能描述
+                    items:[
+                        {
+                            id:seed(), //技能项id
+                            probability:1000,//Integer 对象，表示成功释放概率
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
+                            targetChooserName:"allEnemyChooser", //选择所有活着的敌人
+                            targetChooserParams:{alive:true},//chooser需要的参数
+                            effects:[
+                                {
+                                    //造成无视防御的伤害
+                                    effectName:"damageByATKAndDEF",
+                                    effectParams:{
+                                        isMagic:true, //是否魔法攻击（决定计算参数是ATK还是MATK)
+                                        canFlee:false, //无法躲避，必中
+                                        atkRate:700,// ATK按照1000/1000倍率 计算（1倍）
+                                        increase:'linear',//等级提升，atk增长函数
+                                        atkRatePerLevel:200,//每提升1级，多20% atk参与计算
+                                        ignoreDEF:0, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
+                                    }
+                                },
+                                {
+                                    //概率造成冰冻
+                                    effectName:"status",
+                                    effectPossibility:300,//概率
+                                    effectParams:{
+                                        icon:"frozen",
+                                        removeAfterBattle:true,
+                                        status:statusEnum.Frozen, //状态：眩晕
+                                        continueTurn:2, //回合数
+                                        stopAction:true,
+                                        stopSkill:true,
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"封禁1",
+            constructor:Skill,
+            params:[
+                {
+                    levelCur:1, //number，表示当前等级
+                    levelMax:10, //number，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },{
+                    type:SkillType.ACTIVE,// SkillType 枚举，表示主动/被动
+                    id:1, //技能id
+                    name:"封禁1", //技能名称
+                    desc:"使用时,对所有敌人造成90%M_ATK的魔法伤害，并有50%几率沉默敌人2回合", //技能描述
+                    items:[
+                        {
+                            id:seed(), //技能项id
+                            probability:1000,//Integer 对象，表示成功释放概率
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
+                            targetChooserName:"allEnemyChooser", //选择所有活着的敌人
+                            targetChooserParams:{alive:true},//chooser需要的参数
+                            effects:[
+                                {
+                                    //造成伤害
+                                    effectName:"damageByATKAndDEF",
+                                    effectParams:{
+                                        isMagic:true, //是否魔法攻击（决定计算参数是ATK还是MATK)
+                                        canFlee:false, //无法躲避，必中
+                                        atkRate:700,// ATK按照1000/1000倍率 计算（1倍）
+                                        increase:'linear',//等级提升，atk增长函数
+                                        atkRatePerLevel:200,//每提升1级，多20% atk参与计算
+                                        ignoreDEF:0, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
+                                    }
+                                },
+                                {
+                                    //概率造成沉默
+                                    effectName:"status",
+                                    effectPossibility:500,//概率
+                                    effectParams:{
+                                        icon:"silence",
+                                        removeAfterBattle:true,
+                                        status:statusEnum.SILENCE, //状态：眩晕
+                                        continueTurn:2, //回合数
+                                        stopAction:false,
                                         stopSkill:true,
                                     }
                                 }

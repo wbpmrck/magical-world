@@ -11,7 +11,7 @@ const integer = require("../../value/integer");
 const {EffectEvents} = require("../effect");
 const {WordLifeCycle,CharLifeCycle} = require("../../mechanism/lifeCycle");
 const  {Hero,HeroEvents} = require("../../mechanism/role/hero");
-
+const {HeroBaseAttributes,HeroOtherAttributes} = require("../../mechanism/role/attributeRule");
 
 describe("statusEffect :", function () {
     beforeEach(function () {
@@ -55,8 +55,14 @@ describe("statusEffect :", function () {
                 INT:40,
                 DEX:50,
                 LUK:60,
-                SP:100,
-                SP_MAX:100,
+                [HeroOtherAttributes.HP]:40,
+                [HeroOtherAttributes.SP]:50,
+                [HeroOtherAttributes.SP_MAX]:50,
+                [HeroOtherAttributes.CRI_ATK]:0,
+                [HeroOtherAttributes.IGNORE_DEF]:0, //无视物理防御的比率(千分比)
+                [HeroOtherAttributes.IGNORE_M_DEF]:0, //无视魔法防御的比率(千分比)
+                [HeroOtherAttributes.REDUCE_ATK]:0, //减少物理伤害比率(千分比)
+                [HeroOtherAttributes.REDUCE_M_ATK]:0, //减少魔法伤害比率(千分比)
             }
         });
         
@@ -134,8 +140,14 @@ describe("statusEffect :", function () {
                 INT:40,
                 DEX:50,
                 LUK:60,
-                SP:100,
-                SP_MAX:100,
+                [HeroOtherAttributes.HP]:40,
+                [HeroOtherAttributes.SP]:50,
+                [HeroOtherAttributes.SP_MAX]:50,
+                [HeroOtherAttributes.CRI_ATK]:0,
+                [HeroOtherAttributes.IGNORE_DEF]:0, //无视物理防御的比率(千分比)
+                [HeroOtherAttributes.IGNORE_M_DEF]:0, //无视魔法防御的比率(千分比)
+                [HeroOtherAttributes.REDUCE_ATK]:0, //减少物理伤害比率(千分比)
+                [HeroOtherAttributes.REDUCE_M_ATK]:0, //减少魔法伤害比率(千分比)
             }
         });
         
@@ -214,8 +226,14 @@ describe("statusEffect :", function () {
                 INT:40,
                 DEX:50,
                 LUK:60,
-                SP:100,
-                SP_MAX:100,
+                [HeroOtherAttributes.HP]:40,
+                [HeroOtherAttributes.SP]:50,
+                [HeroOtherAttributes.SP_MAX]:50,
+                [HeroOtherAttributes.CRI_ATK]:0,
+                [HeroOtherAttributes.IGNORE_DEF]:0, //无视物理防御的比率(千分比)
+                [HeroOtherAttributes.IGNORE_M_DEF]:0, //无视魔法防御的比率(千分比)
+                [HeroOtherAttributes.REDUCE_ATK]:0, //减少物理伤害比率(千分比)
+                [HeroOtherAttributes.REDUCE_M_ATK]:0, //减少魔法伤害比率(千分比)
             }
         });
         

@@ -5,10 +5,11 @@
 var filter = require("../../framework/ui/vue-filter");
 
 
-Array.prototype.remove = function(val) {
-    var index = this.indexOf(val);
-    if (index > -1) {
-        this.splice(index, 1);
+Array.prototype.remove = function(filter) {
+    for(var i=this.length-1;i>=0;i--){
+        if(filter(this[i])){
+            this.splice(i,1)
+        }
     }
 };
 

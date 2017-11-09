@@ -9,7 +9,7 @@
  *
  *  注意：
  *  1、应该只把"影响hero行动方式"的状态放入status管理，目前包括（行动、大招）的控制
- *  2、其他的"状态"，比如燃烧、毒素，这种持续造成伤害的，可以设计其他的effect来实现
+ *  2、其他的"状态"，比如燃烧、毒素，这种有"外部物质"附加的状态，应该用单独的effect类来控制，可以继承自status类
  */
 
 
@@ -35,19 +35,19 @@ var Status = oop.defineClass({
     },
     prototype:{
     
-        //将对象内容完全转化为不附带循环引用的纯对象
-        toJSONObject:function ({serializeLevel}) {
-            var self = this;
-    
-            let {continueTurn,status,stopAction,stopSkill} = self.params;
-            if(serializeLevel === 1){
-                //只需要展示相关的信息
-                return {
-                    id:self.id,
-                    name:`${status}`,
-                }
-            }
-        },
+        // //将对象内容完全转化为不附带循环引用的纯对象
+        // toJSONObject:function ({serializeLevel}) {
+        //     var self = this;
+        //
+        //     let {continueTurn,status,stopAction,stopSkill} = self.params;
+        //     if(serializeLevel === 1){
+        //         //只需要展示相关的信息
+        //         return {
+        //             id:self.id,
+        //             name:`${status}`,
+        //         }
+        //     }
+        // },
         toString:function () {
             var self = this;
             let {continueTurn,status,stopAction,stopSkill} = self.params;

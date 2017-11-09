@@ -384,9 +384,29 @@ body,#root{
     background-image: url("../../res/image/star.png?__inline");
 }
 
+/*
+    效果展示
+ */
+
 .hero-effects{
+    border: solid 1px #673588;
     height: 40px;
+    overflow-y:auto;
+    overflow-x:hidden;
 }
+.hero-effects ul{
+}
+
+.hero-effects li{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+
+    margin: 2px;
+
+    background-size: contain;
+}
+
 .hero-log{
     height: 50px;
     overflow-y: scroll;
@@ -448,3 +468,4 @@ body,#root{
     line-height: 14px;
     font-size: 12px;
 }
+

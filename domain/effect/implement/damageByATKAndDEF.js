@@ -43,22 +43,22 @@ var DamageByATKAndDEF = oop.defineClass({
     },
     prototype:{
     
-        //将对象内容完全转化为不附带循环引用的纯对象
-        toJSONObject:function ({serializeLevel}) {
-            var self = this;
-        
-            if(serializeLevel === 1){
-                //只需要展示相关的信息
-                return {
-                    id:self.id,
-                    name:self.name,
-                }
-            }
-        },
+        // //将对象内容完全转化为不附带循环引用的纯对象
+        // toJSONObject:function ({serializeLevel}) {
+        //     var self = this;
+        //
+        //     if(serializeLevel === 1){
+        //         //只需要展示相关的信息
+        //         return {
+        //             id:self.id,
+        //             name:self.name,
+        //         }
+        //     }
+        // },
         toString:function () {
             var self = this;
-            let {isMagic,atkRate,atkRatePerLevel,ignoreDEF} = self.params;
-            return `造成基于${atkRate/10}%${isMagic?'M_ATK':'ATK'}的伤害${ignoreDEF?",无视%"+ignoreDEF/10+"防御":""}]`;
+            let {isMagic,atkRate,atkRatePerLevel,ignoreDEF,canFlee} = self.params;
+            return `造成基于${self.atkRate/10}%${isMagic?'M_ATK':'ATK'}的伤害${ignoreDEF?",无视%"+ignoreDEF/10+"防御":""}${canFlee?"":"(必中)"}]`;
         },
         /**
          * 根据等级计算参与计算的atk的比例
@@ -106,7 +106,9 @@ var DamageByATKAndDEF = oop.defineClass({
     
                 let cri = source.getAttr(HeroDeriveAttributes.CRI).getVal();
                 let cri_atk = source.getAttr(HeroOtherAttributes.CRI_ATK).getVal();
-                let reduce_atk = isMagic?target.getAttr(HeroOtherAttributes.REDUCE_M_ATK).getVal():target.getAttr(HeroOtherAttributes.REDUCE_M_ATK).getVal();
+                
+                let reduce_atk = isMagic?target.getAttr(HeroOtherAttributes.REDUCE_M_ATK).getVal():target.getAttr(HeroOtherAttributes.REDUCE_ATK).getVal();
+                let ignore_def = isMagic?source.getAttr(HeroOtherAttributes.IGNORE_M_DEF).getVal():target.getAttr(HeroOtherAttributes.IGNORE_DEF).getVal();
     
                 /**
                  * 计算"应得伤害"
@@ -120,20 +122,25 @@ var DamageByATKAndDEF = oop.defineClass({
     
                     logger.debug(`准备计算伤害`);
                     
-                    //如果是神圣攻击，则计算防御无视百分比
+                    //计算防御无视百分比
                     if(ignoreDEF){
-                        let rawDef = isMagic?target.getAttr(HeroDeriveAttributes.M_DEF).val.raw:target.getAttr(HeroDeriveAttributes.DEF).val.raw;
-                        def = parseInt(rawDef * ( (1000-ignoreDEF) /1000));
+                        ignore_def += ignoreDEF;
                     }
+                    
+                    //确定：参与计算"应得伤害"的 对方防御力
+                    def = parseInt(def * ( (1000-ignore_def) /1000));
+    
+    
+                    //确定：参与计算"应得伤害"的 攻击方攻击力
+                    atk = parseInt(atk * (self.atkRate /1000) );
+                    
                     
                     //应得伤害 = 攻击 - 防御
                     d = atk -def;
                     
-                    if(d<0){
+                    if(d<=0){
                         d =1; //最少造成1点伤害
                     }
-                    //加成计算
-                    
                     //如果是暴击
                     logger.debug(`判断是否暴击，暴击率[${cri/10}%]`);
                     if(isSingleHappen(cri)){

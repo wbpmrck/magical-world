@@ -19,6 +19,8 @@
  *  true:战斗结束时，会自动清除此类效果
  *  false:战斗结束时，效果可以不清（一些永久被动类技能可以使用）
  *
+ * icon:String
+ * 用于表示在UI展示中，效果的展示图标。最好是64X64 或者128X128 png
  */
 
 
@@ -63,22 +65,26 @@ var Effect = oop.defineClass({
         self.params = params; //由外部上下文来注入，效果的具体参数。这个参数由具体的效果自己来定义
         self.worldContext = worldContext; //世界上下文。主要用于了解世界发生的lifeCycle
         self.source = self.target = undefined; //效果的作用源、作用对象
-        self.listenerOnTurnEnd = undefined;//保留监听target的回合结束事件handlerId,用于取消监听
+        self.__listenerOnTurnEnd = undefined;//保留监听target的回合结束事件handlerId,用于取消监听
         
     },
     prototype:{
     
         //将对象内容完全转化为不附带循环引用的纯对象
-        toJSONObject:function () {
+        toJSONObject:function ({serializeLevel}) {
             var self = this;
         
-            //默认只展示相关的信息
-            return {
-                id:self.id,
-                name:self.name,
+            let {continueTurn,status,stopAction,stopSkill} = self.params;
+            if(serializeLevel === 1){
+                //只需要展示相关的信息
+                return {
+                    id:self.id,
+                    name:self.name,
+                    level:self.level.total(),
+                    params:self.params
+                }
             }
         },
-       
         /**
          * 当等级变化的时候会触发，子类应该重写这个方法
          * @param nowLevel
@@ -96,7 +102,7 @@ var Effect = oop.defineClass({
             
             //如果自己有持续回合数定义，则需要自行关注世界的回合事件，决定何时uninstall,离开target
             if(self.params.continueTurn!==undefined && self.params.continueTurn!='ever'){
-                self.listenerOnTurnEnd = self.worldContext.on(WordLifeCycle.TURN_END,(lifeCycleParam)=>{
+                self.__listenerOnTurnEnd = self.worldContext.on(WordLifeCycle.TURN_END,(lifeCycleParam)=>{
                     self.params.continueTurn--;
                     if(self.params.continueTurn<1){
                         self.target.uninstallEffect && self.target.uninstallEffect(self); //持续回合数到了，移除自身
@@ -114,9 +120,9 @@ var Effect = oop.defineClass({
             var self = this;
     
             this.source = this.target = undefined;
-            if(self.listenerOnTurnEnd){
-                self.worldContext && self.worldContext.off(self.listenerOnTurnEnd);
-                self.listenerOnTurnEnd=undefined; //清空订阅token
+            if(self.__listenerOnTurnEnd){
+                self.worldContext && self.worldContext.off(self.__listenerOnTurnEnd);
+                self.__listenerOnTurnEnd=undefined; //清空订阅token
             }
             this.emit(EffectEvents.UNINSTALLED,this); //发射事件，通知外部
         },

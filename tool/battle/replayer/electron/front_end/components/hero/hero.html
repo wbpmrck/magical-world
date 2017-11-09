@@ -21,7 +21,7 @@
 
     <div class="hero-effects">
         <ul>
-            <li v-for="effect in heroData.effects">{{effect}}</li>
+            <li v-for="effect in heroData.effects" :style="{backgroundImage:'url(../../res/image/'+effect.params.icon+'.png)'}"></li>
         </ul>
     </div>
     <div class="hero-log">

@@ -29,18 +29,18 @@ describe("Battle", function () {
         //先创建2个队伍，每个队伍6个英雄
         let hero1 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
         let hero2 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
-        let hero3 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
-        let hero4 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
-        let hero5 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
-        let hero6 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
+        let hero3 = make({key:"术士1"}).initOnPlayer(player_shinhwa);
+        let hero4 = make({key:"术士1"}).initOnPlayer(player_shinhwa);
+        let hero5 = make({key:"术士1"}).initOnPlayer(player_shinhwa);
+        let hero6 = make({key:"术士1"}).initOnPlayer(player_shinhwa);
         
         
-        let hero7 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
-        let hero8 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
-        let hero9 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
-        let hero10 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
-        let hero11 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
-        let hero12 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
+        let hero7 = make({key:"光战1"}).initOnPlayer(player_weatherpop);
+        let hero8 = make({key:"光战1"}).initOnPlayer(player_weatherpop);
+        let hero9 = make({key:"术士1"}).initOnPlayer(player_weatherpop);
+        let hero10 = make({key:"术士1"}).initOnPlayer(player_weatherpop);
+        let hero11 = make({key:"术士1"}).initOnPlayer(player_weatherpop);
+        let hero12 = make({key:"术士1"}).initOnPlayer(player_weatherpop);
         //
         //team1
         let team1 = new Team({
