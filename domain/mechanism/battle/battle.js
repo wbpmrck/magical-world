@@ -25,6 +25,20 @@ const BattleStatus ={
 const MAX_BATTLE_TURN = 20; //最大回合数
 
 
+/**
+ * 将对象的副本形式保留下来
+ * @param obj
+ * @returns {*}
+ */
+function pojo(obj) {
+    if(obj !== undefined && obj !== null && obj.toJSONObject){
+        return obj.toJSONObject({serializeLevel:1})
+    }else{
+        return obj;
+    }
+}
+
+
 let Action = oop.defineClass({
     super:undefined,
     constructor:function({
@@ -38,8 +52,8 @@ let Action = oop.defineClass({
         var self = this;
         
         self.eventCode = eventCode,
-        self.who = who;
-        self.param = param;
+        self.who = pojo(who);
+        self.param = pojo(param);
     },
     prototype:{
         //将对象内容完全转化为不附带循环引用的纯对象
@@ -47,9 +61,14 @@ let Action = oop.defineClass({
             var self = this;
             return {
                 eventCode:self.eventCode,
-                who:self.who?self.who.toJSONObject({serializeLevel:1}):undefined, //只需要最简单的英雄信息，用于界面展示
-                param:self.param?( self.param.toJSONObject?self.param.toJSONObject({serializeLevel:1}):self.param ):undefined,
+                who:self.who, //只需要最简单的英雄信息，用于界面展示
+                param:self.param,
             }
+            // return {
+            //     eventCode:self.eventCode,
+            //     who:self.who?self.who.toJSONObject({serializeLevel:1}):undefined, //只需要最简单的英雄信息，用于界面展示
+            //     param:self.param?( self.param.toJSONObject?self.param.toJSONObject({serializeLevel:1}):self.param ):undefined,
+            // }
         },
         toString:function () {
             var self = this;
@@ -80,14 +99,14 @@ let Mutation = oop.defineClass({
     }){
         var self = this;
         
-        self.type = type;
-        self.remark = remark;
-        self.who = who;
-        self.from = from;
-        self.effect = effect;
-        self.attr = attr;
-        self.attrChanged = attrChanged;
-        self.attrTotal = attrTotal;
+        self.type = pojo(type);
+        self.remark = pojo(remark);
+        self.who = pojo(who);
+        self.from = pojo(from);
+        self.effect = pojo(effect);
+        self.attr = pojo(attr);
+        self.attrChanged = pojo(attrChanged);
+        self.attrTotal = pojo(attrTotal);
         
     },
     prototype:{
@@ -98,14 +117,25 @@ let Mutation = oop.defineClass({
             return {
                 type:self.type,
                 remark:self.remark,
-                who:self.who.toJSONObject({serializeLevel:1}),
-                from:self.from?self.from.toJSONObject({serializeLevel:1}):undefined,
-                effect:self.effect===undefined?undefined:self.effect.toJSONObject({serializeLevel:1}),
+                who:self.who,
+                from:self.from,
+                effect:self.effect,
                 attr:self.attr,
                 // attr:self.attr===undefined?undefined:self.attr.name,
-                attrChanged:self.attrChanged===undefined?undefined:self.attrChanged,
-                attrTotal:self.attrTotal===undefined?undefined:self.attrTotal
+                attrChanged:self.attrChanged,
+                attrTotal:self.attrTotal
             }
+            // return {
+            //     type:self.type,
+            //     remark:self.remark,
+            //     who:self.who.toJSONObject({serializeLevel:1}),
+            //     from:self.from?self.from.toJSONObject({serializeLevel:1}):undefined,
+            //     effect:self.effect===undefined?undefined:self.effect.toJSONObject({serializeLevel:1}),
+            //     attr:self.attr,
+            //     // attr:self.attr===undefined?undefined:self.attr.name,
+            //     attrChanged:self.attrChanged===undefined?undefined:self.attrChanged,
+            //     attrTotal:self.attrTotal===undefined?undefined:self.attrTotal
+            // }
         },
         toString:function () {
             var self = this;

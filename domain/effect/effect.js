@@ -81,7 +81,7 @@ var Effect = oop.defineClass({
                     id:self.id,
                     name:self.name,
                     level:self.level.total(),
-                    params:self.params
+                    params:JSON.parse(JSON.stringify(self.params))
                 }
             }
         },

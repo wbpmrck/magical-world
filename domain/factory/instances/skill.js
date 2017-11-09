@@ -53,6 +53,7 @@ module.exports={
                 }
             ]
         },
+        
         {
             singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
             key:"狂热1",
@@ -142,6 +143,62 @@ module.exports={
                                         increase:'linear',//等级提升，atk增长函数
                                         atkRatePerLevel:200,//每提升1级，多20% atk参与计算
                                         ignoreDEF:1000, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"毒雾1",
+            constructor:Skill,
+            params:[
+                {
+                    levelCur:1, //number，表示当前等级
+                    levelMax:10, //number，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },{
+                    type:SkillType.ACTIVE,// SkillType 枚举，表示主动/被动
+                    id:1, //技能id
+                    name:"毒雾1", //技能名称
+                    desc:"使用时,对所有敌人造成30%ATK的物理伤害，无视防御。同时有50%的概率使敌人中毒，每回合造成 60%M_ATK的毒素伤害(致死、无视防御)，持续2回合", //技能描述
+                    items:[
+                        {
+                            id:seed(), //技能项id
+                            probability:1000,//Integer 对象，表示成功释放概率
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
+                            targetChooserName:"allEnemyChooser", //选择所有活着的敌人
+                            targetChooserParams:{alive:true},//chooser需要的参数
+                            effects:[
+                                {
+                                    //对所有敌人造成30%ATK的物理伤害，无视防御
+                                    effectName:"damageByATKAndDEF",
+                                    effectParams:{
+                                        isMagic:false, //是否魔法攻击（决定计算参数是ATK还是MATK)
+                                        canFlee:false, //无法躲避，必中
+                                        atkRate:300,// ATK按照1000/1000倍率 计算（1倍）
+                                        increase:'linear',//等级提升，atk增长函数
+                                        atkRatePerLevel:0,//每提升1级，多20% atk参与计算
+                                        ignoreDEF:1000, //是否无视对方防御力（神圣攻击）（但是仍然收到减伤等因素影响）数字，则表示无视多少比率的防御(千分比）
+                                    }
+                                },
+                                {
+                                    //敌人中毒，每回合造成 60%M_ATK的毒素伤害(致死、无视防御)，持续2回合
+                                    effectName:"poison",
+                                    effectPossibility:500,//概率
+                                    effectParams:{
+                                        icon:"poison",
+                                        continueTurn:2, //回合数
+                                        deadly:true,//此毒素效果致死
+                                        isMagic:true, //是魔法攻击（决定计算参数是ATK还是MATK)
+                                        atkRatePerLevel:500,//每提升1级，增加50%伤害
+                                        increase:'linear',//等级提升，atk增长函数
+                                        atkRate:100,// 基础伤害，10%
+                                        ignoreDEF:1000, //非无视防御
+                                        removeAfterBattle:true,
                                     }
                                 }
                             ]

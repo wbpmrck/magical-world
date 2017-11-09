@@ -100,6 +100,49 @@ module.exports={
                 }
             ]
         },
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"毒刺客1",
+            constructor:Hero,
+            params:[
+                {
+                    levelCur:2, //number,或者Integer 对象，表示当前等级
+                    levelMax:99, //number,或者Integer 对象，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },
+                {
+                
+                    id:seed(),//英雄id
+                    name:`毒刺客1`,//英雄名称
+                    skills:[
+                        ref({key:'普攻1'}),
+                        ref({key:'毒雾1'}),
+                        ref({key:'狂热1'}),
+                
+                    ],
+                
+                    raceCampCode:RACES.HUMAN.code, //种族&阵营编号
+                    jobCode:JOBS.ASSASSIN.code, //职业编号
+                    starLevel:1,//number,星数
+                    rawAttributes:{
+                        [HeroBaseAttributes.STR]:10,
+                        [HeroBaseAttributes.AGI]:80,
+                        [HeroBaseAttributes.VIT]:15,
+                        [HeroBaseAttributes.INT]:40,
+                        [HeroBaseAttributes.DEX]:30,
+                        [HeroBaseAttributes.LUK]:170,
+                        [HeroOtherAttributes.HP]:100,
+                        [HeroOtherAttributes.SP]:0,
+                        [HeroOtherAttributes.SP_MAX]:40,
+                        [HeroOtherAttributes.CRI_ATK]:0,
+                        [HeroOtherAttributes.IGNORE_DEF]:0, //无视物理防御的比率(千分比)
+                        [HeroOtherAttributes.IGNORE_M_DEF]:0, //无视魔法防御的比率(千分比)
+                        [HeroOtherAttributes.REDUCE_ATK]:0, //减少物理伤害比率(千分比)
+                        [HeroOtherAttributes.REDUCE_M_ATK]:0, //减少魔法伤害比率(千分比)
+                    }
+                }
+            ]
+        },
     
         {
             singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个

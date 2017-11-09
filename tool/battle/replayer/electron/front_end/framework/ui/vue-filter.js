@@ -54,6 +54,8 @@ Vue.filter('displayEvent', function (evtObject) {
             if(attrChanged<=0){
                if(remark && remark.cri){
                    text=`[${who.name}]受到${Math.abs(attrChanged)}点暴击伤害`;
+               }else if(remark && remark.damageCategory=='poison'){
+                   text=`[${who.name}]受到${Math.abs(attrChanged)}点毒素伤害`;
                }else{
                    text=`[${who.name}]受到${Math.abs(attrChanged)}点伤害`;
                }
