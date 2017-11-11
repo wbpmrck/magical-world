@@ -69,7 +69,7 @@ describe("EffectAndAttrCarrier ", function () {
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(10); //before install,value not change
         });
-        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,(context,source,effect)=>{
+        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,(source,effect)=>{
             expect(source).to.eql(_source);
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(40); //after install,value changed
@@ -90,7 +90,7 @@ describe("EffectAndAttrCarrier ", function () {
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(40); //before uninstall,value not change
         });
-        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,(effect)=>{
+        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,(source,effect)=>{
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(10); //after uninstall,value back to origin
         });
@@ -150,7 +150,7 @@ describe("EffectAndAttrCarrier ", function () {
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(10); //before install,value not change
         });
-        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,(context,source,effect)=>{
+        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,(source,effect)=>{
             expect(source).to.eql(_source);
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(40); //after install,value changed
@@ -173,7 +173,7 @@ describe("EffectAndAttrCarrier ", function () {
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(40); //before uninstall,value not change
         });
-        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,(effect)=>{
+        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,(source,effect)=>{
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(10); //after uninstall,value back to origin
         });
@@ -233,7 +233,7 @@ describe("EffectAndAttrCarrier ", function () {
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(10); //before install,value not change
         });
-        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,(context,source,effect)=>{
+        w1.once(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,(source,effect)=>{
             expect(source).to.eql(_source);
             expect(effect).to.eql(_effect);
             expect(w1.getAttr("str").getVal()).to.eql(40); //after install,value changed

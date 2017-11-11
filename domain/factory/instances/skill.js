@@ -137,6 +137,7 @@ module.exports={
                                     effectName:"reborn",
                                     effectParams:{
                                         icon:"reborn",
+                                        continueTurn:'ever', //一直持续
                                         removeAfterBattle:true,
                                         delayTurn:1,//死亡后，在下一回合开始的时候才复活
                                         recoverHpRate:400,//基础恢复40%hp

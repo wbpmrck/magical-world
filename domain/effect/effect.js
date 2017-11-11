@@ -35,6 +35,8 @@ const EffectEvents =  {
     UNINSTALLED:2,
 };
 const {WordLifeCycle} = require("../mechanism/lifeCycle");
+
+const {EffectAndAttrCarrierLifeEvent} = require("../effect/effectAndAttrCarrier");
 var seed=1000;
 
 var Effect = oop.defineClass({
@@ -80,6 +82,7 @@ var Effect = oop.defineClass({
             if(continueTurn!==undefined &&continueTurn!=='ever'){
                 return `[持续${self.continueTurnLeft}/${continueTurn}回合]`
             }
+            return "";
         },
         //将对象内容完全转化为不附带循环引用的纯对象
         toJSONObject:function ({serializeLevel}) {
@@ -110,6 +113,9 @@ var Effect = oop.defineClass({
             self.source = source;
             self.target = target;
             self.emit(EffectEvents.INSTALLED,self); //发射事件，通知外部
+            //在target上面触发对应的事件
+            self.target.emit(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,source,self);
+            
             
             //如果自己有持续回合数定义，则需要自行关注世界的回合事件，决定何时uninstall,离开target
             if(self.params.continueTurn!==undefined && self.params.continueTurn!='ever'){
@@ -136,9 +142,15 @@ var Effect = oop.defineClass({
         onAfterUnInstall:function () {
             var self = this;
             
-            logger.debug(`effect:[${self.id}]准备uninstall!`);
+            logger.debug(`effect:[${self.id}][${self.toString()}]准备uninstall!`);
     
+            let _source = self.source;
+            let _target = self.target;
             this.source = this.target = undefined;
+            //在target上面触发对应的事件
+            _target.emit(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,_source,self);
+            
+            
             if(self.__listenerOnTurnEnd){
     
                 logger.debug(`effect:[${self.id}]取消订阅![${self.__listenerOnTurnEnd}]`);
@@ -146,6 +158,7 @@ var Effect = oop.defineClass({
                 self.__listenerOnTurnEnd=undefined; //清空订阅token
             }
             this.emit(EffectEvents.UNINSTALLED,this); //发射事件，通知外部
+          
         },
         /**
          * 效果被放到目标对象

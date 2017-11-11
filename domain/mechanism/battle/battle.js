@@ -462,7 +462,7 @@ let Battle = oop.defineClass({
                 hero.on(HeroEvents.BEFORE_ACTION,function(skillToRelease){
                     _handleReleaseSkill(HeroEvents.BEFORE_ACTION,this,skillToRelease);
                 });
-                hero.on(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,function(context,source,ef){
+                hero.on(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,function(source,ef){
                     _handleEffectAdd(this,source,ef);
                 });
                 hero.on(EffectAndAttrCarrierLifeEvent.BEFORE_UNINSTALL_EFFECT,function(ef){
@@ -507,11 +507,11 @@ let Battle = oop.defineClass({
                 hero.on(HeroEvents.BEFORE_ACTION,function(skillToRelease){
                     _handleReleaseSkill(HeroEvents.BEFORE_ACTION,this,skillToRelease);
                 });
-                hero.on(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,function(context,source,ef){
+                hero.on(EffectAndAttrCarrierLifeEvent.AFTER_INSTALL_EFFECT,function(source,ef){
                     _handleEffectAdd(this,source,ef);
                 });
-                hero.on(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,function(ef){
-                    _handleEffectRemove(this,ef.source,ef);
+                hero.on(EffectAndAttrCarrierLifeEvent.AFTER_UNINSTALL_EFFECT,function(source,ef){
+                    _handleEffectRemove(this,source,ef);
                 });
                 
                 // hero.on("attrChange",function(attr,total,raw,modify,val,oldTotal){
@@ -538,6 +538,10 @@ let Battle = oop.defineClass({
                 });
                 hero.on(HeroEvents.AFTER_HERO_DIE,function(){
                     _handleDie(HeroEvents.AFTER_HERO_DIE,this);
+                });
+    
+                hero.on(HeroEvents.AFTER_HERO_REBORN,function(){
+                    _handleReborn(HeroEvents.AFTER_HERO_REBORN,this);
                 });
                 //代理内部hero的所有事件
                 // hero.on("*",function () {

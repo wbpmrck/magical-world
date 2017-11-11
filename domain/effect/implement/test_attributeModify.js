@@ -6,7 +6,7 @@
 const expect = require('chai').expect;
 const attributeModify = require("./attributeModify");
 const integer = require("../../value/integer");
-
+const event = require("local-libs").event;
 const Attribute = require("../../attribute/attribute");
 const {EffectEvents} = require("../effect")
 
@@ -45,6 +45,7 @@ describe("attributeModify :", function () {
                 return this.attr[name];
             }
         };
+        event.mixin(target);
         let source = {};//假的作用源
     
         effect.once(EffectEvents.INSTALLED,(ef)=>{
@@ -111,6 +112,7 @@ describe("attributeModify :", function () {
                 return this.attr[name];
             }
         };
+        event.mixin(target);
         let source = {};//假的作用源
         effect.onInstall(source,target);
         

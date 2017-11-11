@@ -7,6 +7,7 @@ const expect = require('chai').expect;
 const attributeReset = require("./attributeReset");
 const integer = require("../../value/integer");
 
+const event = require("local-libs").event;
 const Attribute = require("../../attribute/attribute");
 
 
@@ -44,6 +45,7 @@ describe("attributeReset :", function () {
                 return this.attr[name];
             }
         };
+        event.mixin(target);
         let source = {};//假的作用源
         effect.onInstall(source,target);
         
@@ -93,6 +95,7 @@ describe("attributeReset :", function () {
                 return this.attr[name];
             }
         };
+        event.mixin(target);
         let source = {};//假的作用源
         effect.onInstall(source,target);
         

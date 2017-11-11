@@ -124,7 +124,7 @@ module.exports={
                     rawAttributes:{
                         [HeroBaseAttributes.STR]:20,
                         [HeroBaseAttributes.AGI]:70,
-                        [HeroBaseAttributes.VIT]:25,
+                        [HeroBaseAttributes.VIT]:10,
                         [HeroBaseAttributes.INT]:12,
                         [HeroBaseAttributes.DEX]:30,
                         [HeroBaseAttributes.LUK]:150,
