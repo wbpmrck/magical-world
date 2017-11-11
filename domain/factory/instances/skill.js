@@ -109,8 +109,54 @@ module.exports={
                     ]
                 }
             ]
-        }
-      ,
+        },
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"涅磐1",
+            constructor:Skill,
+            params:[
+                {
+                    levelCur:1, //number，表示当前等级
+                    levelMax:10, //number，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },{
+                    type:SkillType.PASSIVE,// SkillType 枚举，表示主动/被动
+                    id:1, //技能id
+                    name:"涅磐1", //技能名称
+                    desc:"英雄死亡之后,下回合开始前复活(只触发1次)，恢复50%的HP,SP", //技能描述
+                    items:[
+                        {
+                            id:seed(), //技能项id
+                            probability:1000,//Integer 对象，表示成功释放概率
+                            installCycle:BattleEvents.BATTLE_BEGIN, //(可空)在什么生命周期去触发里面的effect的install
+                            targetChooserName:"SelfChooser", //技能对象，应该是持有者自己
+                            targetChooserParams:undefined,//chooser需要的参数:无
+                            effects:[
+                                {
+                                    //攻击力提升效果
+                                    effectName:"reborn",
+                                    effectParams:{
+                                        icon:"reborn",
+                                        removeAfterBattle:true,
+                                        delayTurn:1,//死亡后，在下一回合开始的时候才复活
+                                        recoverHpRate:400,//基础恢复40%hp
+                                        recoverHpRatePerLevel:100,//提升1级，多10%
+                                        recoverHpRateIncrease:"linear",//
+    
+                                        recoverSpRate:400,//基础恢复40%sp
+                                        recoverSpRatePerLevel:100,//提升1级，多10%
+                                        recoverSpRateIncrease:"linear",//
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        
+        
+        
         {
             singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
             key:"狂击1",

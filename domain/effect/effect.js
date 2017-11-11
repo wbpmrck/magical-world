@@ -11,7 +11,7 @@
  *  如果是undefined，则立刻Uninstall
  *
  *
- * category:仅仅用于给效果进行分类（方便一些清楚类技能的运作）
+ * category:仅仅用于给效果进行分类（方便一些清楚类技能的运作）枚举参考：effectCategoryEnum
  *  1:正面
  *  0：负面
  *
@@ -29,6 +29,7 @@
 const oop = require("local-libs").oop;
 const event = require("local-libs").event;
 const IntegerValue = require("../value/integer");
+const logger = require('../../log/logger');
 const EffectEvents =  {
     INSTALLED:1,
     UNINSTALLED:2,
@@ -66,10 +67,20 @@ var Effect = oop.defineClass({
         self.worldContext = worldContext; //世界上下文。主要用于了解世界发生的lifeCycle
         self.source = self.target = undefined; //效果的作用源、作用对象
         self.__listenerOnTurnEnd = undefined;//保留监听target的回合结束事件handlerId,用于取消监听
-        
+        self.continueTurnLeft = self.params.continueTurn;//保存效果剩余持续回合数
     },
     prototype:{
     
+        /**
+         * 子类通用方法，返回当前效果的持续状态信息
+         */
+        turnInfo:function () {
+            var self = this;
+            let {continueTurn} = self.params;
+            if(continueTurn!==undefined &&continueTurn!=='ever'){
+                return `[持续${self.continueTurnLeft}/${continueTurn}回合]`
+            }
+        },
         //将对象内容完全转化为不附带循环引用的纯对象
         toJSONObject:function ({serializeLevel}) {
             var self = this;
@@ -103,11 +114,17 @@ var Effect = oop.defineClass({
             //如果自己有持续回合数定义，则需要自行关注世界的回合事件，决定何时uninstall,离开target
             if(self.params.continueTurn!==undefined && self.params.continueTurn!='ever'){
                 self.__listenerOnTurnEnd = self.worldContext.on(WordLifeCycle.TURN_END,(lifeCycleParam)=>{
-                    self.params.continueTurn--;
-                    if(self.params.continueTurn<1){
+    
+                    
+                    // self.params.continueTurn--;
+                    // if(self.params.continueTurn<1){
+                    self.continueTurnLeft--;
+                    logger.debug(`effect:[${self.id}]监听到回合结束!self.continueTurnLeft=[${self.continueTurnLeft}]`);
+                    if(self.continueTurnLeft<1){
                         self.target.uninstallEffect && self.target.uninstallEffect(self); //持续回合数到了，移除自身
                     }
-                },self.params.continueTurn); //通过TTL控制自动取消订阅
+                // },self.params.continueTurn); //通过TTL控制自动取消订阅
+                }); //通过TTL控制自动取消订阅
             }
             //如果该效果没有持续回合数字段，则直接调用uninstall立刻移除
             if(self.params.continueTurn===undefined){
@@ -118,10 +135,14 @@ var Effect = oop.defineClass({
        
         onAfterUnInstall:function () {
             var self = this;
+            
+            logger.debug(`effect:[${self.id}]准备uninstall!`);
     
             this.source = this.target = undefined;
             if(self.__listenerOnTurnEnd){
-                self.worldContext && self.worldContext.off(self.__listenerOnTurnEnd);
+    
+                logger.debug(`effect:[${self.id}]取消订阅![${self.__listenerOnTurnEnd}]`);
+                self.worldContext && self.worldContext.off(WordLifeCycle.TURN_END,self.__listenerOnTurnEnd);
                 self.__listenerOnTurnEnd=undefined; //清空订阅token
             }
             this.emit(EffectEvents.UNINSTALLED,this); //发射事件，通知外部

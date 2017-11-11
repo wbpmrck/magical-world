@@ -35,7 +35,7 @@ describe("Battle", function () {
         let hero6 = make({key:"毒刺客1"}).initOnPlayer(player_shinhwa);
         
         
-        let hero7 = make({key:"光战1"}).initOnPlayer(player_weatherpop);
+        let hero7 = make({key:"光战2"}).initOnPlayer(player_weatherpop);
         let hero8 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
         let hero9 = make({key:"术士1"}).initOnPlayer(player_weatherpop);
         let hero10 = make({key:"术士1"}).initOnPlayer(player_weatherpop);

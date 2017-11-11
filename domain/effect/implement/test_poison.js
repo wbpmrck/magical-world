@@ -112,7 +112,7 @@ describe("poison :", function () {
     
         target.installEffect(source,poisonEffect);
     
-        expect(poisonEffect.toString()).to.eql("中毒效果(不致死):持续[2/2]回合,每回合造成基于50% M_ATK的伤害,无视%100防御]");
+        expect(poisonEffect.toString()).to.eql("中毒效果(不致死)[持续2/2回合],每回合造成基于50% M_ATK的伤害,无视%100防御");
         //身上有效果
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Poison");
@@ -122,7 +122,7 @@ describe("poison :", function () {
         
         //模拟经过1个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-        expect(poisonEffect.toString()).to.eql("中毒效果(不致死):持续[1/2]回合,每回合造成基于50% M_ATK的伤害,无视%100防御]");
+        expect(poisonEffect.toString()).to.eql("中毒效果(不致死)[持续1/2回合],每回合造成基于50% M_ATK的伤害,无视%100防御");
         //身上有效果
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Poison");
@@ -135,7 +135,7 @@ describe("poison :", function () {
         
         //模拟经过2个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-        expect(poisonEffect.toString()).to.eql("中毒效果(不致死):持续[0/2]回合,每回合造成基于50% M_ATK的伤害,无视%100防御]");
+        expect(poisonEffect.toString()).to.eql("中毒效果(不致死)[持续0/2回合],每回合造成基于50% M_ATK的伤害,无视%100防御");
         //英雄的HP 减少
         
         //m_atk=10+1 = 11
@@ -240,7 +240,7 @@ describe("poison :", function () {
     
         target.installEffect(source,poisonEffect);
     
-        expect(poisonEffect.toString()).to.eql("中毒效果(致死):持续[2/2]回合,每回合造成基于150% M_ATK的伤害]");
+        expect(poisonEffect.toString()).to.eql("中毒效果(致死)[持续2/2回合],每回合造成基于150% M_ATK的伤害");
         //身上有效果
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Poison");
@@ -250,7 +250,7 @@ describe("poison :", function () {
         
         //模拟经过1个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-        expect(poisonEffect.toString()).to.eql("中毒效果(致死):持续[1/2]回合,每回合造成基于150% M_ATK的伤害]");
+        expect(poisonEffect.toString()).to.eql("中毒效果(致死)[持续1/2回合],每回合造成基于150% M_ATK的伤害");
         //身上有效果
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Poison");
@@ -265,7 +265,7 @@ describe("poison :", function () {
         
         //模拟经过2个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-        expect(poisonEffect.toString()).to.eql("中毒效果(致死):持续[0/2]回合,每回合造成基于150% M_ATK的伤害]");
+        expect(poisonEffect.toString()).to.eql("中毒效果(致死)[持续0/2回合],每回合造成基于150% M_ATK的伤害");
         //英雄的HP 减少
     
         //m_atk=20+1 = 21

@@ -31,7 +31,7 @@ var Status = oop.defineClass({
         var self = this;
         self.name = 'Status';
         
-        self.maxTurn =params.continueTurn; //缓存最大持续回合
+        // self.maxTurn =params.continueTurn; //缓存最大持续回合
     },
     prototype:{
     
@@ -52,7 +52,8 @@ var Status = oop.defineClass({
             var self = this;
             let {continueTurn,status,stopAction,stopSkill} = self.params;
             
-            return `效果:[${status}${stopAction?",stopAction":""}${stopSkill?",stopSkill":""}]持续[${continueTurn}/${self.maxTurn}]回合`;
+            // return `效果:[${status}${stopAction?",stopAction":""}${stopSkill?",stopSkill":""}]持续[${self.continueTurnLeft}/${continueTurn}]回合`;
+            return `效果:[${status}${stopAction?",stopAction":""}${stopSkill?",stopSkill":""}]${self.turnInfo()}`;
         },
        
         /**

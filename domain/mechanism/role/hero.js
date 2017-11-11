@@ -66,6 +66,9 @@ let Hero = oop.defineClass({
                    logger.debug(`英雄死亡:[${self}]`);
                    //设置死亡标记
                    self.isDead = true;
+                   
+                   //死亡时，能量丢失(设置未0)
+                   self.getAttr(HeroOtherAttributes.SP).updateAddPercent(-1);
     
                    self.emit(HeroEvents.AFTER_HERO_DIE);
                }else{

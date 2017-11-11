@@ -33,6 +33,20 @@ var EffectAndAttrCarrier = oop.defineClass({
     prototype:{
     
         /**
+         * uninstall符合条件的效果
+         */
+        removeEffects:function (filter) {
+            var self = this;
+        
+            for(var i=self.effects.length-1;i>=0;i--){
+                var item = self.effects[i];
+                if(filter(item)){
+                    self.uninstallEffect(item);
+                }
+            }
+        },
+        
+        /**
          * uninstall所有只能在战斗中存在的效果
          */
         removeBattleEffects:function () {

@@ -20,8 +20,10 @@ var Attribute = oop.defineClass({
         self.nowTotal=self.val.total();
         //订阅val的变化
         self.val.on("change",(raw,modify,total,val)=>{
-           self.emit("valueChange",total,raw,modify,val,self.nowTotal);
+            let oldTotal = self.nowTotal;
             self.nowTotal = total;
+           self.emit("valueChange",total,raw,modify,val,oldTotal);
+           
         });
     },
     prototype:{
