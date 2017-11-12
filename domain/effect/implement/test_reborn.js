@@ -87,6 +87,74 @@ describe("reborn :", function () {
         expect(target.isDead).to.eql(false); //死亡标记
         
     });
+    it("reborn should work on dead people", function () {
+    
+        let worldContext ={};//模拟世界上下文
+        event.mixin(worldContext);
+        
+        //重生标记，持续3回合，在此期间如果英雄死亡，立刻复活。并恢复50%hp,30%sp
+        let rebornEffect = new reborn({
+            level:new integer(1),
+            params:{
+                continueTurn:3, //回合数
+                delayTurn:0,//死亡立刻复活
+                recoverHpRate:400,//基础恢复40%hp
+                recoverHpRatePerLevel:100,//提升1级，多10%
+                recoverHpRateIncrease:"linear",//
+                
+                recoverSpRate:200,//基础恢复20%sp
+                recoverSpRatePerLevel:100,//提升1级，多10%
+                recoverSpRateIncrease:"linear",//
+            },
+            worldContext
+        });
+        
+        //定义作用对象
+        let target = make({key:"测试hero(hp0,sp10)"});
+        
+        //定义作用源
+        let source = make({key:"测试hero(hp10,sp10)"});
+    
+        rebornEffect.once(EffectEvents.INSTALLED,(ef)=>{
+            expect(ef).to.eql(rebornEffect);
+            expect(ef.source).to.eql(source);
+            expect(ef.target).to.eql(target);
+        });
+    
+    
+        //放置效果
+        target.installEffect(source,rebornEffect);
+    
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合]");
+    
+        //身上效果消失
+        expect(target.effects.length).to.eql(0);
+        //复活之后，50%hp  30%sp
+        expect(target.getAttr(HeroOtherAttributes.HP).getVal()).to.eql( parseInt(target.getAttr(HeroDeriveAttributes.HP_MAX).getVal()*0.5) );
+        expect(target.getAttr(HeroOtherAttributes.SP).getVal()).to.eql(parseInt(target.getAttr(HeroOtherAttributes.SP_MAX).getVal()*0.3) );
+    
+        expect(target.isCompleteDead()).to.eql(false); //没有死
+        expect(target.isDead).to.eql(false); //死亡标记
+        
+        
+        //模拟扣血,此时已经无重生效果
+        target.takeMutation({
+            from:source,
+            mutation:{
+                [HeroOtherAttributes.HP]:-25
+            },
+            remark:{}
+        });
+    
+    
+        //身上效果消失
+        expect(target.effects.length).to.eql(0);
+        //复活之后，50%hp  30%sp
+        expect(target.getAttr(HeroOtherAttributes.HP).getVal()).to.eql( 0 );
+        expect(target.isCompleteDead()).to.eql(true); //死了
+        expect(target.isDead).to.eql(true); //死亡标记
+        
+    });
     
     it("reborn effect can delay", function () {
         let worldContext ={};//模拟世界上下文

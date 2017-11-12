@@ -10,6 +10,7 @@
  *  1、英雄hp掉到0之后，会触发"dead"事件，但是只要hero身上有reborn效果，team就不会被判定为团灭，battle就不会结束
  *  2、effect本身如果有continueTurn,然后又使用了延迟复活参数(delayTurn),则有可能导致reborn效果提前被移除，但是复活还没有触发的情况。
  *      所以：配置技能的时候要注意这两个参数，最好是配置成被动技能（continueTurn='ever')
+ *  3、如果效果放置的对象，刚开始就处于死亡状态，那么效果立刻触发
  */
 
 
@@ -152,13 +153,15 @@ var Reborn = oop.defineClass({
                         },
                     });
                 }
-                //一旦重生过后，重生效果应该被移除
-                logger.debug(`\r\n ${source.toString(true)} 准备移除重生效果${self.toString()}`);
-                target.uninstallEffect && target.uninstallEffect(self);
+                
+                return true
+                // //一旦重生过后，重生效果应该被移除
+                // logger.debug(`\r\n ${source.toString(true)} 准备移除重生效果${self.toString()}`);
+                // target.uninstallEffect && target.uninstallEffect(self);
                 
             }
             
-            return this;
+            return false;
         },
         /**
          * 覆盖基类实现
@@ -170,29 +173,66 @@ var Reborn = oop.defineClass({
             var self = this;
             logger.debug(`给 target:${target.toString(true)} 添加状态:[${self.toString()}] \r\n`);
             
-            //订阅 英雄死亡 事件(只订阅1次)
-            self.listenerForHeroDie = target.on(WordLifeCycle.AFTER_HERO_DIE,(lifeCycleParam)=>{
-                //宿主对象死亡,则触发复活逻辑
-                
+            //如果对象是死亡状态，那么立刻触发
+            if(target && target.isDead){
                 //如果是延迟复活，则需要订阅回合开始事件
                 if(self.waitTurnLeft){
                     self.listenerForDoReborn = self.worldContext.on(WordLifeCycle.TURN_BEGIN,(lifeCycleParam)=>{
                         self.waitTurnLeft--;
                         if(self.waitTurnLeft==0){
-                            self.doReborn(source,target);//进行复活
+                            let success = self.doReborn(source,target);//进行复活
+    
+                            if(success){
+                                logger.debug(`\r\n ${source.toString(true)} 准备移除重生效果${self.toString()}`);
+                                target.uninstallEffect && target.uninstallEffect(self);
+                            }
+                            
                         }
                     });
+                    //调用基类方法
+                    oop.getSupper(self).onAfterInstall.call(self,source,target);
+
                 }else{
                     //否则立刻复活
-                    self.doReborn(source,target);//进行复活
+                    let success = self.doReborn(source,target);//进行复活   //一旦重生过后，重生效果应该被移除
+                    //调用基类方法
+                    oop.getSupper(self).onAfterInstall.call(self,source,target);
+                    
+                    if(success){
+                        logger.debug(`\r\n ${source.toString(true)} 准备移除重生效果${self.toString()}`);
+                        target.uninstallEffect && target.uninstallEffect(self);
+                    }
                 }
-                
-            });
-            
-            
-            //调用基类方法
-            oop.getSupper(self).onAfterInstall.call(self,source,target);
-            
+            }else{
+                //订阅 英雄死亡 事件(只订阅1次)
+                self.listenerForHeroDie = target.on(WordLifeCycle.AFTER_HERO_DIE,(lifeCycleParam)=>{
+                    //宿主对象死亡,则触发复活逻辑
+        
+                    //如果是延迟复活，则需要订阅回合开始事件
+                    if(self.waitTurnLeft){
+                        self.listenerForDoReborn = self.worldContext.on(WordLifeCycle.TURN_BEGIN,(lifeCycleParam)=>{
+                            self.waitTurnLeft--;
+                            if(self.waitTurnLeft==0){
+                                let success = self.doReborn(source,target);//进行复活
+                                if(success){
+                                    logger.debug(`\r\n ${source.toString(true)} 准备移除重生效果${self.toString()}`);
+                                    target.uninstallEffect && target.uninstallEffect(self);
+                                }
+                            }
+                        });
+                    }else{
+                        //否则立刻复活
+                        let success = self.doReborn(source,target);//进行复活
+                        if(success){
+                            logger.debug(`\r\n ${source.toString(true)} 准备移除重生效果${self.toString()}`);
+                            target.uninstallEffect && target.uninstallEffect(self);
+                        }
+                    }
+        
+                });
+                //调用基类方法
+                oop.getSupper(self).onAfterInstall.call(self,source,target);
+            }
             return this;
         },
         onUninstall:function () {

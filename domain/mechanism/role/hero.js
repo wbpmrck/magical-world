@@ -54,7 +54,12 @@ let Hero = oop.defineClass({
         self.skills = skills;
     
        
-        self.isDead = false;//是否已死亡
+        self.isDead = self.getAttr(HeroOtherAttributes.HP).getVal()===0;//是否已死亡
+        
+        if(self.isDead){
+            //死亡时，能量丢失(设置未0)
+            self.getAttr(HeroOtherAttributes.SP).updateAddPercent(-1);
+        }
         
         //检测hp变化，如果到0，且当前没有重生效果，会发射死亡事件
         self.on("attrChange",(attr,total,raw,modify,val,oldTotal)=>{

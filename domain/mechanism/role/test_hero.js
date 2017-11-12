@@ -33,7 +33,11 @@ describe("Hero", function () {
                 VIT:30,
                 INT:40,
                 DEX:50,
-                LUK:60
+                LUK:60,
+                HP:10,
+                SP:0,
+                HP_MAX:20,
+                SP_MAX:20,
             }
         });
         

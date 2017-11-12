@@ -56,6 +56,46 @@ module.exports={
         
         {
             singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"测试hero(hp0,sp10)",
+            constructor:Hero,
+            params:[
+                {
+                    levelCur:1, //number,或者Integer 对象，表示当前等级
+                    levelMax:99, //number,或者Integer 对象，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },
+                {
+                
+                    id:seed(),//英雄id
+                    name:`测试hero(hp0,sp10)`,//英雄名称
+                    skills:[
+                    ],
+                
+                    raceCampCode:RACES.LIGHT.code, //种族&阵营编号
+                    jobCode:JOBS.WARRIOR.code, //职业编号
+                    starLevel:1,//number,星数
+                    rawAttributes:{
+                        [HeroBaseAttributes.STR]:10,
+                        [HeroBaseAttributes.AGI]:10,
+                        [HeroBaseAttributes.VIT]:10,
+                        [HeroBaseAttributes.INT]:10,
+                        [HeroBaseAttributes.DEX]:10,
+                        [HeroBaseAttributes.LUK]:10,
+                        [HeroOtherAttributes.HP]:0,
+                        [HeroOtherAttributes.SP]:10,
+                        [HeroOtherAttributes.SP_MAX]:50,
+                        [HeroOtherAttributes.CRI_ATK]:0,
+                        [HeroOtherAttributes.IGNORE_DEF]:0, //无视物理防御的比率(千分比)
+                        [HeroOtherAttributes.IGNORE_M_DEF]:0, //无视魔法防御的比率(千分比)
+                        [HeroOtherAttributes.REDUCE_ATK]:0, //减少物理伤害比率(千分比)
+                        [HeroOtherAttributes.REDUCE_M_ATK]:0, //减少魔法伤害比率(千分比)
+                    }
+                }
+            ]
+        },
+        
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
             key:"光战1",
             constructor:Hero,
             params:[
