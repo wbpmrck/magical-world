@@ -61,7 +61,7 @@ describe("reborn :", function () {
         target.installEffect(source,rebornEffect);
         expect(target.getAttr(HeroOtherAttributes.HP).getVal()).to.eql(10);
     
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合][不可被清除]");
         //身上有效果
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Reborn");
@@ -125,7 +125,7 @@ describe("reborn :", function () {
         //放置效果
         target.installEffect(source,rebornEffect);
     
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合][不可被清除]");
     
         //身上效果消失
         expect(target.effects.length).to.eql(0);
@@ -194,7 +194,7 @@ describe("reborn :", function () {
         target.installEffect(source,rebornEffect);
         expect(target.getAttr(HeroOtherAttributes.HP).getVal()).to.eql(10);
     
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续3/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续3/3回合][不可被清除]");
         //身上有效果
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Reborn");
@@ -270,7 +270,7 @@ describe("reborn :", function () {
         //放置效果
         target.installEffect(source,rebornEffect);
         expect(target.getAttr(HeroOtherAttributes.HP).getVal()).to.eql(10);
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续3/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续3/3回合][不可被清除]");
         //身上有效果
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Reborn");
@@ -280,14 +280,14 @@ describe("reborn :", function () {
         worldContext.emit(WordLifeCycle.TURN_BEGIN,1);
         worldContext.emit(WordLifeCycle.TURN_END,1);
         //身上有效果
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续2/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续2/3回合][不可被清除]");
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Reborn");
         
         worldContext.emit(WordLifeCycle.TURN_BEGIN,2);
         worldContext.emit(WordLifeCycle.TURN_END,2);
         //身上有效果
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续1/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续1/3回合][不可被清除]");
         expect(target.effects.length).to.eql(1);
         expect(target.effects[0].name).to.eql("Reborn");
         
@@ -295,7 +295,7 @@ describe("reborn :", function () {
         worldContext.emit(WordLifeCycle.TURN_END,3);
         
         //此时身上效果消失
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续0/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[下回合开始时复活],恢复50%HP,恢复30%SP[持续0/3回合][不可被清除]");
         expect(target.effects.length).to.eql(0);
     
         //模拟扣血
@@ -371,8 +371,8 @@ describe("reborn :", function () {
         target.installEffect(source,rebornEffect2);
         expect(target.getAttr(HeroOtherAttributes.HP).getVal()).to.eql(10);
     
-        expect(rebornEffect.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合]");
-        expect(rebornEffect2.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合]");
+        expect(rebornEffect.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合][不可被清除]");
+        expect(rebornEffect2.toString()).to.eql("英雄若死亡,[立刻复活],恢复50%HP,恢复30%SP[持续3/3回合][不可被清除]");
         //身上有效果
         expect(target.effects.length).to.eql(2);
         expect(target.effects[0].name).to.eql("Reborn");

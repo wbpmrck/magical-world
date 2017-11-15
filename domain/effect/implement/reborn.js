@@ -58,7 +58,7 @@ var Reborn = oop.defineClass({
             var self = this;
             let {continueTurn,delayTurn,recoverHpRate,recoverSpRate} = self.params;
             
-            return `英雄若死亡,[${delayTurn>0? (delayTurn==1?"下回合开始时复活":delayTurn+"回合后回合开始前复活")  :"立刻复活"}]${self.recoverHpRate>0?",恢复"+self.recoverHpRate/10+'%HP':''}${self.recoverSpRate>0?",恢复"+self.recoverSpRate/10+'%SP':''}${self.turnInfo()}`;
+            return `英雄若死亡,[${delayTurn>0? (delayTurn==1?"下回合开始时复活":delayTurn+"回合后回合开始前复活")  :"立刻复活"}]${self.recoverHpRate>0?",恢复"+self.recoverHpRate/10+'%HP':''}${self.recoverSpRate>0?",恢复"+self.recoverSpRate/10+'%SP':''}${self.turnInfo()}`+self.clearableInfo();
         },
         
         /**

@@ -81,7 +81,7 @@ describe("statusEffect :", function () {
     
         target.installEffect(source,frozenEffect);
     
-        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill][持续2/2回合]");
+        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill][持续2/2回合][不可被清除]");
         //放置效果后，英雄不可以放大招、行动
         expect(target.canAction()).to.eql(false);
         expect(target.canBigSkill()).to.eql(false);
@@ -89,7 +89,7 @@ describe("statusEffect :", function () {
         
         //模拟经过一个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill][持续1/2回合]");
+        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill][持续1/2回合][不可被清除]");
         expect(target.canAction()).to.eql(false);
         expect(target.canBigSkill()).to.eql(false);
         
@@ -103,7 +103,7 @@ describe("statusEffect :", function () {
         worldContext.emit(WordLifeCycle.TURN_END);
         expect(target.canAction()).to.eql(true);
         expect(target.canBigSkill()).to.eql(true);
-        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill][持续0/2回合]");
+        expect(frozenEffect.toString()).to.eql("效果:[Frozen,stopAction,stopSkill][持续0/2回合][不可被清除]");
         
     });
     it("Dizzy should work", function () {
@@ -166,7 +166,7 @@ describe("statusEffect :", function () {
     
         target.installEffect(source,dizzy);
     
-        expect(dizzy.toString()).to.eql("效果:[Dizzy,stopAction,stopSkill][持续2/2回合]");
+        expect(dizzy.toString()).to.eql("效果:[Dizzy,stopAction,stopSkill][持续2/2回合][不可被清除]");
         //放置效果后，英雄不可以放大招、行动
         expect(target.canAction()).to.eql(false);
         expect(target.canBigSkill()).to.eql(false);
@@ -174,7 +174,7 @@ describe("statusEffect :", function () {
         
         //模拟经过一个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-        expect(dizzy.toString()).to.eql("效果:[Dizzy,stopAction,stopSkill][持续1/2回合]");
+        expect(dizzy.toString()).to.eql("效果:[Dizzy,stopAction,stopSkill][持续1/2回合][不可被清除]");
         expect(target.canAction()).to.eql(false);
         expect(target.canBigSkill()).to.eql(false);
         
@@ -188,7 +188,7 @@ describe("statusEffect :", function () {
         worldContext.emit(WordLifeCycle.TURN_END);
         expect(target.canAction()).to.eql(true);
         expect(target.canBigSkill()).to.eql(true);
-        expect(dizzy.toString()).to.eql("效果:[Dizzy,stopAction,stopSkill][持续0/2回合]");
+        expect(dizzy.toString()).to.eql("效果:[Dizzy,stopAction,stopSkill][持续0/2回合][不可被清除]");
         
     });
     
@@ -252,7 +252,7 @@ describe("statusEffect :", function () {
     
         target.installEffect(source,silence);
     
-        expect(silence.toString()).to.eql("效果:[SILENCE,stopSkill][持续2/2回合]");
+        expect(silence.toString()).to.eql("效果:[SILENCE,stopSkill][持续2/2回合][不可被清除]");
         //放置效果后，英雄不可以放大招、但是可以行动
         expect(target.canAction()).to.eql(true);
         expect(target.canBigSkill()).to.eql(false);
@@ -260,7 +260,7 @@ describe("statusEffect :", function () {
         
         //模拟经过一个回合
         worldContext.emit(WordLifeCycle.TURN_END);
-        expect(silence.toString()).to.eql("效果:[SILENCE,stopSkill][持续1/2回合]");
+        expect(silence.toString()).to.eql("效果:[SILENCE,stopSkill][持续1/2回合][不可被清除]");
         expect(target.canAction()).to.eql(true);
         expect(target.canBigSkill()).to.eql(false);
         
@@ -274,7 +274,7 @@ describe("statusEffect :", function () {
         worldContext.emit(WordLifeCycle.TURN_END);
         expect(target.canAction()).to.eql(true);
         expect(target.canBigSkill()).to.eql(true);
-        expect(silence.toString()).to.eql("效果:[SILENCE,stopSkill][持续0/2回合]");
+        expect(silence.toString()).to.eql("效果:[SILENCE,stopSkill][持续0/2回合][不可被清除]");
         
     });
     

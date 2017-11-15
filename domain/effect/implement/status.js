@@ -53,7 +53,7 @@ var Status = oop.defineClass({
             let {continueTurn,status,stopAction,stopSkill} = self.params;
             
             // return `效果:[${status}${stopAction?",stopAction":""}${stopSkill?",stopSkill":""}]持续[${self.continueTurnLeft}/${continueTurn}]回合`;
-            return `效果:[${status}${stopAction?",stopAction":""}${stopSkill?",stopSkill":""}]${self.turnInfo()}`;
+            return `效果:[${status}${stopAction?",stopAction":""}${stopSkill?",stopSkill":""}]${self.turnInfo()}`+self.clearableInfo();
         },
        
         /**

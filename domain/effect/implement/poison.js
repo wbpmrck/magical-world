@@ -52,7 +52,7 @@ var Poison = oop.defineClass({
             let {continueTurn,deadly,isMagic,atkRate,atkRatePerLevel,ignoreDEF} = self.params;
             
             // return `中毒效果(${deadly?"致死":"不致死"}):持续[${self.continueTurnLeft}/${continueTurn}]回合,每回合造成基于${self.atkRate/10}% ${isMagic?'M_ATK':'ATK'}的伤害${ignoreDEF?",无视%"+ignoreDEF/10+"防御":""}]`;
-            return `中毒效果(${deadly?"致死":"不致死"})${self.turnInfo()},每回合造成基于${self.atkRate/10}% ${isMagic?'M_ATK':'ATK'}的伤害${ignoreDEF?",无视%"+ignoreDEF/10+"防御":""}`;
+            return `中毒效果(${deadly?"致死":"不致死"})${self.turnInfo()},每回合造成基于${self.atkRate/10}% ${isMagic?'M_ATK':'ATK'}的伤害${ignoreDEF?",无视%"+ignoreDEF/10+"防御":""}`+self.clearableInfo();
         },
         
         /**

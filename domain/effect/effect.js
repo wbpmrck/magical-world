@@ -12,12 +12,15 @@
  *
  *
  * category:仅仅用于给效果进行分类（方便一些清楚类技能的运作）枚举参考：effectCategoryEnum
- *  1:正面
- *  0：负面
+ *
  *
  * removeAfterBattle
  *  true:战斗结束时，会自动清除此类效果
  *  false:战斗结束时，效果可以不清（一些永久被动类技能可以使用）
+ *
+ * clearable
+ *  true:能够被 "clearOtherEffect" 效果来清除
+ *  false/undefined: 不能够被 "clearOtherEffect" 效果来清除
  *
  * icon:String
  * 用于表示在UI展示中，效果的展示图标。最好是64X64 或者128X128 png
@@ -83,6 +86,23 @@ var Effect = oop.defineClass({
                 return `[持续${self.continueTurnLeft}/${continueTurn}回合]`
             }
             return "";
+        },
+        /**
+         * 子类通用方法，返回当前效果是否可清除信息
+         */
+        clearableInfo:function () {
+            var self = this;
+            let {clearable,continueTurn} = self.params;
+            
+            //只有持续性的效果，才存在需要被清除的需要（其他效果自从安装之后就自动清除了）
+            if(continueTurn!==undefined){
+                if(clearable){
+                    return `[可被清除]`
+                }
+                return "[不可被清除]";
+            }else{
+                return ""
+            }
         },
         //将对象内容完全转化为不附带循环引用的纯对象
         toJSONObject:function ({serializeLevel}) {
