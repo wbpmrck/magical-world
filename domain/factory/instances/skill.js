@@ -9,6 +9,7 @@ const {SkillItem,Skill,SkillType} = require("../../skill/skill");
 const {HeroBaseAttributes,HeroDeriveAttributes,HeroOtherAttributes} = require("../../mechanism/role/attributeRule");
 const {ref,seed} = require("../factory");
 const statusEnum = require("../../effect/implement/statusEnum");
+const effectCategoryEnum = require("../../effect/effectCategoryEnum");
 
 module.exports={
     instances:[
@@ -67,7 +68,7 @@ module.exports={
                     type:SkillType.PASSIVE,// SkillType 枚举，表示主动/被动
                     id:1, //技能id
                     name:"狂热1", //技能名称
-                    desc:"战斗开始时,大幅提升HP上限、攻击力3回合", //技能描述
+                    desc:"战斗开始时,大幅提升HP上限、攻击力5回合", //技能描述
                     items:[
                         {
                             id:seed(), //技能项id
@@ -83,7 +84,7 @@ module.exports={
                                         icon:"atk-up",
                                         removeAfterBattle:true,
                                         attrName:HeroDeriveAttributes.ATK,
-                                        continueTurn:3, //持续3回合
+                                        continueTurn:5, //持续5回合
                                         mode:"inc",
                                         basePercent:100, //基础增加 100/1000 = 10%
                                         levelFactor:10,
@@ -97,7 +98,7 @@ module.exports={
                                         icon:"hp-up",
                                         removeAfterBattle:true,
                                         attrName:HeroDeriveAttributes.HP_MAX,
-                                        continueTurn:3, //3回合消失
+                                        continueTurn:5, //5回合消失
                                         mode:"inc",
                                         basePercent:100, //基础增加 100/1000 = 10%
                                         levelFactor:10,
@@ -138,6 +139,9 @@ module.exports={
                                     effectParams:{
                                         icon:"reborn",
                                         continueTurn:'ever', //一直持续
+                                        clearable:true,//可被清除
+                                        category:effectCategoryEnum.POSITIVE, //正面效果
+                                        
                                         removeAfterBattle:true,
                                         delayTurn:1,//死亡后，在下一回合开始的时候才复活
                                         recoverHpRate:400,//基础恢复40%hp
@@ -198,6 +202,61 @@ module.exports={
                 }
             ]
         },
+    
+        {
+            singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
+            key:"净化1",
+            constructor:Skill,
+            params:[
+                {
+                    levelCur:1, //number，表示当前等级
+                    levelMax:10, //number，表示最高等级
+                    exp:0, // number,表示当前获得的经验值
+                },{
+                    type:SkillType.ACTIVE,// SkillType 枚举，表示主动/被动
+                    id:1, //技能id
+                    name:"净化1", //技能名称
+                    desc:"清除所有友军(包括自身)身上的负面效果，并增加(物理)防御力20%,持续3回合", //技能描述
+                    items:[
+                        {
+                            id:seed(), //技能项id
+                            probability:1000,//Integer 对象，表示成功释放概率
+                            installCycle:undefined, //(可空)在什么生命周期去触发里面的effect的install
+                            targetChooserName:"allyChooser", //选择友军
+                            targetChooserParams:{hasEffect:{category:effectCategoryEnum.NEGATIVE},count:6},//chooser需要的参数
+                            effects:[
+                                {
+                                    //清除负面效果
+                                    effectName:"clearOtherEffect",
+                                    effectParams:{
+                                        minLevelToClear:undefined,
+                                        maxLevelToClear:undefined,
+                                        categoryToClear:effectCategoryEnum.NEGATIVE, //移除负面效果
+                                        nameToClear:undefined
+                                    }
+                                },
+                                {
+                                    //防御提升效果
+                                    effectName:"attributeModifyByPercent",
+                                    effectParams:{
+                                        icon:"def-up",
+                                        removeAfterBattle:true,
+                                        attrName:HeroDeriveAttributes.DEF,
+                                        continueTurn:3, //持续3回合
+                                        mode:"inc",
+                                        basePercent:100, //基础增加 100/1000 = 10%
+                                        levelFactor:10,
+                                        increase:"linear"
+                                    }
+                                },
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        
+        
         {
             singleton:false, //如果是true,代表该实例全局只产生一个。否则每次获取本key的实例，都产生多个
             key:"毒雾1",
@@ -239,6 +298,9 @@ module.exports={
                                     effectParams:{
                                         icon:"poison",
                                         continueTurn:2, //回合数
+                                        clearable:true,//可被清除
+                                        category:effectCategoryEnum.NEGATIVE, //负面效果
+                                        
                                         deadly:true,//此毒素效果致死
                                         isMagic:true, //是魔法攻击（决定计算参数是ATK还是MATK)
                                         atkRatePerLevel:500,//每提升1级，增加50%伤害
@@ -295,6 +357,9 @@ module.exports={
                                     effectParams:{
                                         icon:"dizzy",
                                         removeAfterBattle:true,
+                                        clearable:true,//可被清除
+                                        category:effectCategoryEnum.NEGATIVE, //负面效果
+                                        
                                         status:statusEnum.Dizzy, //状态：眩晕
                                         continueTurn:2, //回合数
                                         stopAction:true,
@@ -348,6 +413,8 @@ module.exports={
                                     effectParams:{
                                         icon:"frozen",
                                         removeAfterBattle:true,
+                                        clearable:true,//可被清除
+                                        category:effectCategoryEnum.NEGATIVE, //负面效果
                                         status:statusEnum.Frozen, //状态：眩晕
                                         continueTurn:2, //回合数
                                         stopAction:true,
@@ -401,6 +468,8 @@ module.exports={
                                     effectParams:{
                                         icon:"silence",
                                         removeAfterBattle:true,
+                                        clearable:true,//可被清除
+                                        category:effectCategoryEnum.NEGATIVE, //负面效果
                                         status:statusEnum.SILENCE, //状态：眩晕
                                         continueTurn:2, //回合数
                                         stopAction:false,

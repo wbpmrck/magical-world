@@ -200,8 +200,8 @@ module.exports={
                                 }
                             }
                             if(frameEvent.effect){
-                                //如果是效果相关
-                                if(frameEvent.effect.name==='damageByATKAndDEF'){
+                                //如果是效果相关,且不存在持续回合的
+                                if(frameEvent.effect.name==='damageByATKAndDEF' || (!frameEvent.effect.params.continueTurn)){
                                     jumpFrame = true;
                                 }else{
                                     //对象添加效果

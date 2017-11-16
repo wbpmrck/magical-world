@@ -73,7 +73,14 @@ let Hero = oop.defineClass({
                    self.isDead = true;
                    
                    //死亡时，能量丢失(设置未0)
-                   self.getAttr(HeroOtherAttributes.SP).updateAddPercent(-1);
+                   //派发mutation给target
+                   self.takeMutation({
+                       from:self,
+                       mutation:{
+                           [HeroOtherAttributes.SP]:0-self.getAttr(HeroOtherAttributes.SP).getVal()
+                       },
+                   });
+                   // self.getAttr(HeroOtherAttributes.SP).updateAddPercent(-1);
     
                    self.emit(HeroEvents.AFTER_HERO_DIE);
                }else{

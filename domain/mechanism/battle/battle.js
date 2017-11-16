@@ -660,6 +660,8 @@ let Battle = oop.defineClass({
                 //判断超时
                 if(self.process.turns === MAX_BATTLE_TURN){
                     self.status = BattleStatus.TIMEOUT;
+                    //超时的时候，获胜方是防守方
+                    self.winner = self.defendTeam;
                 }
             }
     

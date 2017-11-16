@@ -28,17 +28,17 @@ describe("Battle", function () {
         
         //先创建2个队伍，每个队伍6个英雄
         let hero1 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
-        let hero2 = make({key:"地狱游侠1"}).initOnPlayer(player_shinhwa);
-        let hero3 = make({key:"术士1"}).initOnPlayer(player_shinhwa);
-        let hero4 = make({key:"术士1"}).initOnPlayer(player_shinhwa);
+        let hero2 = make({key:"光战1"}).initOnPlayer(player_shinhwa);
+        let hero3 = make({key:"毒刺客1"}).initOnPlayer(player_shinhwa);
+        let hero4 = make({key:"牧师1"}).initOnPlayer(player_shinhwa);
         let hero5 = make({key:"毒刺客1"}).initOnPlayer(player_shinhwa);
         let hero6 = make({key:"毒刺客1"}).initOnPlayer(player_shinhwa);
         
         
-        let hero7 = make({key:"光战2"}).initOnPlayer(player_weatherpop);
-        let hero8 = make({key:"地狱游侠1"}).initOnPlayer(player_weatherpop);
-        let hero9 = make({key:"术士1"}).initOnPlayer(player_weatherpop);
-        let hero10 = make({key:"术士1"}).initOnPlayer(player_weatherpop);
+        let hero7 = make({key:"光战1"}).initOnPlayer(player_weatherpop);
+        let hero8 = make({key:"光战1"}).initOnPlayer(player_weatherpop);
+        let hero9 = make({key:"毒刺客1"}).initOnPlayer(player_weatherpop);
+        let hero10 = make({key:"牧师1"}).initOnPlayer(player_weatherpop);
         let hero11 = make({key:"毒刺客1"}).initOnPlayer(player_weatherpop);
         let hero12 = make({key:"毒刺客1"}).initOnPlayer(player_weatherpop);
         //
@@ -70,15 +70,15 @@ describe("Battle", function () {
         
         fs.writeFileSync(beginfile,bat.toJSONString());
     
-        //检查被动技能效果持续回合
-        bat.on(BattleEvents.TURN_BEGIN,function (curTurn) {
-            if(curTurn<=3){
-                expect(hero1.effects.filter((ef)=>{return ef.name=='AttributeModifyByPercent'}).length).to.eql(2);
-            }else{
-                //3回合之后，所有英雄身上应该没有效果
-                expect(hero1.effects.filter((ef)=>{return ef.name=='AttributeModifyByPercent'}).length).to.eql(0);
-            }
-        });
+        // //检查被动技能效果持续回合
+        // bat.on(BattleEvents.TURN_BEGIN,function (curTurn) {
+        //     if(curTurn<=3){
+        //         expect(hero1.effects.filter((ef)=>{return ef.name=='AttributeModifyByPercent'}).length).to.eql(2);
+        //     }else{
+        //         //3回合之后，所有英雄身上应该没有效果
+        //         expect(hero1.effects.filter((ef)=>{return ef.name=='AttributeModifyByPercent'}).length).to.eql(0);
+        //     }
+        // });
         
         bat.run();
       
